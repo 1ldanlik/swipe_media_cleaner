@@ -94,3 +94,4 @@ lib/
 
 MIT
 # swipe_media_cleaner
+# swipe_media_cleaner
