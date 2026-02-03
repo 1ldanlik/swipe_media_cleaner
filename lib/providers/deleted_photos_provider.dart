@@ -14,22 +14,38 @@ final statisticsBoxProvider = Provider<Box<AppStatistics>>((ref) {
   return Hive.box<AppStatistics>('statistics');
 });
 
-/// Провайдер для списка удалённых фото
-final deletedPhotosProvider = StreamProvider<List<DeletedPhoto>>((ref) {
+/// Провайдер для списка удалённых фото - ИСПРАВЛЕНО!
+final deletedPhotosProvider = StreamProvider.autoDispose<List<DeletedPhoto>>((ref) {
   final box = ref.watch(deletedPhotosBoxProvider);
-  return box.watch().map((_) => box.values.toList());
+  
+  // Создаем Stream, который сначала эмитит текущие данные, а потом слушает изменения
+  return Stream.value(box.values.toList()).asyncExpand((initial) async* {
+    yield initial;
+    await for (final _ in box.watch()) {
+      yield box.values.toList();
+    }
+  });
 });
 
-/// Провайдер для статистики
-final statisticsProvider = StreamProvider<AppStatistics>((ref) {
+/// Провайдер для статистики - ИСПРАВЛЕНО!
+final statisticsProvider = StreamProvider.autoDispose<AppStatistics>((ref) {
   final box = ref.watch(statisticsBoxProvider);
-  return box.watch().map((_) {
+  
+  // Создаем Stream, который сначала эмитит текущие данные, а потом слушает изменения
+  AppStatistics getStats() {
     if (box.isEmpty) {
       final stats = AppStatistics();
       box.put('stats', stats);
       return stats;
     }
     return box.get('stats')!;
+  }
+  
+  return Stream.value(getStats()).asyncExpand((initial) async* {
+    yield initial;
+    await for (final _ in box.watch()) {
+      yield getStats();
+    }
   });
 });
 

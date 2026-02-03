@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/deleted_photos_provider.dart';
+import '../../providers/deleted_photos_provider.dart';
+import 'widgets/empty_statistics_widget.dart';
 
 class StatisticsScreen extends ConsumerWidget {
   const StatisticsScreen({super.key});
@@ -19,7 +20,6 @@ class StatisticsScreen extends ConsumerWidget {
         data: (stats) {
           return deletedPhotosAsync.when(
             data: (photosInTrash) {
-              // Фото в корзине (еще не удалены)
               final trashCount = photosInTrash.length;
               final trashSize = photosInTrash.fold<int>(
                 0,
@@ -31,7 +31,6 @@ class StatisticsScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Заголовок
                     const Text(
                       'Ваш прогресс',
                       style: TextStyle(
@@ -49,7 +48,6 @@ class StatisticsScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 32),
 
-                    // Карточки статистики
                     _buildStatCard(
                       context,
                       icon: Icons.photo_library,
@@ -78,9 +76,14 @@ class StatisticsScreen extends ConsumerWidget {
                       value: stats.formattedFreedSpace,
                       subtitle: 'Реально освобождено',
                     ),
+                    
+                    if (stats.checkedPhotos == 0 && trashCount == 0) ...[
+                      const SizedBox(height: 32),
+                      const EmptyStatisticsWidget(),
+                    ],
+
                     const SizedBox(height: 32),
 
-                    // Информация о корзине
                     if (trashCount > 0) ...[
                       Card(
                         elevation: 2,
@@ -122,7 +125,6 @@ class StatisticsScreen extends ConsumerWidget {
                       ),
                     ],
 
-                    // Дополнительная информация
                     if (stats.deletedPhotos > 0) ...[
                       const SizedBox(height: 16),
                       Card(

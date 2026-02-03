@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'home_screen.dart';
-import 'deleted_photos_screen.dart';
-import 'statistics_screen.dart';
+import 'deleted_photos/deleted_photos_screen.dart';
+import 'statistics/statistics_screen.dart';
 
 class MainNavigation extends ConsumerStatefulWidget {
   const MainNavigation({super.key});

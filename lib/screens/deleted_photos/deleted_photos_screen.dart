@@ -2,8 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:photo_manager/photo_manager.dart';
-import '../models/deleted_photo.dart';
-import '../providers/deleted_photos_provider.dart';
+import '../../models/deleted_photo.dart';
+import '../../providers/deleted_photos_provider.dart';
+import 'widgets/empty_trash_widget.dart';
 
 class DeletedPhotosScreen extends ConsumerWidget {
   const DeletedPhotosScreen({super.key});
@@ -20,31 +21,11 @@ class DeletedPhotosScreen extends ConsumerWidget {
       body: deletedPhotosAsync.when(
         data: (deletedPhotos) {
           if (deletedPhotos.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.delete_outline,
-                    size: 100,
-                    color: Colors.grey[400],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Корзина пуста',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            );
+            return const EmptyTrashWidget();
           }
 
           return Column(
             children: [
-              // Кнопка удалить все
               Container(
                 padding: const EdgeInsets.all(16),
                 color: Colors.red[50],
@@ -71,8 +52,6 @@ class DeletedPhotosScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-
-              // Список фото
               Expanded(
                 child: GridView.builder(
                   padding: const EdgeInsets.all(8),
@@ -107,7 +86,6 @@ class DeletedPhotosScreen extends ConsumerWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        // Фото
         Image.file(
           File(photo.path),
           fit: BoxFit.cover,
@@ -118,15 +96,11 @@ class DeletedPhotosScreen extends ConsumerWidget {
             );
           },
         ),
-
-        // Полупрозрачный красный оверлей
         Container(
           decoration: BoxDecoration(
             color: Colors.red.withOpacity(0.3),
           ),
         ),
-
-        // Кнопка восстановить
         Positioned(
           top: 4,
           right: 4,
@@ -205,7 +179,6 @@ class DeletedPhotosScreen extends ConsumerWidget {
     WidgetRef ref,
     List<DeletedPhoto> photos,
   ) async {
-    // Показываем индикатор прогресса
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -222,7 +195,7 @@ class DeletedPhotosScreen extends ConsumerWidget {
       await service.deleteAll();
 
       if (context.mounted) {
-        Navigator.of(context).pop(); // Закрываем прогресс
+        Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Удалено ${photos.length} фото'),
@@ -232,7 +205,7 @@ class DeletedPhotosScreen extends ConsumerWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        Navigator.of(context).pop(); // Закрываем прогресс
+        Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ошибка при удалении: $e'),
