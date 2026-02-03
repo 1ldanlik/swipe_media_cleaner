@@ -8,6 +8,7 @@ class StatisticsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final statsAsync = ref.watch(statisticsProvider);
+    final deletedPhotosAsync = ref.watch(deletedPhotosProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -16,101 +17,159 @@ class StatisticsScreen extends ConsumerWidget {
       ),
       body: statsAsync.when(
         data: (stats) {
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Заголовок
-                const Text(
-                  'Ваш прогресс',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Отслеживайте свои достижения',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 32),
+          return deletedPhotosAsync.when(
+            data: (photosInTrash) {
+              // Фото в корзине (еще не удалены)
+              final trashCount = photosInTrash.length;
+              final trashSize = photosInTrash.fold<int>(
+                0,
+                (sum, photo) => sum + photo.size,
+              );
 
-                // Карточки статистики
-                _buildStatCard(
-                  context,
-                  icon: Icons.photo_library,
-                  iconColor: Colors.blue,
-                  title: 'Проверено фотографий',
-                  value: stats.checkedPhotos.toString(),
-                  subtitle: 'Всего просмотрено',
-                ),
-                const SizedBox(height: 16),
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Заголовок
+                    const Text(
+                      'Ваш прогресс',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Отслеживайте свои достижения',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    const SizedBox(height: 32),
 
-                _buildStatCard(
-                  context,
-                  icon: Icons.delete,
-                  iconColor: Colors.red,
-                  title: 'Удалено фотографий',
-                  value: stats.deletedPhotos.toString(),
-                  subtitle: 'Отмечено к удалению',
-                ),
-                const SizedBox(height: 16),
+                    // Карточки статистики
+                    _buildStatCard(
+                      context,
+                      icon: Icons.photo_library,
+                      iconColor: Colors.blue,
+                      title: 'Проверено фотографий',
+                      value: stats.checkedPhotos.toString(),
+                      subtitle: 'Всего просмотрено',
+                    ),
+                    const SizedBox(height: 16),
 
-                _buildStatCard(
-                  context,
-                  icon: Icons.storage,
-                  iconColor: Colors.green,
-                  title: 'Освобождено памяти',
-                  value: stats.formattedFreedSpace,
-                  subtitle: 'Потенциально свободное место',
-                ),
-                const SizedBox(height: 32),
+                    _buildStatCard(
+                      context,
+                      icon: Icons.delete,
+                      iconColor: Colors.red,
+                      title: 'Удалено фотографий',
+                      value: stats.deletedPhotos.toString(),
+                      subtitle: 'Удалено навсегда',
+                    ),
+                    const SizedBox(height: 16),
 
-                // Дополнительная информация
-                if (stats.deletedPhotos > 0) ...[
-                  Card(
-                    elevation: 2,
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+                    _buildStatCard(
+                      context,
+                      icon: Icons.storage,
+                      iconColor: Colors.green,
+                      title: 'Освобождено памяти',
+                      value: stats.formattedFreedSpace,
+                      subtitle: 'Реально освобождено',
+                    ),
+                    const SizedBox(height: 32),
+
+                    // Информация о корзине
+                    if (trashCount > 0) ...[
+                      Card(
+                        elevation: 2,
+                        color: Colors.orange[50],
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Icon(
-                                Icons.lightbulb_outline,
-                                color: Colors.amber[700],
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.delete_outline,
+                                    color: Colors.orange[700],
+                                  ),
+                                  const SizedBox(width: 12),
+                                  const Text(
+                                    'В корзине',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 12),
-                              const Text(
-                                'Совет',
+                              const SizedBox(height: 12),
+                              Text(
+                                'У вас $trashCount фото в корзине (${_formatBytes(trashSize)}). '
+                                'Они еще не удалены! Перейдите на вкладку "Корзина", '
+                                'чтобы удалить их окончательно.',
                                 style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: Colors.grey[700],
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 12),
-                          Text(
-                            'У вас есть ${stats.deletedPhotos} фото в корзине. '
-                            'Не забудьте окончательно удалить их, '
-                            'чтобы освободить ${stats.formattedFreedSpace} памяти!',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                ],
-              ],
+                    ],
+
+                    // Дополнительная информация
+                    if (stats.deletedPhotos > 0) ...[
+                      const SizedBox(height: 16),
+                      Card(
+                        elevation: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.celebration,
+                                    color: Colors.amber[700],
+                                  ),
+                                  const SizedBox(width: 12),
+                                  const Text(
+                                    'Отличная работа!',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                'Вы уже удалили ${stats.deletedPhotos} фото и '
+                                'освободили ${stats.formattedFreedSpace} памяти! '
+                                'Продолжайте в том же духе! 🎉',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              );
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(
+              child: Text('Ошибка: $error'),
             ),
           );
         },

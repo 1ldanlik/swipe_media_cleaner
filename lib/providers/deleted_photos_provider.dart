@@ -49,7 +49,7 @@ class DeletedPhotosService {
     return _statsBox.get('stats')!;
   }
   
-  /// Добавить фото в список на удаление
+  /// Добавить фото в корзину (НЕ удаляем, просто помечаем)
   Future<void> markForDeletion(PhotoItem photo) async {
     final deletedPhoto = DeletedPhoto(
       id: photo.id,
@@ -60,9 +60,6 @@ class DeletedPhotosService {
       month: photo.createdDate.month,
     );
     await _box.put(photo.id, deletedPhoto);
-    
-    // Обновляем статистику
-    _stats.addDeleted(photo.size);
   }
   
   /// Увеличить счетчик просмотренных фото
@@ -70,21 +67,31 @@ class DeletedPhotosService {
     _stats.incrementChecked();
   }
   
-  /// Удалить фото из списка (восстановить)
+  /// Удалить фото из корзины (восстановить)
   Future<void> restore(String id) async {
     final photo = _box.get(id);
     if (photo != null) {
       await _box.delete(id);
-      // Обновляем статистику
-      _stats.restorePhoto(photo.size);
     }
   }
   
-  /// Удалить все отмеченные фото окончательно
+  /// Окончательно удалить все фото из корзины
   Future<void> deleteAll() async {
+    // Получаем все фото из корзины
+    final photos = _box.values.toList();
+    
+    // Считаем статистику ПЕРЕД удалением
+    final totalCount = photos.length;
+    final totalSize = photos.fold<int>(0, (sum, photo) => sum + photo.size);
+    
+    // Очищаем корзину
     await _box.clear();
-    // Сбрасываем счетчики удаленных, но оставляем просмотренные
-    _stats.resetDeleted();
+    
+    // ВОТ ТЕПЕРЬ обновляем статистику реально удаленных фото!
+    final stats = _stats;
+    stats.deletedPhotos += totalCount;
+    stats.freedSpace += totalSize;
+    await stats.save();
   }
   
   /// Получить все удалённые фото
