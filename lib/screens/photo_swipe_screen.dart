@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/month_group.dart';
 import '../models/photo_item.dart';
 import '../providers/deleted_photos_provider.dart';
+import '../providers/viewed_photos_provider.dart';
 import '../widgets/swipeable_photo_card.dart';
 
 class PhotoSwipeScreen extends ConsumerStatefulWidget {
@@ -21,15 +22,44 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
   int currentIndex = 0;
   List<PhotoItem> remainingPhotos = [];
   List<PhotoItem> markedForDeletion = [];
+  int alreadyViewedCount = 0; // Счетчик уже просмотренных фото
 
   @override
   void initState() {
     super.initState();
-    remainingPhotos = List.from(widget.monthGroup.photos);
+    _initializePhotos();
+  }
+
+  void _initializePhotos() {
+    final viewedService = ref.read(viewedPhotosServiceProvider);
+    
+    // Фильтруем непросмотренные фото
+    final unviewedPhotos = widget.monthGroup.photos
+        .where((photo) => !viewedService.isViewed(photo.id))
+        .toList();
+    
+    // Подсчитываем уже просмотренные фото
+    alreadyViewedCount = widget.monthGroup.photos.length - unviewedPhotos.length;
+    
+    // Если есть непросмотренные - показываем только их, иначе показываем все
+    remainingPhotos = unviewedPhotos.isNotEmpty 
+        ? unviewedPhotos 
+        : List.from(widget.monthGroup.photos);
+    
+    // Если показываем все фото (пересмотр), сбрасываем счетчик просмотренных
+    if (unviewedPhotos.isEmpty) {
+      alreadyViewedCount = 0;
+    }
   }
 
   void _handleKeep() {
     if (currentIndex < remainingPhotos.length) {
+      final photo = remainingPhotos[currentIndex];
+      
+      // Отмечаем фото как просмотренное
+      final viewedService = ref.read(viewedPhotosServiceProvider);
+      viewedService.markAsViewed(photo.id, widget.monthGroup.year, widget.monthGroup.month);
+      
       // Увеличиваем счетчик просмотренных
       final service = ref.read(deletedPhotosServiceProvider);
       service.incrementCheckedPhotos();
@@ -44,6 +74,10 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
   Future<void> _handleDelete() async {
     if (currentIndex < remainingPhotos.length) {
       final photo = remainingPhotos[currentIndex];
+      
+      // Отмечаем фото как просмотренное
+      final viewedService = ref.read(viewedPhotosServiceProvider);
+      await viewedService.markAsViewed(photo.id, widget.monthGroup.year, widget.monthGroup.month);
       
       // Увеличиваем счетчик просмотренных
       final service = ref.read(deletedPhotosServiceProvider);
@@ -93,9 +127,9 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final progress = remainingPhotos.isEmpty
+    final progress = widget.monthGroup.photos.isEmpty
         ? 0.0
-        : (currentIndex / remainingPhotos.length).clamp(0.0, 1.0);
+        : ((currentIndex + alreadyViewedCount) / widget.monthGroup.photos.length).clamp(0.0, 1.0);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -110,7 +144,7 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
               style: const TextStyle(fontSize: 18),
             ),
             Text(
-              '${currentIndex + 1} / ${remainingPhotos.length}',
+              '${currentIndex + alreadyViewedCount + 1} / ${widget.monthGroup.photos.length}',
               style: const TextStyle(fontSize: 14, color: Colors.white70),
             ),
           ],
