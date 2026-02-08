@@ -6,20 +6,18 @@ part of 'deleted_photos_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$deletedPhotosNotifierHash() =>
-    r'135e9d65382f6357c7be612b7518eca2c43e313e';
+String _$deletedPhotosNotifierHash() => r'135e9d65382f6357c7be612b7518eca2c43e313e';
 
 /// Notifier для управления состоянием экрана корзины
 ///
 /// Copied from [DeletedPhotosNotifier].
 @ProviderFor(DeletedPhotosNotifier)
-final deletedPhotosNotifierProvider = AutoDisposeNotifierProvider<
-    DeletedPhotosNotifier, DeletedPhotosScreenState>.internal(
+final deletedPhotosNotifierProvider =
+    AutoDisposeNotifierProvider<DeletedPhotosNotifier, DeletedPhotosScreenState>.internal(
   DeletedPhotosNotifier.new,
   name: r'deletedPhotosNotifierProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$deletedPhotosNotifierHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$deletedPhotosNotifierHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );

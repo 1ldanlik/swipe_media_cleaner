@@ -90,8 +90,9 @@ class MonthCard extends ConsumerWidget {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color:
-                                isCompleted ? AppColors.successGreen : Theme.of(context).colorScheme.primary,
+                            color: isCompleted
+                                ? AppColors.successGreen
+                                : Theme.of(context).colorScheme.primary,
                           ),
                         ),
                       ],
@@ -104,7 +105,9 @@ class MonthCard extends ConsumerWidget {
                         minHeight: 8,
                         backgroundColor: AppColors.greyLight,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          isCompleted ? AppColors.successGreen : Theme.of(context).colorScheme.primary,
+                          isCompleted
+                              ? AppColors.successGreen
+                              : Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ),
