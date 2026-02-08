@@ -29,7 +29,7 @@ class PermissionRequestWidget extends ConsumerWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            Text(
+            const Text(
               'Для работы приложения необходим доступ к вашим фотографиям',
               style: TextStyle(
                 fontSize: 16,

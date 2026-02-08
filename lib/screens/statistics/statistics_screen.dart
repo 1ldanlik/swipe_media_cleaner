@@ -40,7 +40,7 @@ class StatisticsScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text(
+                    const Text(
                       'Отслеживайте свои достижения',
                       style: TextStyle(
                         fontSize: 16,
@@ -88,14 +88,14 @@ class StatisticsScreen extends ConsumerWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
+                              const Row(
                                 children: [
                                   Icon(
                                     Icons.delete_outline,
                                     color: AppColors.warningIcon,
                                   ),
-                                  const SizedBox(width: 12),
-                                  const Text(
+                                  SizedBox(width: 12),
+                                  Text(
                                     'В корзине',
                                     style: TextStyle(
                                       fontSize: 18,
@@ -109,7 +109,7 @@ class StatisticsScreen extends ConsumerWidget {
                                 'У вас $trashCount фото в корзине (${_formatBytes(trashSize)}). '
                                 'Они еще не удалены! Перейдите на вкладку "Корзина", '
                                 'чтобы удалить их окончательно.',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 14,
                                   color: AppColors.greyVeryDark,
                                 ),
@@ -128,14 +128,14 @@ class StatisticsScreen extends ConsumerWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
+                              const Row(
                                 children: [
                                   Icon(
                                     Icons.celebration,
                                     color: AppColors.achievementIcon,
                                   ),
-                                  const SizedBox(width: 12),
-                                  const Text(
+                                  SizedBox(width: 12),
+                                  Text(
                                     'Отличная работа!',
                                     style: TextStyle(
                                       fontSize: 18,
@@ -149,7 +149,7 @@ class StatisticsScreen extends ConsumerWidget {
                                 'Вы уже удалили ${stats.deletedPhotos} фото и '
                                 'освободили ${stats.formattedFreedSpace} памяти! '
                                 'Продолжайте в том же духе! 🎉',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 14,
                                   color: AppColors.greyVeryDark,
                                 ),
@@ -210,7 +210,7 @@ class StatisticsScreen extends ConsumerWidget {
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
                       color: AppColors.greyMedium,
                     ),
@@ -226,7 +226,7 @@ class StatisticsScreen extends ConsumerWidget {
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       color: AppColors.greyDark,
                     ),

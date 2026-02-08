@@ -6,11 +6,11 @@ class EmptyStatisticsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return const Card(
       elevation: 2,
       color: AppColors.warningBackground,
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -20,8 +20,8 @@ class EmptyStatisticsWidget extends StatelessWidget {
                   Icons.info_outline,
                   color: AppColors.restoreBlue,
                 ),
-                const SizedBox(width: 12),
-                const Text(
+                SizedBox(width: 12),
+                Text(
                   'Начните очистку',
                   style: TextStyle(
                     fontSize: 18,
@@ -30,7 +30,7 @@ class EmptyStatisticsWidget extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Text(
               'Перейдите на вкладку "Галерея", выберите месяц и начните просматривать фотографии. '
               'Свайпайте влево, чтобы удалить, или вправо, чтобы оставить.',

@@ -6,9 +6,9 @@ class EmptyTrashWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: EdgeInsets.all(32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -17,7 +17,7 @@ class EmptyTrashWidget extends StatelessWidget {
               size: 120,
               color: AppColors.greyLight,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             Text(
               'Корзина пуста',
               style: TextStyle(
@@ -26,7 +26,7 @@ class EmptyTrashWidget extends StatelessWidget {
                 color: AppColors.greyVeryDark,
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Text(
               'Свайпните фото влево на экране просмотра, чтобы добавить их в корзину',
               textAlign: TextAlign.center,
