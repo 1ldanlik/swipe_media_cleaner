@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../theme/app_colors.dart';
 
 class EmptyTrashWidget extends StatelessWidget {
   const EmptyTrashWidget({super.key});
@@ -14,7 +15,7 @@ class EmptyTrashWidget extends StatelessWidget {
             Icon(
               Icons.delete_sweep_outlined,
               size: 120,
-              color: Colors.grey[300],
+              color: AppColors.greyLight,
             ),
             const SizedBox(height: 24),
             Text(
@@ -22,7 +23,7 @@ class EmptyTrashWidget extends StatelessWidget {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey[700],
+                color: AppColors.greyVeryDark,
               ),
             ),
             const SizedBox(height: 12),
@@ -31,7 +32,7 @@ class EmptyTrashWidget extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey[600],
+                color: AppColors.greyMedium,
               ),
             ),
           ],

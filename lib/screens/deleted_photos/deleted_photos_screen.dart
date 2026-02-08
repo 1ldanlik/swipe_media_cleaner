@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/deleted_photo.dart';
 import '../../providers/deleted_photos_provider.dart';
+import '../../theme/app_colors.dart';
 import 'notifiers/deleted_photos_notifier.dart';
 import 'widgets/empty_trash_widget.dart';
 import 'widgets/bottom_action_buttons.dart';
@@ -80,7 +81,7 @@ class DeletedPhotosScreen extends ConsumerWidget {
   ) {
     return Container(
       padding: const EdgeInsets.all(16),
-      color: Colors.red[50],
+      color: AppColors.trashBannerBackground,
       child: Row(
         children: [
           Expanded(
@@ -88,9 +89,9 @@ class DeletedPhotosScreen extends ConsumerWidget {
               state.hasSelection
                   ? 'Выбрано: ${state.selectedCount} из ${photos.length}'
                   : '${photos.length} фото готово к удалению',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
-                color: Colors.red[900],
+                color: AppColors.trashBannerText,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -101,7 +102,7 @@ class DeletedPhotosScreen extends ConsumerWidget {
               icon: const Icon(Icons.close, size: 18),
               label: const Text('Отменить'),
               style: TextButton.styleFrom(
-                foregroundColor: Colors.red[900],
+                foregroundColor: AppColors.trashBannerText,
               ),
             )
           else
@@ -110,7 +111,7 @@ class DeletedPhotosScreen extends ConsumerWidget {
               icon: const Icon(Icons.select_all, size: 18),
               label: const Text('Выбрать все'),
               style: TextButton.styleFrom(
-                foregroundColor: Colors.red[900],
+                foregroundColor: AppColors.trashBannerText,
               ),
             ),
         ],
@@ -157,15 +158,15 @@ class DeletedPhotosScreen extends ConsumerWidget {
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
               return Container(
-                color: Colors.grey[300],
-                child: const Icon(Icons.broken_image),
+                color: AppColors.greyLight,
+                child: const Icon(Icons.broken_image, color: AppColors.brokenImageIcon),
               );
             },
           ),
           Container(
             decoration: BoxDecoration(
-              color: isSelected ? Colors.blue.withOpacity(0.5) : Colors.red.withOpacity(0.3),
-              border: isSelected ? Border.all(color: Colors.blue, width: 3) : null,
+              color: isSelected ? AppColors.selectedPhotoOverlay : AppColors.trashPhotoOverlay,
+              border: isSelected ? Border.all(color: AppColors.restoreBlue, width: 3) : null,
             ),
           ),
           if (isSelected)
@@ -174,7 +175,7 @@ class DeletedPhotosScreen extends ConsumerWidget {
               right: 8,
               child: Icon(
                 Icons.check_circle,
-                color: Colors.white,
+                color: AppColors.checkCircleIcon,
                 size: 32,
               ),
             ),

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/photo_item.dart';
+import '../theme/app_colors.dart';
 
 class SwipeablePhotoCard extends StatefulWidget {
   final PhotoItem photo;
@@ -90,11 +91,11 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
 
   Color _getOverlayColor() {
     if (_dragPosition > 50) {
-      return Colors.green.withOpacity(0.3);
+      return AppColors.successGreen.withOpacity(0.3);
     } else if (_dragPosition < -50) {
-      return Colors.red.withOpacity(0.3);
+      return AppColors.deleteRed.withOpacity(0.3);
     }
-    return Colors.transparent;
+    return AppColors.transparent;
   }
 
   Widget _getOverlayIcon() {
@@ -107,13 +108,13 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.green, width: 4),
+              border: Border.all(color: AppColors.successGreen, width: 4),
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Icon(
               Icons.check,
               size: 64,
-              color: Colors.green,
+              color: AppColors.successGreen,
             ),
           ),
         ),
@@ -127,13 +128,13 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.red, width: 4),
+              border: Border.all(color: AppColors.deleteRed, width: 4),
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Icon(
               Icons.close,
               size: 64,
-              color: Colors.red,
+              color: AppColors.deleteRed,
             ),
           ),
         ),
@@ -166,7 +167,7 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
+                        color: AppColors.shadowLight.withOpacity(0.3),
                         blurRadius: 20,
                         spreadRadius: 5,
                       ),
@@ -181,12 +182,12 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
                       height: double.infinity,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
-                          color: Colors.grey[900],
+                          color: AppColors.greyExtraDark,
                           child: const Center(
                             child: Icon(
                               Icons.broken_image,
                               size: 64,
-                              color: Colors.white54,
+                              color: AppColors.white54,
                             ),
                           ),
                         );

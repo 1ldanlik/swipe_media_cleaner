@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../theme/app_colors.dart';
 
 class EmptyStatisticsWidget extends StatelessWidget {
   const EmptyStatisticsWidget({super.key});
@@ -7,7 +8,7 @@ class EmptyStatisticsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
-      color: Colors.blue[50],
+      color: AppColors.warningBackground,
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -17,7 +18,7 @@ class EmptyStatisticsWidget extends StatelessWidget {
               children: [
                 Icon(
                   Icons.info_outline,
-                  color: Colors.blue[700],
+                  color: AppColors.restoreBlue,
                 ),
                 const SizedBox(width: 12),
                 const Text(
@@ -35,7 +36,7 @@ class EmptyStatisticsWidget extends StatelessWidget {
               'Свайпайте влево, чтобы удалить, или вправо, чтобы оставить.',
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.grey[700],
+                color: AppColors.greyVeryDark,
               ),
             ),
           ],

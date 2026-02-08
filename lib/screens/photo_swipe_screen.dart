@@ -4,6 +4,7 @@ import '../models/month_group.dart';
 import '../models/photo_item.dart';
 import '../providers/deleted_photos_provider.dart';
 import '../providers/viewed_photos_provider.dart';
+import '../theme/app_colors.dart';
 import '../widgets/swipeable_photo_card.dart';
 
 class PhotoSwipeScreen extends ConsumerStatefulWidget {
@@ -114,10 +115,10 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
         : ((currentIndex + alreadyViewedCount) / widget.monthGroup.photos.length).clamp(0.0, 1.0);
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.black,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.black,
+        foregroundColor: AppColors.white,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -127,7 +128,7 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
             ),
             Text(
               '${currentIndex + alreadyViewedCount + 1} / ${widget.monthGroup.photos.length}',
-              style: const TextStyle(fontSize: 14, color: Colors.white70),
+              style: const TextStyle(fontSize: 14, color: AppColors.white70),
             ),
           ],
         ),
@@ -135,8 +136,8 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
           preferredSize: const Size.fromHeight(4),
           child: LinearProgressIndicator(
             value: progress,
-            backgroundColor: Colors.grey[800],
-            valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+            backgroundColor: AppColors.greyExtraDark,
+            valueColor: const AlwaysStoppedAnimation<Color>(AppColors.restoreBlue),
           ),
         ),
       ),
@@ -153,14 +154,14 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
                   const Icon(
                     Icons.check_circle_outline,
                     size: 100,
-                    color: Colors.green,
+                    color: AppColors.successGreen,
                   ),
                   const SizedBox(height: 24),
                   const Text(
                     'Все фотографии просмотрены!',
                     style: TextStyle(
                       fontSize: 24,
-                      color: Colors.white,
+                      color: AppColors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -176,7 +177,7 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
             ),
       bottomNavigationBar: currentIndex < remainingPhotos.length
           ? Container(
-              color: Colors.black,
+              color: AppColors.black,
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -184,13 +185,13 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
                   FloatingActionButton(
                     heroTag: 'delete',
                     onPressed: _handleDelete,
-                    backgroundColor: Colors.red,
+                    backgroundColor: AppColors.deleteRed,
                     child: const Icon(Icons.close, size: 32),
                   ),
                   FloatingActionButton(
                     heroTag: 'keep',
                     onPressed: _handleKeep,
-                    backgroundColor: Colors.green,
+                    backgroundColor: AppColors.successGreen,
                     child: const Icon(Icons.check, size: 32),
                   ),
                 ],

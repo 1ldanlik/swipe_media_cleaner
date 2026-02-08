@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:photo_manager/photo_manager.dart';
 import '../providers/permission_provider.dart';
 import '../providers/month_groups_with_preview_provider.dart';
+import '../theme/app_colors.dart';
 import '../widgets/month_card.dart';
 import '../widgets/permission_request_widget.dart';
 
@@ -63,7 +64,7 @@ class HomeScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  const Icon(Icons.error_outline, size: 64, color: AppColors.deleteRed),
                   const SizedBox(height: 16),
                   Text(
                     'Ошибка загрузки фото:\n$error',

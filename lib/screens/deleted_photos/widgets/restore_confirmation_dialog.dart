@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../theme/app_colors.dart';
 
 /// Диалог подтверждения восстановления фотографий
 class RestoreConfirmationDialog extends StatelessWidget {
@@ -32,7 +33,7 @@ class RestoreConfirmationDialog extends StatelessWidget {
         ),
         FilledButton(
           onPressed: () => Navigator.of(context).pop(true),
-          style: FilledButton.styleFrom(backgroundColor: Colors.blue),
+          style: FilledButton.styleFrom(backgroundColor: AppColors.restoreBlue),
           child: const Text('Восстановить'),
         ),
       ],

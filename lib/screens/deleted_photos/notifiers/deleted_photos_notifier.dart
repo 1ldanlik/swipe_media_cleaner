@@ -4,6 +4,7 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../models/deleted_photo.dart';
 import '../../../providers/deleted_photos_provider.dart';
+import '../../../theme/app_colors.dart';
 import '../widgets/delete_confirmation_dialog.dart';
 import '../widgets/restore_confirmation_dialog.dart';
 
@@ -81,7 +82,7 @@ class DeletedPhotosNotifier extends _$DeletedPhotosNotifier {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Удалено ${photos.length} фото'),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.successGreen,
           ),
         );
       }
@@ -90,7 +91,7 @@ class DeletedPhotosNotifier extends _$DeletedPhotosNotifier {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ошибка при удалении: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.deleteRed,
           ),
         );
       }
@@ -111,7 +112,7 @@ class DeletedPhotosNotifier extends _$DeletedPhotosNotifier {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Восстановлено ${photos.length} фото'),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.successGreen,
           ),
         );
       }
@@ -120,7 +121,7 @@ class DeletedPhotosNotifier extends _$DeletedPhotosNotifier {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ошибка при восстановлении: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.deleteRed,
           ),
         );
       }

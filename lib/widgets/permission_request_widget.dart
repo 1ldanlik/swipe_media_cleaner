@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/permission_provider.dart';
+import '../theme/app_colors.dart';
 
 class PermissionRequestWidget extends ConsumerWidget {
   const PermissionRequestWidget({super.key});
@@ -32,14 +33,14 @@ class PermissionRequestWidget extends ConsumerWidget {
               'Для работы приложения необходим доступ к вашим фотографиям',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey[600],
+                color: AppColors.greyMedium,
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 48),
             ElevatedButton.icon(
               onPressed: () async {
-                await ref.refresh(requestPermissionProvider(null).future);
+                final _ = await ref.refresh(requestPermissionProvider(null).future);
                 ref.invalidate(photoPermissionProvider);
               },
               icon: const Icon(Icons.check_circle_outline),

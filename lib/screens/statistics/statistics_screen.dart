@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/deleted_photos_provider.dart';
+import '../../theme/app_colors.dart';
 import 'widgets/empty_statistics_widget.dart';
 
 class StatisticsScreen extends ConsumerWidget {
@@ -43,14 +44,14 @@ class StatisticsScreen extends ConsumerWidget {
                       'Отслеживайте свои достижения',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.grey[600],
+                        color: AppColors.greyMedium,
                       ),
                     ),
                     const SizedBox(height: 32),
                     _buildStatCard(
                       context,
                       icon: Icons.photo_library,
-                      iconColor: Colors.blue,
+                      iconColor: AppColors.statsBlue,
                       title: 'Проверено фотографий',
                       value: stats.checkedPhotos.toString(),
                       subtitle: 'Всего просмотрено',
@@ -59,7 +60,7 @@ class StatisticsScreen extends ConsumerWidget {
                     _buildStatCard(
                       context,
                       icon: Icons.delete,
-                      iconColor: Colors.red,
+                      iconColor: AppColors.deleteRed,
                       title: 'Удалено фотографий',
                       value: stats.deletedPhotos.toString(),
                       subtitle: 'Удалено навсегда',
@@ -68,7 +69,7 @@ class StatisticsScreen extends ConsumerWidget {
                     _buildStatCard(
                       context,
                       icon: Icons.storage,
-                      iconColor: Colors.green,
+                      iconColor: AppColors.successGreen,
                       title: 'Освобождено памяти',
                       value: stats.formattedFreedSpace,
                       subtitle: 'Реально освобождено',
@@ -81,7 +82,7 @@ class StatisticsScreen extends ConsumerWidget {
                     if (trashCount > 0) ...[
                       Card(
                         elevation: 2,
-                        color: Colors.orange[50],
+                        color: AppColors.warningBackground,
                         child: Padding(
                           padding: const EdgeInsets.all(20),
                           child: Column(
@@ -91,7 +92,7 @@ class StatisticsScreen extends ConsumerWidget {
                                 children: [
                                   Icon(
                                     Icons.delete_outline,
-                                    color: Colors.orange[700],
+                                    color: AppColors.warningIcon,
                                   ),
                                   const SizedBox(width: 12),
                                   const Text(
@@ -110,7 +111,7 @@ class StatisticsScreen extends ConsumerWidget {
                                 'чтобы удалить их окончательно.',
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Colors.grey[700],
+                                  color: AppColors.greyVeryDark,
                                 ),
                               ),
                             ],
@@ -131,7 +132,7 @@ class StatisticsScreen extends ConsumerWidget {
                                 children: [
                                   Icon(
                                     Icons.celebration,
-                                    color: Colors.amber[700],
+                                    color: AppColors.achievementIcon,
                                   ),
                                   const SizedBox(width: 12),
                                   const Text(
@@ -150,7 +151,7 @@ class StatisticsScreen extends ConsumerWidget {
                                 'Продолжайте в том же духе! 🎉',
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Colors.grey[700],
+                                  color: AppColors.greyVeryDark,
                                 ),
                               ),
                             ],
@@ -211,7 +212,7 @@ class StatisticsScreen extends ConsumerWidget {
                     title,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[600],
+                      color: AppColors.greyMedium,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -227,7 +228,7 @@ class StatisticsScreen extends ConsumerWidget {
                     subtitle,
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.grey[500],
+                      color: AppColors.greyDark,
                     ),
                   ),
                 ],

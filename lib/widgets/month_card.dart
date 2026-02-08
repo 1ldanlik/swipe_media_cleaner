@@ -4,6 +4,7 @@ import '../models/month_group.dart';
 import '../models/photo_item.dart';
 import '../screens/photo_swipe_screen.dart';
 import '../providers/viewed_photos_provider.dart';
+import '../theme/app_colors.dart';
 import 'month_preview_photos.dart';
 
 class MonthCard extends ConsumerWidget {
@@ -61,9 +62,9 @@ class MonthCard extends ConsumerWidget {
               const SizedBox(height: 4),
               Text(
                 '${monthGroup.year}',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
-                  color: Colors.grey[600],
+                  color: AppColors.greyMedium,
                 ),
               ),
 
@@ -77,11 +78,11 @@ class MonthCard extends ConsumerWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        const Text(
                           'Просмотрено',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey[600],
+                            color: AppColors.greyMedium,
                           ),
                         ),
                         Text(
@@ -90,7 +91,7 @@ class MonthCard extends ConsumerWidget {
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color:
-                                isCompleted ? Colors.green : Theme.of(context).colorScheme.primary,
+                                isCompleted ? AppColors.successGreen : Theme.of(context).colorScheme.primary,
                           ),
                         ),
                       ],
@@ -101,9 +102,9 @@ class MonthCard extends ConsumerWidget {
                       child: LinearProgressIndicator(
                         value: progress,
                         minHeight: 8,
-                        backgroundColor: Colors.grey[300],
+                        backgroundColor: AppColors.greyLight,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          isCompleted ? Colors.green : Theme.of(context).colorScheme.primary,
+                          isCompleted ? AppColors.successGreen : Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ),
@@ -159,9 +160,9 @@ class MonthCard extends ConsumerWidget {
           children: [
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
-                color: Colors.grey[600],
+                color: AppColors.greyMedium,
               ),
             ),
             Text(

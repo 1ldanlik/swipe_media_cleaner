@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/photo_item.dart';
+import '../theme/app_colors.dart';
 
 /// Виджет для отображения трёх фотографий месяца в ряд
 class MonthPreviewPhotos extends StatelessWidget {
@@ -32,10 +33,10 @@ class MonthPreviewPhotos extends StatelessWidget {
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
-                      color: Colors.grey[300],
+                      color: AppColors.greyLight,
                       child: const Icon(
                         Icons.broken_image,
-                        color: Colors.grey,
+                        color: AppColors.brokenImageIcon,
                       ),
                     );
                   },

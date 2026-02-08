@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../theme/app_colors.dart';
 
 /// Диалог подтверждения удаления фотографий
 class DeleteConfirmationDialog extends StatelessWidget {
@@ -33,7 +34,7 @@ class DeleteConfirmationDialog extends StatelessWidget {
         ),
         FilledButton(
           onPressed: () => Navigator.of(context).pop(true),
-          style: FilledButton.styleFrom(backgroundColor: Colors.red),
+          style: FilledButton.styleFrom(backgroundColor: AppColors.deleteRed),
           child: const Text('Удалить'),
         ),
       ],
