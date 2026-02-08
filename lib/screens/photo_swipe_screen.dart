@@ -102,33 +102,9 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
 
   void _checkIfFinished() {
     if (currentIndex >= remainingPhotos.length) {
-      _showSummaryDialog();
+      // Просто возвращаемся на предыдущий экран
+      Navigator.of(context).pop();
     }
-  }
-
-  void _showSummaryDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Text('Готово!'),
-        content: Text(
-          'Вы просмотрели все фотографии.\n\n'
-          'Отмечено к удалению: ${markedForDeletion.length}\n'
-          'Оставлено: ${remainingPhotos.length - markedForDeletion.length}\n\n'
-          'Фото перемещены в корзину. Вы можете удалить их окончательно на вкладке "Корзина".',
-        ),
-        actions: [
-          FilledButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-            },
-            child: const Text('Завершить'),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
