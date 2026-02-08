@@ -47,9 +47,15 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	
+	<!-- Разрешения для доступа к фото библиотеке -->
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Нам нужен доступ к вашим фотографиям для их просмотра и удаления</string>
+	<string>Это приложение нуждается в доступе к вашим фотографиям для их просмотра и управления. Вы сможете просматривать, удалять и восстанавливать фотографии.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Нам нужен доступ для управления вашими фотографиями</string>
+	<string>Это приложение нуждается в доступе для сохранения и восстановления фотографий в вашу библиотеку.</string>
+	
+	<!-- Предотвращаем показ диалога ограниченного доступа при каждом запуске -->
+	<key>PHPhotoLibraryPreventAutomaticLimitedAccessAlert</key>
+	<true/>
 </dict>
 </plist>

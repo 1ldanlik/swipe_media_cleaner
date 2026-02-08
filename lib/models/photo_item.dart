@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 /// Модель для отдельной фотографии
@@ -18,21 +19,27 @@ class PhotoItem {
   });
 
   static Future<PhotoItem?> fromAsset(AssetEntity asset, String path) async {
-    // Получаем размер файла
-    final file = File(path);
-    int fileSize = 0;
     try {
-      fileSize = await file.length();
-    } catch (e) {
-      fileSize = 0;
-    }
+      // Получаем размер файла
+      final file = File(path);
+      int fileSize = 0;
+      try {
+        fileSize = await file.length();
+      } catch (e) {
+        debugPrint('⚠️ Не удалось получить размер файла: $e');
+        fileSize = 0;
+      }
 
-    return PhotoItem(
-      id: asset.id,
-      path: path,
-      createdDate: asset.createDateTime,
-      size: fileSize,
-      asset: asset,
-    );
+      return PhotoItem(
+        id: asset.id,
+        path: path,
+        createdDate: asset.createDateTime,
+        size: fileSize,
+        asset: asset,
+      );
+    } catch (e) {
+      debugPrint('❌ Ошибка создания PhotoItem: $e');
+      return null;
+    }
   }
 }
