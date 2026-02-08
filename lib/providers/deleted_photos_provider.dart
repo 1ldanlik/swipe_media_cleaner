@@ -110,6 +110,25 @@ class DeletedPhotosService {
     await stats.save();
   }
 
+  /// Окончательно удалить выбранные фото из корзины
+  Future<void> deleteSelected(List<String> ids) async {
+    // Получаем фото которые будем удалять
+    final photosToDelete = ids.map((id) => _box.get(id)).whereType<DeletedPhoto>().toList();
+
+    // Считаем статистику ПЕРЕД удалением
+    final totalCount = photosToDelete.length;
+    final totalSize = photosToDelete.fold<int>(0, (sum, photo) => sum + photo.size);
+
+    // Удаляем фото из корзины
+    await _box.deleteAll(ids);
+
+    // Обновляем статистику реально удаленных фото
+    final stats = _stats;
+    stats.deletedPhotos += totalCount;
+    stats.freedSpace += totalSize;
+    await stats.save();
+  }
+
   /// Получить все удалённые фото
   List<DeletedPhoto> getAll() {
     return _box.values.toList();

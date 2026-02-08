@@ -1,16 +1,19 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:photo_manager/photo_manager.dart';
 import '../../models/deleted_photo.dart';
 import '../../providers/deleted_photos_provider.dart';
+import 'notifiers/deleted_photos_notifier.dart';
 import 'widgets/empty_trash_widget.dart';
+import 'widgets/bottom_action_buttons.dart';
 
 class DeletedPhotosScreen extends ConsumerWidget {
   const DeletedPhotosScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final screenState = ref.watch(deletedPhotosNotifierProvider);
+    final notifier = ref.read(deletedPhotosNotifierProvider.notifier);
     final deletedPhotosAsync = ref.watch(deletedPhotosProvider);
 
     return Scaffold(
@@ -24,48 +27,24 @@ class DeletedPhotosScreen extends ConsumerWidget {
             return const EmptyTrashWidget();
           }
 
+          if (screenState.isProcessing) {
+            return const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Обработка...'),
+                ],
+              ),
+            );
+          }
+
           return Column(
             children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                color: Colors.red[50],
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '${deletedPhotos.length} фото готово к удалению',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.red[900],
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    FilledButton.icon(
-                      onPressed: () => _confirmDeleteAll(context, ref, deletedPhotos),
-                      icon: const Icon(Icons.delete_forever),
-                      label: const Text('Удалить все'),
-                      style: FilledButton.styleFrom(
-                        backgroundColor: Colors.red,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              _buildInfoBanner(context, notifier, screenState, deletedPhotos),
               Expanded(
-                child: GridView.builder(
-                  padding: const EdgeInsets.all(8),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 4,
-                    mainAxisSpacing: 4,
-                  ),
-                  itemCount: deletedPhotos.length,
-                  itemBuilder: (context, index) {
-                    final photo = deletedPhotos[index];
-                    return _buildPhotoCard(context, ref, photo);
-                  },
-                ),
+                child: _buildPhotoGrid(context, notifier, screenState, deletedPhotos),
               ),
             ],
           );
@@ -75,144 +54,132 @@ class DeletedPhotosScreen extends ConsumerWidget {
           child: Text('Ошибка: $error'),
         ),
       ),
+      bottomNavigationBar: deletedPhotosAsync.whenOrNull(
+        data: (deletedPhotos) {
+          if (deletedPhotos.isEmpty || !screenState.hasSelection) return null;
+
+          final selectedPhotos = deletedPhotos
+              .where((photo) => screenState.selectedPhotoIds.contains(photo.id))
+              .toList();
+
+          return BottomActionButtons(
+            selectedCount: screenState.selectedCount,
+            onDelete: () => notifier.handleDelete(context, selectedPhotos),
+            onRestore: () => notifier.handleRestore(context, selectedPhotos),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildInfoBanner(
+    BuildContext context,
+    DeletedPhotosNotifier notifier,
+    DeletedPhotosScreenState state,
+    List<DeletedPhoto> photos,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      color: Colors.red[50],
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              state.hasSelection
+                  ? 'Выбрано: ${state.selectedCount} из ${photos.length}'
+                  : '${photos.length} фото готово к удалению',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.red[900],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          if (state.hasSelection)
+            TextButton.icon(
+              onPressed: () => notifier.clearSelection(),
+              icon: const Icon(Icons.close, size: 18),
+              label: const Text('Отменить'),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red[900],
+              ),
+            )
+          else
+            TextButton.icon(
+              onPressed: () => notifier.selectAll(photos.map((p) => p.id).toList()),
+              icon: const Icon(Icons.select_all, size: 18),
+              label: const Text('Выбрать все'),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red[900],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPhotoGrid(
+    BuildContext context,
+    DeletedPhotosNotifier notifier,
+    DeletedPhotosScreenState state,
+    List<DeletedPhoto> photos,
+  ) {
+    return GridView.builder(
+      padding: const EdgeInsets.all(8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 4,
+        mainAxisSpacing: 4,
+      ),
+      itemCount: photos.length,
+      itemBuilder: (context, index) {
+        final photo = photos[index];
+        final isSelected = state.selectedPhotoIds.contains(photo.id);
+        return _buildPhotoCard(context, notifier, photo, isSelected);
+      },
     );
   }
 
   Widget _buildPhotoCard(
     BuildContext context,
-    WidgetRef ref,
+    DeletedPhotosNotifier notifier,
     DeletedPhoto photo,
+    bool isSelected,
   ) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Image.file(
-          File(photo.path),
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              color: Colors.grey[300],
-              child: const Icon(Icons.broken_image),
-            );
-          },
-        ),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.red.withOpacity(0.3),
+    return GestureDetector(
+      onTap: () => notifier.toggleSelection(photo.id),
+      onLongPress: () => notifier.toggleSelection(photo.id),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.file(
+            File(photo.path),
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                color: Colors.grey[300],
+                child: const Icon(Icons.broken_image),
+              );
+            },
           ),
-        ),
-        Positioned(
-          top: 4,
-          right: 4,
-          child: InkWell(
-            onTap: () => _restorePhoto(context, ref, photo),
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Icon(
-                Icons.restore,
-                size: 20,
-                color: Colors.blue,
-              ),
+          Container(
+            decoration: BoxDecoration(
+              color: isSelected ? Colors.blue.withOpacity(0.5) : Colors.red.withOpacity(0.3),
+              border: isSelected ? Border.all(color: Colors.blue, width: 3) : null,
             ),
           ),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _restorePhoto(
-    BuildContext context,
-    WidgetRef ref,
-    DeletedPhoto photo,
-  ) async {
-    final service = ref.read(deletedPhotosServiceProvider);
-    await service.restore(photo.id);
-
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Фото восстановлено'),
-          backgroundColor: Colors.green,
-        ),
-      );
-    }
-  }
-
-  Future<void> _confirmDeleteAll(
-    BuildContext context,
-    WidgetRef ref,
-    List<DeletedPhoto> photos,
-  ) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Удалить все фотографии?'),
-        content: Text(
-          'Вы действительно хотите удалить ${photos.length} фото навсегда?\n\n'
-          'Это действие нельзя отменить!',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Отмена'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: FilledButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Удалить'),
-          ),
+          if (isSelected)
+            const Positioned(
+              top: 8,
+              right: 8,
+              child: Icon(
+                Icons.check_circle,
+                color: Colors.white,
+                size: 32,
+              ),
+            ),
         ],
       ),
     );
-
-    if (confirmed == true && context.mounted) {
-      await _deleteAllPhotos(context, ref, photos);
-    }
-  }
-
-  Future<void> _deleteAllPhotos(
-    BuildContext context,
-    WidgetRef ref,
-    List<DeletedPhoto> photos,
-  ) async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-
-    try {
-      final ids = photos.map((p) => p.id).toList();
-      await PhotoManager.editor.deleteWithIds(ids);
-
-      final service = ref.read(deletedPhotosServiceProvider);
-      await service.deleteAll();
-
-      if (context.mounted) {
-        Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Удалено ${photos.length} фото'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      if (context.mounted) {
-        Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Ошибка при удалении: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
   }
 }
