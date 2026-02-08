@@ -26,7 +26,7 @@ class PhotoItem {
     } catch (e) {
       fileSize = 0;
     }
-    
+
     return PhotoItem(
       id: asset.id,
       path: path,

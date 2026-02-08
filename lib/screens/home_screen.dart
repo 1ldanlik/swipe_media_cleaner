@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:photo_manager/photo_manager.dart';
 import '../providers/permission_provider.dart';
-import '../providers/photos_provider.dart';
+import '../providers/month_groups_with_preview_provider.dart';
 import '../widgets/month_card.dart';
 import '../widgets/permission_request_widget.dart';
 
@@ -21,17 +21,16 @@ class HomeScreen extends ConsumerWidget {
       body: permissionState.when(
         data: (state) {
           // Проверяем статус разрешения
-          if (state == PermissionState.denied || 
-              state == PermissionState.limited) {
+          if (state == PermissionState.denied || state == PermissionState.limited) {
             return const PermissionRequestWidget();
           }
 
-          // Загружаем фото если есть разрешение
-          final monthGroupsAsync = ref.watch(monthGroupsProvider);
+          // Загружаем фото с превью если есть разрешение
+          final monthGroupsAsync = ref.watch(monthGroupsWithPreviewProvider);
 
           return monthGroupsAsync.when(
-            data: (monthGroups) {
-              if (monthGroups.isEmpty) {
+            data: (monthGroupsWithPreview) {
+              if (monthGroupsWithPreview.isEmpty) {
                 return const Center(
                   child: Text(
                     'Фотографии не найдены',
@@ -42,14 +41,17 @@ class HomeScreen extends ConsumerWidget {
 
               return RefreshIndicator(
                 onRefresh: () async {
-                  ref.invalidate(monthGroupsProvider);
+                  ref.invalidate(monthGroupsWithPreviewProvider);
                 },
                 child: ListView.builder(
                   padding: const EdgeInsets.all(16),
-                  itemCount: monthGroups.length,
+                  itemCount: monthGroupsWithPreview.length,
                   itemBuilder: (context, index) {
-                    final monthGroup = monthGroups[index];
-                    return MonthCard(monthGroup: monthGroup);
+                    final item = monthGroupsWithPreview[index];
+                    return MonthCard(
+                      monthGroup: item.monthGroup,
+                      previewPhotos: item.previewPhotos,
+                    );
                   },
                 ),
               );
@@ -70,7 +72,7 @@ class HomeScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      ref.invalidate(monthGroupsProvider);
+                      ref.invalidate(monthGroupsWithPreviewProvider);
                     },
                     child: const Text('Попробовать снова'),
                   ),

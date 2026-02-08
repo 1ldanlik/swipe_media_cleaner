@@ -54,7 +54,7 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
 
   void _onHorizontalDragEnd(DragEndDetails details) {
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     // Если свайп больше 30% экрана
     if (_dragPosition.abs() > screenWidth * 0.3) {
       // Анимируем карточку за экран
@@ -64,7 +64,7 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
       ).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
       );
-      
+
       _animationController.forward(from: 0).then((_) {
         if (_dragPosition > 0) {
           widget.onSwipeRight();
@@ -194,7 +194,7 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
                     ),
                   ),
                 ),
-                
+
                 // Цветной оверлей при свайпе
                 Container(
                   margin: const EdgeInsets.all(20),
@@ -203,7 +203,7 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                
+
                 // Иконка при свайпе
                 _getOverlayIcon(),
               ],

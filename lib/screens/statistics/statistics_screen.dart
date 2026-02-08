@@ -47,7 +47,6 @@ class StatisticsScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 32),
-
                     _buildStatCard(
                       context,
                       icon: Icons.photo_library,
@@ -57,7 +56,6 @@ class StatisticsScreen extends ConsumerWidget {
                       subtitle: 'Всего просмотрено',
                     ),
                     const SizedBox(height: 16),
-
                     _buildStatCard(
                       context,
                       icon: Icons.delete,
@@ -67,7 +65,6 @@ class StatisticsScreen extends ConsumerWidget {
                       subtitle: 'Удалено навсегда',
                     ),
                     const SizedBox(height: 16),
-
                     _buildStatCard(
                       context,
                       icon: Icons.storage,
@@ -76,14 +73,11 @@ class StatisticsScreen extends ConsumerWidget {
                       value: stats.formattedFreedSpace,
                       subtitle: 'Реально освобождено',
                     ),
-                    
                     if (stats.checkedPhotos == 0 && trashCount == 0) ...[
                       const SizedBox(height: 32),
                       const EmptyStatisticsWidget(),
                     ],
-
                     const SizedBox(height: 32),
-
                     if (trashCount > 0) ...[
                       Card(
                         elevation: 2,
@@ -124,7 +118,6 @@ class StatisticsScreen extends ConsumerWidget {
                         ),
                       ),
                     ],
-
                     if (stats.deletedPhotos > 0) ...[
                       const SizedBox(height: 16),
                       Card(

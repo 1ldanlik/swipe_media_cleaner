@@ -44,7 +44,5 @@ class ViewedPhotoAdapter extends TypeAdapter<ViewedPhoto> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ViewedPhotoAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
+      other is ViewedPhotoAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
 }

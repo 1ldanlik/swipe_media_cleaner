@@ -34,7 +34,7 @@ final monthGroupsProvider = FutureProvider<List<MonthGroup>>((ref) async {
 
     final photoItem = await PhotoItem.fromAsset(asset, file.path);
     if (photoItem == null) continue;
-    
+
     final date = photoItem.createdDate;
     final key = '${date.year}-${date.month}';
 

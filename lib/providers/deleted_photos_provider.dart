@@ -17,7 +17,7 @@ final statisticsBoxProvider = Provider<Box<AppStatistics>>((ref) {
 /// Провайдер для списка удалённых фото - ИСПРАВЛЕНО!
 final deletedPhotosProvider = StreamProvider.autoDispose<List<DeletedPhoto>>((ref) {
   final box = ref.watch(deletedPhotosBoxProvider);
-  
+
   // Создаем Stream, который сначала эмитит текущие данные, а потом слушает изменения
   return Stream.value(box.values.toList()).asyncExpand((initial) async* {
     yield initial;
@@ -30,7 +30,7 @@ final deletedPhotosProvider = StreamProvider.autoDispose<List<DeletedPhoto>>((re
 /// Провайдер для статистики - ИСПРАВЛЕНО!
 final statisticsProvider = StreamProvider.autoDispose<AppStatistics>((ref) {
   final box = ref.watch(statisticsBoxProvider);
-  
+
   // Создаем Stream, который сначала эмитит текущие данные, а потом слушает изменения
   AppStatistics getStats() {
     if (box.isEmpty) {
@@ -40,7 +40,7 @@ final statisticsProvider = StreamProvider.autoDispose<AppStatistics>((ref) {
     }
     return box.get('stats')!;
   }
-  
+
   return Stream.value(getStats()).asyncExpand((initial) async* {
     yield initial;
     await for (final _ in box.watch()) {
@@ -53,9 +53,9 @@ final statisticsProvider = StreamProvider.autoDispose<AppStatistics>((ref) {
 class DeletedPhotosService {
   final Box<DeletedPhoto> _box;
   final Box<AppStatistics> _statsBox;
-  
+
   DeletedPhotosService(this._box, this._statsBox);
-  
+
   AppStatistics get _stats {
     if (_statsBox.isEmpty) {
       final stats = AppStatistics();
@@ -64,7 +64,7 @@ class DeletedPhotosService {
     }
     return _statsBox.get('stats')!;
   }
-  
+
   /// Добавить фото в корзину (НЕ удаляем, просто помечаем)
   Future<void> markForDeletion(PhotoItem photo) async {
     final deletedPhoto = DeletedPhoto(
@@ -77,12 +77,12 @@ class DeletedPhotosService {
     );
     await _box.put(photo.id, deletedPhoto);
   }
-  
+
   /// Увеличить счетчик просмотренных фото
   void incrementCheckedPhotos() {
     _stats.incrementChecked();
   }
-  
+
   /// Удалить фото из корзины (восстановить)
   Future<void> restore(String id) async {
     final photo = _box.get(id);
@@ -90,31 +90,31 @@ class DeletedPhotosService {
       await _box.delete(id);
     }
   }
-  
+
   /// Окончательно удалить все фото из корзины
   Future<void> deleteAll() async {
     // Получаем все фото из корзины
     final photos = _box.values.toList();
-    
+
     // Считаем статистику ПЕРЕД удалением
     final totalCount = photos.length;
     final totalSize = photos.fold<int>(0, (sum, photo) => sum + photo.size);
-    
+
     // Очищаем корзину
     await _box.clear();
-    
+
     // ВОТ ТЕПЕРЬ обновляем статистику реально удаленных фото!
     final stats = _stats;
     stats.deletedPhotos += totalCount;
     stats.freedSpace += totalSize;
     await stats.save();
   }
-  
+
   /// Получить все удалённые фото
   List<DeletedPhoto> getAll() {
     return _box.values.toList();
   }
-  
+
   /// Проверить, отмечено ли фото на удаление
   bool isMarkedForDeletion(String id) {
     return _box.containsKey(id);

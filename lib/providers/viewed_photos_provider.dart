@@ -19,21 +19,23 @@ final viewedPhotosProvider = Provider.autoDispose<List<ViewedPhoto>>((ref) {
 });
 
 /// Провайдер для получения просмотренных фото по месяцу
-final viewedPhotosByMonthProvider = Provider.autoDispose.family<List<ViewedPhoto>, String>((ref, monthKey) {
+final viewedPhotosByMonthProvider =
+    Provider.autoDispose.family<List<ViewedPhoto>, String>((ref, monthKey) {
   final allViewed = ref.watch(viewedPhotosProvider);
   return allViewed.where((photo) => photo.monthKey == monthKey).toList();
 });
 
 /// Провайдер для подсчета процента просмотренных фото по месяцу
-final monthProgressProvider = Provider.autoDispose.family<double, MapEntry<String, int>>((ref, data) {
+final monthProgressProvider =
+    Provider.autoDispose.family<double, MapEntry<String, int>>((ref, data) {
   final monthKey = data.key;
   final totalPhotos = data.value;
-  
+
   if (totalPhotos == 0) return 0.0;
-  
+
   final viewedPhotos = ref.watch(viewedPhotosByMonthProvider(monthKey));
   final viewedCount = viewedPhotos.length;
-  
+
   return (viewedCount / totalPhotos).clamp(0.0, 1.0);
 });
 
@@ -75,7 +77,7 @@ class ViewedPhotosService {
   /// Очистить просмотренные фото, которых больше нет на устройстве
   Future<void> cleanupMissingPhotos(List<String> existingPhotoIds) async {
     final toDelete = <dynamic>[];
-    
+
     for (var photo in _box.values) {
       if (!existingPhotoIds.contains(photo.id)) {
         toDelete.add(photo.key);
@@ -87,9 +89,7 @@ class ViewedPhotosService {
 
   /// Получить количество просмотренных фото по месяцу
   int getViewedCountByMonth(int year, int month) {
-    return _box.values.where((photo) => 
-      photo.year == year && photo.month == month
-    ).length;
+    return _box.values.where((photo) => photo.year == year && photo.month == month).length;
   }
 
   /// Очистить все просмотренные фото по месяцу
@@ -98,7 +98,7 @@ class ViewedPhotosService {
         .where((photo) => photo.year == year && photo.month == month)
         .map((photo) => photo.key)
         .toList();
-    
+
     await _box.deleteAll(toDelete);
   }
 }

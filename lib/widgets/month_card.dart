@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/month_group.dart';
+import '../models/photo_item.dart';
 import '../screens/photo_swipe_screen.dart';
 import '../providers/viewed_photos_provider.dart';
+import 'month_preview_photos.dart';
 
 class MonthCard extends ConsumerWidget {
   final MonthGroup monthGroup;
+  final List<PhotoItem> previewPhotos;
 
   const MonthCard({
     super.key,
     required this.monthGroup,
+    required this.previewPhotos,
   });
 
   @override
@@ -43,56 +47,24 @@ class MonthCard extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Название месяца и год
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            monthGroup.monthName,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          if (isCompleted) ...[
-                            const SizedBox(width: 8),
-                            const Icon(
-                              Icons.check_circle,
-                              color: Colors.green,
-                              size: 24,
-                            ),
-                          ],
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${monthGroup.year}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // Иконка календаря
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: isCompleted
-                          ? Colors.green.withOpacity(0.2)
-                          : Theme.of(context).colorScheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      isCompleted ? Icons.done_all : Icons.calendar_month,
-                      size: 32,
-                      color: isCompleted ? Colors.green : Theme.of(context).colorScheme.primary,
+                  Text(
+                    monthGroup.monthName,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
+                  // Предпросмотр фотографий
+                  MonthPreviewPhotos(previewPhotos: previewPhotos),
                 ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '${monthGroup.year}',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                ),
               ),
 
               const SizedBox(height: 16),

@@ -10,7 +10,7 @@ final photoPermissionProvider = FutureProvider<PermissionState>((ref) async {
 /// Провайдер для запроса разрешения
 final requestPermissionProvider = FutureProvider.family<bool, void>((ref, _) async {
   final state = await PhotoManager.requestPermissionExtend();
-  
+
   if (state.isAuth) {
     return true;
   } else if (state.hasAccess) {

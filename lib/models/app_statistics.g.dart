@@ -41,7 +41,5 @@ class AppStatisticsAdapter extends TypeAdapter<AppStatistics> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AppStatisticsAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
+      other is AppStatisticsAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
 }

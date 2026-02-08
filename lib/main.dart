@@ -8,7 +8,7 @@ import 'screens/main_navigation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Инициализация Hive
   await Hive.initFlutter();
   Hive.registerAdapter(DeletedPhotoAdapter());
@@ -17,7 +17,7 @@ void main() async {
   await Hive.openBox<DeletedPhoto>('deleted_photos');
   await Hive.openBox<AppStatistics>('statistics');
   await Hive.openBox<ViewedPhoto>('viewedPhotos');
-  
+
   runApp(
     const ProviderScope(
       child: MyApp(),

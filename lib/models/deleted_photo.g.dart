@@ -50,7 +50,5 @@ class DeletedPhotoAdapter extends TypeAdapter<DeletedPhoto> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is DeletedPhotoAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
+      other is DeletedPhotoAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
 }
