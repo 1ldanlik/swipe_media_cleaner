@@ -32,38 +32,48 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
 
   void _initializePhotos() {
     final viewedService = ref.read(viewedPhotosServiceProvider);
-    
+
     // Фильтруем непросмотренные фото
-    final unviewedPhotos = widget.monthGroup.photos
-        .where((photo) => !viewedService.isViewed(photo.id))
-        .toList();
-    
+    final unviewedPhotos =
+        widget.monthGroup.photos.where((photo) => !viewedService.isViewed(photo.id)).toList();
+
     // Подсчитываем уже просмотренные фото
     alreadyViewedCount = widget.monthGroup.photos.length - unviewedPhotos.length;
-    
+
     // Если есть непросмотренные - показываем только их, иначе показываем все
-    remainingPhotos = unviewedPhotos.isNotEmpty 
-        ? unviewedPhotos 
-        : List.from(widget.monthGroup.photos);
-    
+    remainingPhotos =
+        unviewedPhotos.isNotEmpty ? unviewedPhotos : List.from(widget.monthGroup.photos);
+
     // Если показываем все фото (пересмотр), сбрасываем счетчик просмотренных
     if (unviewedPhotos.isEmpty) {
       alreadyViewedCount = 0;
     }
   }
 
+  /// Отмечает фото как просмотренное и увеличивает счетчик, если фото не была просмотрена ранее
+  Future<void> _markPhotoAsViewed(PhotoItem photo) async {
+    final viewedService = ref.read(viewedPhotosServiceProvider);
+
+    // Проверяем, была ли фото уже просмотрена
+    final wasAlreadyViewed = viewedService.isViewed(photo.id);
+
+    // Отмечаем фото как просмотренное
+    await viewedService.markAsViewed(photo.id, widget.monthGroup.year, widget.monthGroup.month);
+
+    // Увеличиваем счетчик просмотренных только если фото не была просмотрена ранее
+    if (!wasAlreadyViewed) {
+      final service = ref.read(deletedPhotosServiceProvider);
+      service.incrementCheckedPhotos();
+    }
+  }
+
   void _handleKeep() {
     if (currentIndex < remainingPhotos.length) {
       final photo = remainingPhotos[currentIndex];
-      
+
       // Отмечаем фото как просмотренное
-      final viewedService = ref.read(viewedPhotosServiceProvider);
-      viewedService.markAsViewed(photo.id, widget.monthGroup.year, widget.monthGroup.month);
-      
-      // Увеличиваем счетчик просмотренных
-      final service = ref.read(deletedPhotosServiceProvider);
-      service.incrementCheckedPhotos();
-      
+      _markPhotoAsViewed(photo);
+
       setState(() {
         currentIndex++;
       });
@@ -74,18 +84,14 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
   Future<void> _handleDelete() async {
     if (currentIndex < remainingPhotos.length) {
       final photo = remainingPhotos[currentIndex];
-      
+
       // Отмечаем фото как просмотренное
-      final viewedService = ref.read(viewedPhotosServiceProvider);
-      await viewedService.markAsViewed(photo.id, widget.monthGroup.year, widget.monthGroup.month);
-      
-      // Увеличиваем счетчик просмотренных
-      final service = ref.read(deletedPhotosServiceProvider);
-      service.incrementCheckedPhotos();
-      
+      await _markPhotoAsViewed(photo);
+
       // Сохраняем в кэш
-      await service.markForDeletion(photo);
-      
+      final deletedService = ref.read(deletedPhotosServiceProvider);
+      await deletedService.markForDeletion(photo);
+
       setState(() {
         markedForDeletion.add(photo);
         currentIndex++;
