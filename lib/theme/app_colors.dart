@@ -37,6 +37,9 @@ class AppColors {
 
   // === Серые оттенки ===
 
+  /// Очень светло-серый для фона (Colors.grey[100])
+  static const Color greyExtraLight = Color(0xFFF5F5F5);
+
   /// Светло-серый для фона элементов (Colors.grey[300])
   static const Color greyLight = Color(0xFFE0E0E0);
 

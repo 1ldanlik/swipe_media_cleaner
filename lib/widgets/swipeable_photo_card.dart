@@ -160,11 +160,11 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
             opacity: opacity,
             child: Stack(
               children: [
-                // Фотография
+                // Фотография с закруглением
                 Container(
                   margin: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
                         color: AppColors.shadowLight.withOpacity(0.3),
@@ -174,20 +174,20 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
                     ],
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(24),
                     child: Image.file(
                       File(widget.photo.path),
-                      fit: BoxFit.contain,
+                      fit: BoxFit.cover,
                       width: double.infinity,
                       height: double.infinity,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
-                          color: AppColors.greyExtraDark,
+                          color: AppColors.greyLight,
                           child: const Center(
                             child: Icon(
                               Icons.broken_image,
                               size: 64,
-                              color: AppColors.white54,
+                              color: AppColors.brokenImageIcon,
                             ),
                           ),
                         );
@@ -201,7 +201,7 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
                   margin: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: _getOverlayColor(),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(24),
                   ),
                 ),
 

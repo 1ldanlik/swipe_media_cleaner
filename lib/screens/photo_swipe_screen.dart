@@ -115,10 +115,10 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
         : ((currentIndex + alreadyViewedCount) / widget.monthGroup.photos.length).clamp(0.0, 1.0);
 
     return Scaffold(
-      backgroundColor: AppColors.black,
+      backgroundColor: AppColors.greyExtraLight,
       appBar: AppBar(
-        backgroundColor: AppColors.black,
-        foregroundColor: AppColors.white,
+        backgroundColor: AppColors.greyExtraLight,
+        foregroundColor: AppColors.black,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -128,7 +128,7 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
             ),
             Text(
               '${currentIndex + alreadyViewedCount + 1} / ${widget.monthGroup.photos.length}',
-              style: const TextStyle(fontSize: 14, color: AppColors.white70),
+              style: const TextStyle(fontSize: 14, color: AppColors.greyMedium),
             ),
           ],
         ),
@@ -136,7 +136,7 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
           preferredSize: const Size.fromHeight(4),
           child: LinearProgressIndicator(
             value: progress,
-            backgroundColor: AppColors.greyExtraDark,
+            backgroundColor: AppColors.greyLight,
             valueColor: const AlwaysStoppedAnimation<Color>(AppColors.restoreBlue),
           ),
         ),
@@ -161,7 +161,7 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
                     'Все фотографии просмотрены!',
                     style: TextStyle(
                       fontSize: 24,
-                      color: AppColors.white,
+                      color: AppColors.black,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -177,7 +177,7 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
             ),
       bottomNavigationBar: currentIndex < remainingPhotos.length
           ? Container(
-              color: AppColors.black,
+              color: AppColors.greyExtraLight,
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
