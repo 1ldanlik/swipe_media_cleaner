@@ -49,21 +49,22 @@ class _MainNavigationState extends ConsumerState<MainNavigation> {
               _currentIndex = index;
             });
           },
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
           destinations: const [
             NavigationDestination(
-              icon: Icon(Icons.photo_library_outlined),
-              selectedIcon: Icon(Icons.photo_library),
-              label: 'Галерея',
+              icon: Icon(Icons.home_outlined, size: 31),
+              selectedIcon: Icon(Icons.home, size: 31),
+              label: '',
             ),
             NavigationDestination(
-              icon: Icon(Icons.delete_outline),
-              selectedIcon: Icon(Icons.delete),
-              label: 'Корзина',
+              icon: Icon(Icons.delete_outline, size: 31),
+              selectedIcon: Icon(Icons.delete, size: 31),
+              label: '',
             ),
             NavigationDestination(
-              icon: Icon(Icons.analytics_outlined),
-              selectedIcon: Icon(Icons.analytics),
-              label: 'Статистика',
+              icon: Icon(Icons.analytics_outlined, size: 31),
+              selectedIcon: Icon(Icons.analytics, size: 31),
+              label: '',
             ),
           ],
         ),
