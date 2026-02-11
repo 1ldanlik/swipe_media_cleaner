@@ -143,6 +143,7 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
       ),
       body: currentIndex < remainingPhotos.length
           ? SwipeablePhotoCard(
+              key: ValueKey(remainingPhotos[currentIndex].id), // Добавляем уникальный key
               photo: remainingPhotos[currentIndex],
               onSwipeLeft: _handleDelete,
               onSwipeRight: _handleKeep,
