@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/month_group.dart';
 import '../models/photo_item.dart';
-import '../screens/photo_swipe_screen.dart';
+import '../screens/photo_swipe/photo_swipe_screen.dart';
 import '../providers/viewed_photos_provider.dart';
 import '../theme/app_colors.dart';
 import 'month_preview_photos.dart';

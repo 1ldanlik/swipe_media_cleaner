@@ -29,6 +29,9 @@ class AppColors {
   /// Зеленый для успеха
   static const Color successGreen = Colors.green;
 
+  /// Фиолетовый для бордера фото
+  static const Color photoBorderPurple = Color(0xFF9C27B0);
+
   /// Красный оверлей для фото в корзине (0.3 opacity)
   static Color trashPhotoOverlay = Colors.red.withOpacity(0.3);
 

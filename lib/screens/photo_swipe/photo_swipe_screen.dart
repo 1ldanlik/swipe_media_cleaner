@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/month_group.dart';
-import '../models/photo_item.dart';
-import '../providers/deleted_photos_provider.dart';
-import '../providers/viewed_photos_provider.dart';
-import '../theme/app_colors.dart';
-import '../widgets/swipeable_photo_card.dart';
+import '../../models/month_group.dart';
+import '../../models/photo_item.dart';
+import '../../providers/deleted_photos_provider.dart';
+import '../../providers/viewed_photos_provider.dart';
+import '../../theme/app_colors.dart';
+import '../../widgets/swipeable_photo_card.dart';
+import 'widgets/action_button.dart';
 
 class PhotoSwipeScreen extends ConsumerStatefulWidget {
   final MonthGroup monthGroup;
@@ -148,7 +149,8 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
               onSwipeLeft: _handleDelete,
               onSwipeRight: _handleKeep,
             )
-          : Center(
+          : Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -177,23 +179,25 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
               ),
             ),
       bottomNavigationBar: currentIndex < remainingPhotos.length
-          ? Container(
-              color: AppColors.greyExtraLight,
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+          ? Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  FloatingActionButton(
-                    heroTag: 'delete',
-                    onPressed: _handleDelete,
-                    backgroundColor: AppColors.deleteRed,
-                    child: const Icon(Icons.close, size: 32),
+                  Expanded(
+                    child: ActionButton(
+                      color: AppColors.deleteRed,
+                      icon: Icons.close,
+                      onPressed: _handleDelete,
+                    ),
                   ),
-                  FloatingActionButton(
-                    heroTag: 'keep',
-                    onPressed: _handleKeep,
-                    backgroundColor: AppColors.successGreen,
-                    child: const Icon(Icons.check, size: 32),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: ActionButton(
+                      color: AppColors.successGreen,
+                      icon: Icons.check,
+                      onPressed: _handleKeep,
+                    ),
                   ),
                 ],
               ),
