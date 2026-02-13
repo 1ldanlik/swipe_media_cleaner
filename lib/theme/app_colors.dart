@@ -41,6 +41,9 @@ class AppColors {
   /// Основной цвет для кнопок
   static const Color mainButtonBackground = Color(0xFFF06292);
 
+  /// Фон navigation bar
+  static const Color navigationBarBackground = Color(0xFFFCE4EC);
+
   /// Фиолетовый для бордера фото
   static const Color photoBorderPurple = Color(0xFF9C27B0);
 
