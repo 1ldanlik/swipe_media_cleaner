@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Swipe Media Cleaner',
+      title: 'Swipe Cleaner',
       // Убираем debug banner в release версии
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

@@ -206,7 +206,7 @@ class _HomeScreenHeader extends StatelessWidget {
     return const Padding(
       padding: EdgeInsets.symmetric(vertical: 16),
       child: Text(
-        'Swipe Media Cleaner',
+        'Swipe Cleaner',
         style: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.bold,

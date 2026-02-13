@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Swipe Media Cleaner',
+      title: 'Swipe Cleaner',
       theme: AppTheme.lightTheme,
       home: const MainNavigation(),
       debugShowCheckedModeBanner: false,
