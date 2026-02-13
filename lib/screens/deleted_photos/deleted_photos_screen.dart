@@ -18,41 +18,72 @@ class DeletedPhotosScreen extends ConsumerWidget {
     final deletedPhotosAsync = ref.watch(deletedPhotosProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Корзина'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
-      body: deletedPhotosAsync.when(
-        data: (deletedPhotos) {
-          if (deletedPhotos.isEmpty) {
-            return const EmptyTrashWidget();
-          }
-
-          if (screenState.isProcessing) {
-            return const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+      body: SafeArea(
+        child: deletedPhotosAsync.when(
+          data: (deletedPhotos) {
+            if (deletedPhotos.isEmpty) {
+              return const Column(
                 children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('Обработка...'),
+                  _DeletedPhotosHeader(),
+                  Expanded(child: EmptyTrashWidget()),
                 ],
-              ),
-            );
-          }
+              );
+            }
 
-          return Column(
+            if (screenState.isProcessing) {
+              return const Column(
+                children: [
+                  _DeletedPhotosHeader(),
+                  Expanded(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(),
+                          SizedBox(height: 16),
+                          Text('Обработка...'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+
+            return Column(
+              children: [
+                const _DeletedPhotosHeader(),
+                _InfoBanner(
+                  notifier: notifier,
+                  state: screenState,
+                  photos: deletedPhotos,
+                ),
+                Expanded(
+                  child: _PhotoGrid(
+                    notifier: notifier,
+                    state: screenState,
+                    photos: deletedPhotos,
+                  ),
+                ),
+              ],
+            );
+          },
+          loading: () => const Column(
             children: [
-              _buildInfoBanner(context, notifier, screenState, deletedPhotos),
+              _DeletedPhotosHeader(),
+              Expanded(child: Center(child: CircularProgressIndicator())),
+            ],
+          ),
+          error: (error, stack) => Column(
+            children: [
+              const _DeletedPhotosHeader(),
               Expanded(
-                child: _buildPhotoGrid(context, notifier, screenState, deletedPhotos),
+                child: Center(
+                  child: Text('Ошибка: $error'),
+                ),
               ),
             ],
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Text('Ошибка: $error'),
+          ),
         ),
       ),
       bottomNavigationBar: deletedPhotosAsync.whenOrNull(
@@ -72,13 +103,40 @@ class DeletedPhotosScreen extends ConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildInfoBanner(
-    BuildContext context,
-    DeletedPhotosNotifier notifier,
-    DeletedPhotosScreenState state,
-    List<DeletedPhoto> photos,
-  ) {
+class _DeletedPhotosHeader extends StatelessWidget {
+  const _DeletedPhotosHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 16),
+      child: Text(
+        'Корзина',
+        style: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+}
+
+class _InfoBanner extends StatelessWidget {
+  final DeletedPhotosNotifier notifier;
+  final DeletedPhotosScreenState state;
+  final List<DeletedPhoto> photos;
+
+  const _InfoBanner({
+    required this.notifier,
+    required this.state,
+    required this.photos,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       color: AppColors.trashBannerBackground,
@@ -118,13 +176,21 @@ class DeletedPhotosScreen extends ConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildPhotoGrid(
-    BuildContext context,
-    DeletedPhotosNotifier notifier,
-    DeletedPhotosScreenState state,
-    List<DeletedPhoto> photos,
-  ) {
+class _PhotoGrid extends StatelessWidget {
+  final DeletedPhotosNotifier notifier;
+  final DeletedPhotosScreenState state;
+  final List<DeletedPhoto> photos;
+
+  const _PhotoGrid({
+    required this.notifier,
+    required this.state,
+    required this.photos,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return GridView.builder(
       padding: const EdgeInsets.all(8),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -136,17 +202,29 @@ class DeletedPhotosScreen extends ConsumerWidget {
       itemBuilder: (context, index) {
         final photo = photos[index];
         final isSelected = state.selectedPhotoIds.contains(photo.id);
-        return _buildPhotoCard(context, notifier, photo, isSelected);
+        return _PhotoCard(
+          notifier: notifier,
+          photo: photo,
+          isSelected: isSelected,
+        );
       },
     );
   }
+}
 
-  Widget _buildPhotoCard(
-    BuildContext context,
-    DeletedPhotosNotifier notifier,
-    DeletedPhoto photo,
-    bool isSelected,
-  ) {
+class _PhotoCard extends StatelessWidget {
+  final DeletedPhotosNotifier notifier;
+  final DeletedPhoto photo;
+  final bool isSelected;
+
+  const _PhotoCard({
+    required this.notifier,
+    required this.photo,
+    required this.isSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => notifier.toggleSelection(photo.id),
       onLongPress: () => notifier.toggleSelection(photo.id),

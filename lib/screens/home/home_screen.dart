@@ -24,143 +24,194 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final availableYearsAsync = ref.watch(availableYearsProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Swipe Media Cleaner'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
-      body: permissionState.when(
-        data: (state) {
-          // Проверяем статус разрешения
-          if (state == PermissionState.denied || state == PermissionState.limited) {
-            return const PermissionRequestWidget();
-          }
-
-          // Загружаем доступные года
-          return availableYearsAsync.when(
-            data: (years) {
-              // Устанавливаем доступные года в notifier (только один раз)
-              if (homeState.availableYears.isEmpty && years.isNotEmpty) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  ref.read(homeScreenNotifierProvider.notifier).setAvailableYears(years);
-                });
-              }
-
-              if (years.isEmpty) {
-                return const Center(
-                  child: Text(
-                    'Фотографии не найдены',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                );
-              }
-
-              // Загружаем фото для выбранного года
-              final monthGroupsAsync = ref.watch(monthGroupsByYearProvider(homeState.selectedYear));
-
-              return Column(
+      body: SafeArea(
+        child: permissionState.when(
+          data: (state) {
+            // Проверяем статус разрешения
+            if (state == PermissionState.denied || state == PermissionState.limited) {
+              return const Column(
                 children: [
-                  // Виджет выбора года
-                  YearSelector(
-                    years: homeState.availableYears,
-                    selectedYear: homeState.selectedYear,
-                    onYearSelected: (year) {
-                      ref.read(homeScreenNotifierProvider.notifier).selectYear(year);
-                    },
-                  ),
+                  _HomeScreenHeader(),
+                  Expanded(child: PermissionRequestWidget()),
+                ],
+              );
+            }
 
-                  // Список карточек месяцев
-                  Expanded(
-                    child: monthGroupsAsync.when(
-                      data: (monthGroups) {
-                        if (monthGroups.isEmpty) {
-                          return Center(
-                            child: Text(
-                              'Фотографий за ${homeState.selectedYear} год не найдено',
-                              style: const TextStyle(fontSize: 18),
-                              textAlign: TextAlign.center,
+            // Загружаем доступные года
+            return availableYearsAsync.when(
+              data: (years) {
+                // Устанавливаем доступные года в notifier (только один раз)
+                if (homeState.availableYears.isEmpty && years.isNotEmpty) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    ref.read(homeScreenNotifierProvider.notifier).setAvailableYears(years);
+                  });
+                }
+
+                if (years.isEmpty) {
+                  return const Column(
+                    children: [
+                      _HomeScreenHeader(),
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            'Фотографии не найдены',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+
+                // Загружаем фото для выбранного года
+                final monthGroupsAsync =
+                    ref.watch(monthGroupsByYearProvider(homeState.selectedYear));
+
+                return Column(
+                  children: [
+                    const _HomeScreenHeader(),
+                    // Виджет выбора года
+                    YearSelector(
+                      years: homeState.availableYears,
+                      selectedYear: homeState.selectedYear,
+                      onYearSelected: (year) {
+                        ref.read(homeScreenNotifierProvider.notifier).selectYear(year);
+                      },
+                    ),
+
+                    // Список карточек месяцев
+                    Expanded(
+                      child: monthGroupsAsync.when(
+                        data: (monthGroups) {
+                          if (monthGroups.isEmpty) {
+                            return Center(
+                              child: Text(
+                                'Фотографий за ${homeState.selectedYear} год не найдено',
+                                style: const TextStyle(fontSize: 18),
+                                textAlign: TextAlign.center,
+                              ),
+                            );
+                          }
+
+                          return RefreshIndicator(
+                            onRefresh: () async {
+                              ref.invalidate(monthGroupsByYearProvider(homeState.selectedYear));
+                            },
+                            child: ListView.builder(
+                              padding: const EdgeInsets.all(16),
+                              itemCount: monthGroups.length,
+                              itemBuilder: (context, index) {
+                                final monthGroup = monthGroups[index];
+                                // Берем первые 3 фото для превью
+                                final previewPhotos = monthGroup.photos.take(3).toList();
+
+                                return MonthCard(
+                                  monthGroup: monthGroup,
+                                  previewPhotos: previewPhotos,
+                                );
+                              },
                             ),
                           );
-                        }
-
-                        return RefreshIndicator(
-                          onRefresh: () async {
-                            ref.invalidate(monthGroupsByYearProvider(homeState.selectedYear));
-                          },
-                          child: ListView.builder(
-                            padding: const EdgeInsets.all(16),
-                            itemCount: monthGroups.length,
-                            itemBuilder: (context, index) {
-                              final monthGroup = monthGroups[index];
-                              // Берем первые 3 фото для превью
-                              final previewPhotos = monthGroup.photos.take(3).toList();
-
-                              return MonthCard(
-                                monthGroup: monthGroup,
-                                previewPhotos: previewPhotos,
-                              );
-                            },
-                          ),
-                        );
-                      },
-                      loading: () => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                      error: (error, stack) => Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.error_outline, size: 64, color: AppColors.deleteRed),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Ошибка загрузки фото:\n$error',
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: () {
-                                ref.invalidate(monthGroupsByYearProvider(homeState.selectedYear));
-                              },
-                              child: const Text('Попробовать снова'),
-                            ),
-                          ],
+                        },
+                        loading: () => const Center(
+                          child: CircularProgressIndicator(),
                         ),
+                        error: (error, stack) => Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.error_outline, size: 64, color: AppColors.deleteRed),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Ошибка загрузки фото:\n$error',
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 16),
+                              ElevatedButton(
+                                onPressed: () {
+                                  ref.invalidate(monthGroupsByYearProvider(homeState.selectedYear));
+                                },
+                                child: const Text('Попробовать снова'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+              loading: () => const Column(
+                children: [
+                  _HomeScreenHeader(),
+                  Expanded(child: Center(child: CircularProgressIndicator())),
+                ],
+              ),
+              error: (error, stack) => Column(
+                children: [
+                  const _HomeScreenHeader(),
+                  Expanded(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.error_outline, size: 64, color: AppColors.deleteRed),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Ошибка загрузки годов:\n$error',
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () {
+                              ref.invalidate(availableYearsProvider);
+                            },
+                            child: const Text('Попробовать снова'),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ],
-              );
-            },
-            loading: () => const Center(
-              child: CircularProgressIndicator(),
-            ),
-            error: (error, stack) => Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, size: 64, color: AppColors.deleteRed),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Ошибка загрузки годов:\n$error',
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      ref.invalidate(availableYearsProvider);
-                    },
-                    child: const Text('Попробовать снова'),
-                  ),
-                ],
               ),
-            ),
-          );
-        },
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
+            );
+          },
+          loading: () => const Column(
+            children: [
+              _HomeScreenHeader(),
+              Expanded(child: Center(child: CircularProgressIndicator())),
+            ],
+          ),
+          error: (error, stack) => Column(
+            children: [
+              const _HomeScreenHeader(),
+              Expanded(
+                child: Center(
+                  child: Text('Ошибка проверки разрешений: $error'),
+                ),
+              ),
+            ],
+          ),
         ),
-        error: (error, stack) => Center(
-          child: Text('Ошибка проверки разрешений: $error'),
+      ),
+    );
+  }
+}
+
+class _HomeScreenHeader extends StatelessWidget {
+  const _HomeScreenHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 16),
+      child: Text(
+        'Swipe Media Cleaner',
+        style: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
         ),
+        textAlign: TextAlign.center,
       ),
     );
   }

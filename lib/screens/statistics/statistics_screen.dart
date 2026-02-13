@@ -13,178 +13,124 @@ class StatisticsScreen extends ConsumerWidget {
     final deletedPhotosAsync = ref.watch(deletedPhotosProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Статистика'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
-      body: statsAsync.when(
-        data: (stats) {
-          return deletedPhotosAsync.when(
-            data: (photosInTrash) {
-              final trashCount = photosInTrash.length;
-              final trashSize = photosInTrash.fold<int>(
-                0,
-                (sum, photo) => sum + photo.size,
-              );
+      body: SafeArea(
+        child: statsAsync.when(
+          data: (stats) {
+            return deletedPhotosAsync.when(
+              data: (photosInTrash) {
+                final trashCount = photosInTrash.length;
+                final trashSize = photosInTrash.fold<int>(
+                  0,
+                  (sum, photo) => sum + photo.size,
+                );
 
-              return SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Ваш прогресс',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const _StatisticsHeader(),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Отслеживайте свои достижения',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: AppColors.greyMedium,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Отслеживайте свои достижения',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: AppColors.greyMedium,
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    _buildStatCard(
-                      context,
-                      icon: Icons.photo_library,
-                      iconColor: AppColors.statsBlue,
-                      title: 'Проверено фотографий',
-                      value: stats.checkedPhotos.toString(),
-                      subtitle: 'Всего просмотрено',
-                    ),
-                    const SizedBox(height: 16),
-                    _buildStatCard(
-                      context,
-                      icon: Icons.delete,
-                      iconColor: AppColors.deleteRed,
-                      title: 'Удалено фотографий',
-                      value: stats.deletedPhotos.toString(),
-                      subtitle: 'Удалено навсегда',
-                    ),
-                    const SizedBox(height: 16),
-                    _buildStatCard(
-                      context,
-                      icon: Icons.storage,
-                      iconColor: AppColors.successGreen,
-                      title: 'Освобождено памяти',
-                      value: stats.formattedFreedSpace,
-                      subtitle: 'Реально освобождено',
-                    ),
-                    if (stats.checkedPhotos == 0 && trashCount == 0) ...[
                       const SizedBox(height: 32),
-                      const EmptyStatisticsWidget(),
-                    ],
-                    const SizedBox(height: 32),
-                    if (trashCount > 0) ...[
-                      Card(
-                        elevation: 2,
-                        color: AppColors.warningBackground,
-                        child: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Row(
-                                children: [
-                                  Icon(
-                                    Icons.delete_outline,
-                                    color: AppColors.warningIcon,
-                                  ),
-                                  SizedBox(width: 12),
-                                  Text(
-                                    'В корзине',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                'У вас $trashCount фото в корзине (${_formatBytes(trashSize)}). '
-                                'Они еще не удалены! Перейдите на вкладку "Корзина", '
-                                'чтобы удалить их окончательно.',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.greyVeryDark,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                      _StatCard(
+                        icon: Icons.photo_library,
+                        iconColor: AppColors.statsBlue,
+                        title: 'Проверено фотографий',
+                        value: stats.checkedPhotos.toString(),
+                        subtitle: 'Всего просмотрено',
                       ),
-                    ],
-                    if (stats.deletedPhotos > 0) ...[
                       const SizedBox(height: 16),
-                      Card(
-                        elevation: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Row(
-                                children: [
-                                  Icon(
-                                    Icons.celebration,
-                                    color: AppColors.achievementIcon,
-                                  ),
-                                  SizedBox(width: 12),
-                                  Text(
-                                    'Отличная работа!',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                'Вы уже удалили ${stats.deletedPhotos} фото и '
-                                'освободили ${stats.formattedFreedSpace} памяти! '
-                                'Продолжайте в том же духе! 🎉',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.greyVeryDark,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                      _StatCard(
+                        icon: Icons.delete,
+                        iconColor: AppColors.deleteRed,
+                        title: 'Удалено фотографий',
+                        value: stats.deletedPhotos.toString(),
+                        subtitle: 'Удалено навсегда',
                       ),
+                      const SizedBox(height: 16),
+                      _StatCard(
+                        icon: Icons.storage,
+                        iconColor: AppColors.successGreen,
+                        title: 'Освобождено памяти',
+                        value: stats.formattedFreedSpace,
+                        subtitle: 'Реально освобождено',
+                      ),
+                      if (stats.checkedPhotos == 0 && trashCount == 0) ...[
+                        const SizedBox(height: 32),
+                        const EmptyStatisticsWidget(),
+                      ],
+                      const SizedBox(height: 32),
+                      if (trashCount > 0)
+                        _TrashWarningCard(
+                          trashCount: trashCount,
+                          trashSize: trashSize,
+                        ),
+                      if (stats.deletedPhotos > 0) ...[
+                        const SizedBox(height: 16),
+                        _AchievementCard(
+                          deletedPhotos: stats.deletedPhotos,
+                          freedSpace: stats.formattedFreedSpace,
+                        ),
+                      ],
                     ],
-                  ],
-                ),
-              );
-            },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => Center(
-              child: Text('Ошибка: $error'),
-            ),
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Text('Ошибка: $error'),
+                  ),
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => Center(
+                child: Text('Ошибка: $error'),
+              ),
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => Center(
+            child: Text('Ошибка: $error'),
+          ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildStatCard(
-    BuildContext context, {
-    required IconData icon,
-    required Color iconColor,
-    required String title,
-    required String value,
-    required String subtitle,
-  }) {
+class _StatisticsHeader extends StatelessWidget {
+  const _StatisticsHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text(
+      'Ваш прогресс',
+      style: TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+}
+
+class _StatCard extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String value;
+  final String subtitle;
+
+  const _StatCard({
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    required this.value,
+    required this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Card(
       elevation: 4,
       child: Padding(
@@ -239,6 +185,16 @@ class StatisticsScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+class _TrashWarningCard extends StatelessWidget {
+  final int trashCount;
+  final int trashSize;
+
+  const _TrashWarningCard({
+    required this.trashCount,
+    required this.trashSize,
+  });
 
   String _formatBytes(int bytes) {
     if (bytes < 1024) return '$bytes B';
@@ -249,5 +205,98 @@ class StatisticsScreen extends ConsumerWidget {
       return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
     }
     return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(2)} GB';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      color: AppColors.warningBackground,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                Icon(
+                  Icons.delete_outline,
+                  color: AppColors.warningIcon,
+                ),
+                SizedBox(width: 12),
+                Text(
+                  'В корзине',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'У вас $trashCount фото в корзине (${_formatBytes(trashSize)}). '
+              'Они еще не удалены! Перейдите на вкладку "Корзина", '
+              'чтобы удалить их окончательно.',
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppColors.greyVeryDark,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AchievementCard extends StatelessWidget {
+  final int deletedPhotos;
+  final String freedSpace;
+
+  const _AchievementCard({
+    required this.deletedPhotos,
+    required this.freedSpace,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                Icon(
+                  Icons.celebration,
+                  color: AppColors.achievementIcon,
+                ),
+                SizedBox(width: 12),
+                Text(
+                  'Отличная работа!',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Вы уже удалили $deletedPhotos фото и '
+              'освободили $freedSpace памяти! '
+              'Продолжайте в том же духе! 🎉',
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppColors.greyVeryDark,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
