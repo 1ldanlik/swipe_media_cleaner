@@ -150,36 +150,39 @@ class DeletedPhotosScreen extends ConsumerWidget {
     return GestureDetector(
       onTap: () => notifier.toggleSelection(photo.id),
       onLongPress: () => notifier.toggleSelection(photo.id),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.file(
-            File(photo.path),
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                color: AppColors.greyLight,
-                child: const Icon(Icons.broken_image, color: AppColors.brokenImageIcon),
-              );
-            },
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: isSelected ? AppColors.selectedPhotoOverlay : null,
-              border: isSelected ? Border.all(color: AppColors.restoreBlue, width: 3) : null,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.file(
+              File(photo.path),
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: AppColors.greyLight,
+                  child: const Icon(Icons.broken_image, color: AppColors.brokenImageIcon),
+                );
+              },
             ),
-          ),
-          if (isSelected)
-            const Positioned(
-              top: 8,
-              right: 8,
-              child: Icon(
-                Icons.check_circle,
-                color: AppColors.checkCircleIcon,
-                size: 32,
+            Container(
+              decoration: BoxDecoration(
+                color: isSelected ? AppColors.selectedPhotoOverlay : Colors.transparent,
+                border: isSelected ? Border.all(color: AppColors.restoreBlue, width: 3) : null,
               ),
             ),
-        ],
+            if (isSelected)
+              const Positioned(
+                top: 8,
+                right: 8,
+                child: Icon(
+                  Icons.check_circle,
+                  color: AppColors.checkCircleIcon,
+                  size: 32,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
