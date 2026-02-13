@@ -165,7 +165,7 @@ class DeletedPhotosScreen extends ConsumerWidget {
           ),
           Container(
             decoration: BoxDecoration(
-              color: isSelected ? AppColors.selectedPhotoOverlay : AppColors.trashPhotoOverlay,
+              color: isSelected ? AppColors.selectedPhotoOverlay : null,
               border: isSelected ? Border.all(color: AppColors.restoreBlue, width: 3) : null,
             ),
           ),
