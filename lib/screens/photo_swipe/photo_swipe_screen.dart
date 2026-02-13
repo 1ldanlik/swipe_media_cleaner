@@ -120,19 +120,25 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.greyExtraLight,
         foregroundColor: AppColors.black,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '${widget.monthGroup.monthName} ${widget.monthGroup.year}',
-              style: const TextStyle(fontSize: 18),
-            ),
-            Text(
-              '${currentIndex + alreadyViewedCount + 1} / ${widget.monthGroup.photos.length}',
-              style: const TextStyle(fontSize: 14, color: AppColors.greyMedium),
-            ),
-          ],
+        title: Text(
+          '${widget.monthGroup.monthName} ${widget.monthGroup.year}',
+          style: const TextStyle(fontSize: 24),
         ),
+        actions: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: Text(
+                '${currentIndex + alreadyViewedCount + 1} / ${widget.monthGroup.photos.length}',
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.black,
+                ),
+              ),
+            ),
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4),
           child: LinearProgressIndicator(
@@ -186,7 +192,8 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
                 children: [
                   Expanded(
                     child: ActionButton(
-                      color: AppColors.deleteRed,
+                      color: AppColors.deleteButtonBackground,
+                      iconColor: AppColors.deleteButtonIcon,
                       icon: Icons.close,
                       onPressed: _handleDelete,
                     ),
@@ -194,7 +201,7 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
                   const SizedBox(width: 20),
                   Expanded(
                     child: ActionButton(
-                      color: AppColors.successGreen,
+                      color: AppColors.mainButtonBackground,
                       icon: Icons.check,
                       onPressed: _handleKeep,
                     ),

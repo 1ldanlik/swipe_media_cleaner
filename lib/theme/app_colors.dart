@@ -6,6 +6,9 @@ class AppColors {
 
   // === Основные цвета ===
 
+  /// Основной цвет фона приложения
+  static const Color backgroundColor = Color(0xFFF4F5F7);
+
   /// Белый цвет
   static const Color white = Colors.white;
 
@@ -23,11 +26,20 @@ class AppColors {
   /// Красный для удаления
   static const Color deleteRed = Colors.red;
 
+  /// Фоновый цвет кнопки удаления в корзину
+  static const Color deleteButtonBackground = Color(0xFFFDECEA);
+
+  /// Цвет иконки кнопки удаления в корзину
+  static const Color deleteButtonIcon = Color(0xFFB3261E);
+
   /// Синий для восстановления и выбора
   static const Color restoreBlue = Colors.blue;
 
   /// Зеленый для успеха
   static const Color successGreen = Colors.green;
+
+  /// Основной цвет для кнопок
+  static const Color mainButtonBackground = Color(0xFFF06292);
 
   /// Фиолетовый для бордера фото
   static const Color photoBorderPurple = Color(0xFF9C27B0);

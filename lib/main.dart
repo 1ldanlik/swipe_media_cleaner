@@ -5,6 +5,7 @@ import 'models/deleted_photo.dart';
 import 'models/app_statistics.dart';
 import 'models/viewed_photo.dart';
 import 'screens/main_navigation.dart';
+import 'theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,10 +33,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Swipe Media Cleaner',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.lightTheme,
       home: const MainNavigation(),
       debugShowCheckedModeBanner: false,
     );
