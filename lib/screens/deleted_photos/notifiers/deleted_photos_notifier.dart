@@ -3,6 +3,8 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../models/deleted_photo.dart';
 import '../../../providers/deleted_photos_provider.dart';
+import '../../../providers/viewed_photos_provider.dart';
+import '../../../providers/month_groups_by_year_provider.dart';
 import '../../../theme/app_colors.dart';
 import '../widgets/delete_confirmation_dialog.dart';
 import '../widgets/restore_confirmation_dialog.dart';
@@ -137,9 +139,27 @@ class DeletedPhotosNotifier extends _$DeletedPhotosNotifier {
       // Удаляем фото из галереи устройства
       await PhotoManager.editor.deleteWithIds(ids);
 
-      // Удаляем из нашего кэша
+      // Удаляем из нашего кэша удаленных фото
       final service = ref.read(deletedPhotosServiceProvider);
       await service.deleteSelected(ids);
+
+      // Очищаем кэш просмотренных фотографий для удаленных фото
+      final viewedBox = ref.read(viewedPhotosBoxProvider);
+      final toDelete = <dynamic>[];
+
+      for (var photo in viewedBox.values) {
+        if (ids.contains(photo.id)) {
+          toDelete.add(photo.key);
+        }
+      }
+
+      if (toDelete.isNotEmpty) {
+        await viewedBox.deleteAll(toDelete);
+      }
+
+      // Обновляем главный экран - инвалидируем провайдеры
+      ref.invalidate(availableYearsProvider);
+      ref.invalidate(monthGroupsByYearProvider);
 
       // Успешно - сбрасываем состояние
       state = state.copyWith(

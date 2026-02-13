@@ -22,8 +22,8 @@ class MonthPreviewPhotos extends StatelessWidget {
       children: [
         for (int i = 0; i < previewPhotos.length; i++) ...[
           SizedBox(
-            width: 50,
-            height: 50,
+            width: 46,
+            height: 46,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: AspectRatio(

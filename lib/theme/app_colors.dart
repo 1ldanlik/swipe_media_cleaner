@@ -58,6 +58,9 @@ class AppColors {
   /// Светло-серый 900 для теней и оверлеев (Colors.grey[900])
   static const Color greyExtraDark = Color(0xFF212121);
 
+  /// Средний серый для бордеров карточек (Colors.grey[400])
+  static const Color cardBorder = Color(0xFFBDBDBD);
+
   // === Цвета для статистики ===
 
   /// Синий для иконок статистики
