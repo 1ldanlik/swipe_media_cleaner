@@ -2,20 +2,12 @@
 
 Приложение для удобной очистки галереи на iPhone. Листайте фотографии как карточки — свайп влево удаляет, свайп вправо оставляет.
 
-## Скриншоты
-
-<p float="left">
-  <img src="assets/screenshots/home.jpg" width="22%" />
-  <img src="assets/screenshots/swipe.jpg" width="22%" />
-  <img src="assets/screenshots/trash.jpg" width="22%" />
-  <img src="assets/screenshots/statistics.jpg" width="22%" />
-</p>
-
 ## Экраны
 
 | Главная | Свайп | Корзина | Статистика |
 |---------|-------|---------|------------|
 | Список месяцев с превью | Карточки фото со свайпом | Сетка фото к удалению | Прогресс и достижения |
+| <img src="assets/screenshots/home.jpg" width="200"/> | <img src="assets/screenshots/swipe.jpg" width="200"/> | <img src="assets/screenshots/trash.jpg" width="200"/> | <img src="assets/screenshots/statistics.jpg" width="200"/> |
 
 ## Функционал
 
