@@ -26,9 +26,18 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    namespace "com.example.swipe_media_cleaner"
+    namespace "com.swipecleaner.app"
     compileSdkVersion 34
     ndkVersion flutter.ndkVersion
+
+    signingConfigs {
+        release {
+            keyAlias 'upload'
+            keyPassword 'swipecleaner123'
+            storeFile file('../upload-keystore.jks')
+            storePassword 'swipecleaner123'
+        }
+    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -44,7 +53,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.example.swipe_media_cleaner"
+        applicationId "com.swipecleaner.app"
         minSdkVersion 21
         targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
@@ -53,9 +62,7 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
     }
 }
