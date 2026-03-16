@@ -5,10 +5,10 @@
 ## Скриншоты
 
 <p float="left">
-  <img src="assets/screenshots/home.png" width="22%" />
-  <img src="assets/screenshots/swipe.png" width="22%" />
-  <img src="assets/screenshots/trash.png" width="22%" />
-  <img src="assets/screenshots/statistics.png" width="22%" />
+  <img src="assets/screenshots/home.jpg" width="22%" />
+  <img src="assets/screenshots/swipe.jpg" width="22%" />
+  <img src="assets/screenshots/trash.jpg" width="22%" />
+  <img src="assets/screenshots/statistics.jpg" width="22%" />
 </p>
 
 ## Экраны
