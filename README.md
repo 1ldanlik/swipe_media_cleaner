@@ -2,6 +2,12 @@
 
 Приложение для удобной очистки галереи на iPhone. Листайте фотографии как карточки — свайп влево удаляет, свайп вправо оставляет.
 
+## 📥 Скачать
+
+Актуальная версия приложения для Android:
+
+[![Download APK](https://img.shields.io/github/v/release/1ldanlik/swipe_media_cleaner?label=Download%20APK&logo=android)](https://github.com/1ldanlik/swipe_media_cleaner/releases/latest/download/app-release.apk)
+
 ## Экраны
 
 | Главная | Свайп | Корзина | Статистика |
