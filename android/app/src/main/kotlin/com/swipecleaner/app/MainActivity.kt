@@ -1,4 +1,4 @@
-package com.example.swipe_media_cleaner
+package com.swipecleaner.app
 
 import io.flutter.embedding.android.FlutterActivity
 
