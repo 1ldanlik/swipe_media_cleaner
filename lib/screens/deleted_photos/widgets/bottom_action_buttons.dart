@@ -32,25 +32,29 @@ class BottomActionButtons extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              child: FilledButton.icon(
+              child: FilledButton(
                 onPressed: onDelete,
-                icon: const Icon(Icons.delete_forever),
-                label: Text('Удалить ($selectedCount)'),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.deleteRed,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                child: const Text(
+                  'Удалить',
+                  style: TextStyle(fontSize: 18),
                 ),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: OutlinedButton.icon(
+              child: FilledButton(
                 onPressed: onRestore,
-                icon: const Icon(Icons.restore),
-                label: Text('Восстановить ($selectedCount)'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.restoreBlue,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.restoreBlue,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                child: const Text(
+                  'Восстановить',
+                  style: TextStyle(fontSize: 18),
                 ),
               ),
             ),
