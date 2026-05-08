@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:io' show File;
 import 'package:flutter/material.dart';
 import '../models/photo_item.dart';
 import '../theme/app_colors.dart';
@@ -18,12 +18,19 @@ class MonthPreviewPhotos extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
+    // Физический размер превью в интерфейсе (logical pixels).
+    const previewSize = 46.0;
+    // Переводим размер в физические пиксели экрана,
+    // чтобы декодировать файл сразу в нужную ширину.
+    final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
+    final targetWidth = (previewSize * devicePixelRatio).round();
+
     return Row(
       children: [
         for (int i = 0; i < previewPhotos.length; i++) ...[
           SizedBox(
-            width: 46,
-            height: 46,
+            width: previewSize,
+            height: previewSize,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: AspectRatio(
@@ -31,6 +38,10 @@ class MonthPreviewPhotos extends StatelessWidget {
                 child: Image.file(
                   File(previewPhotos[i].path),
                   fit: BoxFit.cover,
+                  // Ограничиваем ширину декодирования:
+                  // меньше память и быстрее отрисовка для маленьких превью.
+                  cacheWidth: targetWidth,
+                  filterQuality: FilterQuality.low,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       color: AppColors.greyLight,
