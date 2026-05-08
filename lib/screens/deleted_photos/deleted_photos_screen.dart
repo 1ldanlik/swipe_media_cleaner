@@ -22,18 +22,12 @@ class DeletedPhotosScreen extends ConsumerWidget {
         child: deletedPhotosAsync.when(
           data: (deletedPhotos) {
             if (deletedPhotos.isEmpty) {
-              return const Column(
-                children: [
-                  _DeletedPhotosHeader(),
-                  Expanded(child: EmptyTrashWidget()),
-                ],
-              );
+              return const EmptyTrashWidget();
             }
 
             if (screenState.isProcessing) {
               return const Column(
                 children: [
-                  _DeletedPhotosHeader(),
                   Expanded(
                     child: Center(
                       child: Column(
@@ -52,7 +46,6 @@ class DeletedPhotosScreen extends ConsumerWidget {
 
             return Column(
               children: [
-                const _DeletedPhotosHeader(),
                 _InfoBanner(
                   notifier: notifier,
                   state: screenState,
@@ -68,15 +61,9 @@ class DeletedPhotosScreen extends ConsumerWidget {
               ],
             );
           },
-          loading: () => const Column(
-            children: [
-              _DeletedPhotosHeader(),
-              Expanded(child: Center(child: CircularProgressIndicator())),
-            ],
-          ),
+          loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, stack) => Column(
             children: [
-              const _DeletedPhotosHeader(),
               Expanded(
                 child: Center(
                   child: Text('Ошибка: $error'),
@@ -105,25 +92,6 @@ class DeletedPhotosScreen extends ConsumerWidget {
   }
 }
 
-class _DeletedPhotosHeader extends StatelessWidget {
-  const _DeletedPhotosHeader();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 16),
-      child: Text(
-        'Корзина',
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
-        textAlign: TextAlign.center,
-      ),
-    );
-  }
-}
-
 class _InfoBanner extends StatelessWidget {
   final DeletedPhotosNotifier notifier;
   final DeletedPhotosScreenState state;
@@ -138,39 +106,32 @@ class _InfoBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      height: 60,
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
       color: AppColors.trashBannerBackground,
       child: Row(
         children: [
           Expanded(
             child: Text(
-              state.hasSelection
-                  ? 'Выбрано: ${state.selectedCount} из ${photos.length}'
-                  : '${photos.length} фото готово к удалению',
+              '${state.selectedCount} / ${photos.length}',
               style: const TextStyle(
-                fontSize: 16,
+                fontSize: 32,
                 color: AppColors.trashBannerText,
                 fontWeight: FontWeight.w500,
               ),
             ),
           ),
           if (state.hasSelection)
-            TextButton.icon(
+            IconButton(
               onPressed: () => notifier.clearSelection(),
-              icon: const Icon(Icons.close, size: 18),
-              label: const Text('Отменить'),
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.trashBannerText,
-              ),
+              icon: const Icon(Icons.close, size: 32),
+              color: AppColors.trashBannerText,
             )
           else
-            TextButton.icon(
+            IconButton(
               onPressed: () => notifier.selectAll(photos.map((p) => p.id).toList()),
-              icon: const Icon(Icons.select_all, size: 18),
-              label: const Text('Выбрать все'),
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.trashBannerText,
-              ),
+              icon: const Icon(Icons.library_add_check_outlined, size: 32),
+              color: AppColors.trashBannerText,
             ),
         ],
       ),
