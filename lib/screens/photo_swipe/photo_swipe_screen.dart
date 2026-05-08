@@ -251,7 +251,7 @@ class _MainScaffold extends StatelessWidget {
             ),
       bottomNavigationBar: currentIndex < remainingPhotos.length
           ? Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
