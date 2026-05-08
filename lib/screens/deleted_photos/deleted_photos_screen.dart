@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/deleted_photo.dart';
@@ -7,6 +6,7 @@ import '../../theme/app_colors.dart';
 import 'notifiers/deleted_photos_notifier.dart';
 import 'widgets/empty_trash_widget.dart';
 import 'widgets/bottom_action_buttons.dart';
+import 'widgets/photo_card.dart';
 
 class DeletedPhotosScreen extends ConsumerWidget {
   const DeletedPhotosScreen({super.key});
@@ -163,66 +163,12 @@ class _PhotoGrid extends StatelessWidget {
       itemBuilder: (context, index) {
         final photo = photos[index];
         final isSelected = state.selectedPhotoIds.contains(photo.id);
-        return _PhotoCard(
+        return PhotoCard(
           notifier: notifier,
           photo: photo,
           isSelected: isSelected,
         );
       },
-    );
-  }
-}
-
-class _PhotoCard extends StatelessWidget {
-  final DeletedPhotosNotifier notifier;
-  final DeletedPhoto photo;
-  final bool isSelected;
-
-  const _PhotoCard({
-    required this.notifier,
-    required this.photo,
-    required this.isSelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => notifier.toggleSelection(photo.id),
-      onLongPress: () => notifier.toggleSelection(photo.id),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Image.file(
-              File(photo.path),
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: AppColors.greyLight,
-                  child: const Icon(Icons.broken_image, color: AppColors.brokenImageIcon),
-                );
-              },
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: isSelected ? AppColors.selectedPhotoOverlay : Colors.transparent,
-                border: isSelected ? Border.all(color: AppColors.restoreBlue, width: 3) : null,
-              ),
-            ),
-            if (isSelected)
-              const Positioned(
-                top: 8,
-                right: 8,
-                child: Icon(
-                  Icons.check_circle,
-                  color: AppColors.checkCircleIcon,
-                  size: 32,
-                ),
-              ),
-          ],
-        ),
-      ),
     );
   }
 }
