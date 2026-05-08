@@ -43,9 +43,8 @@ final monthGroupsByYearProvider = FutureProvider.family<List<MonthGroup>, int?>(
 
     debugPrint('✅ Загружено AssetEntity: ${assets.length}');
 
-    // Группируем фото по месяцам только для выбранного года
-    final Map<String, List<PhotoItem>> groupedPhotos = {};
-    int processedCount = 0;
+    // Группируем фото по месяцам только для выбранного года (без загрузки файлов)
+    final Map<String, List<AssetEntity>> groupedAssets = {};
     int filteredCount = 0;
 
     for (int i = 0; i < assets.length; i++) {
@@ -59,52 +58,40 @@ final monthGroupsByYearProvider = FutureProvider.family<List<MonthGroup>, int?>(
 
       filteredCount++;
 
-      if (processedCount % 50 == 0 && processedCount > 0) {
-        debugPrint('⏳ Обработано фото года $year: $processedCount');
+      if (filteredCount % 500 == 0 && filteredCount > 0) {
+        debugPrint('⏳ Обработано метаданных фото года $year: $filteredCount');
       }
 
-      try {
-        // Используем originFile для iOS
-        final file = await asset.originFile;
-        if (file == null) {
-          continue;
-        }
+      final date = asset.createDateTime;
+      final key = '${date.year}-${date.month}';
 
-        final photoItem = await PhotoItem.fromAsset(asset, file.path);
-        if (photoItem == null) {
-          continue;
-        }
-
-        final date = photoItem.createdDate;
-        final key = '${date.year}-${date.month}';
-
-        if (!groupedPhotos.containsKey(key)) {
-          groupedPhotos[key] = [];
-        }
-        groupedPhotos[key]!.add(photoItem);
-        processedCount++;
-      } catch (e) {
-        debugPrint('❌ Ошибка обработки фото ${asset.id}: $e');
-        continue;
+      if (!groupedAssets.containsKey(key)) {
+        groupedAssets[key] = [];
       }
+      groupedAssets[key]!.add(asset);
     }
 
     debugPrint('📊 Найдено фото для года $year: $filteredCount');
-    debugPrint('📊 Успешно обработано: $processedCount');
-    debugPrint('📊 Создано групп месяцев: ${groupedPhotos.length}');
+    debugPrint('📊 Создано групп месяцев: ${groupedAssets.length}');
 
-    // Преобразуем в список MonthGroup и сортируем
-    final List<MonthGroup> monthGroups = groupedPhotos.entries.map((entry) {
+    // Преобразуем в список MonthGroup с легковесными данными Home-экрана
+    final List<MonthGroup> monthGroups = [];
+
+    for (final entry in groupedAssets.entries) {
       final parts = entry.key.split('-');
       final monthYear = int.parse(parts[0]);
       final month = int.parse(parts[1]);
+      final monthAssets = entry.value;
 
-      return MonthGroup(
+      final previewPhotos = await _buildPreviewPhotos(monthAssets);
+
+      monthGroups.add(MonthGroup(
         year: monthYear,
         month: month,
-        photos: entry.value,
-      );
-    }).toList();
+        photoCount: monthAssets.length,
+        previewPhotos: previewPhotos,
+      ));
+    }
 
     // Сортируем по месяцу (новые сверху)
     monthGroups.sort((a, b) => b.month.compareTo(a.month));
@@ -118,6 +105,39 @@ final monthGroupsByYearProvider = FutureProvider.family<List<MonthGroup>, int?>(
     rethrow;
   }
 });
+
+Future<List<PhotoItem>> _buildPreviewPhotos(List<AssetEntity> assets) async {
+  if (assets.isEmpty) {
+    return [];
+  }
+
+  final Set<int> indices = {0};
+  if (assets.length > 1) {
+    indices.add(assets.length ~/ 2);
+    indices.add(assets.length - 1);
+  }
+
+  final List<PhotoItem> result = [];
+
+  for (final index in indices) {
+    try {
+      final asset = assets[index];
+      final file = await asset.originFile;
+      if (file == null) {
+        continue;
+      }
+
+      final photoItem = await PhotoItem.fromAsset(asset, file.path);
+      if (photoItem != null) {
+        result.add(photoItem);
+      }
+    } catch (e) {
+      debugPrint('❌ Ошибка загрузки превью фото: $e');
+    }
+  }
+
+  return result;
+}
 
 /// Провайдер для получения списка доступных годов
 final availableYearsProvider = FutureProvider<List<int>>((ref) async {

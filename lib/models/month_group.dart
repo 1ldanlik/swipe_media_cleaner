@@ -5,12 +5,20 @@ class MonthGroup {
   final int year;
   final int month;
   final List<PhotoItem> photos;
+  final List<PhotoItem> previewPhotos;
+  final int photoCount;
+  final int totalSizeBytes;
 
   MonthGroup({
     required this.year,
     required this.month,
-    required this.photos,
-  });
+    this.photos = const [],
+    List<PhotoItem>? previewPhotos,
+    int? photoCount,
+    int? totalSizeBytes,
+  })  : previewPhotos = previewPhotos ?? const [],
+        photoCount = photoCount ?? photos.length,
+        totalSizeBytes = totalSizeBytes ?? photos.fold(0, (sum, photo) => sum + photo.size);
 
   /// Название месяца на русском
   String get monthName {
@@ -32,10 +40,10 @@ class MonthGroup {
   }
 
   /// Общий размер всех фото в группе (в байтах)
-  int get totalSize => photos.fold(0, (sum, photo) => sum + photo.size);
+  int get totalSize => totalSizeBytes;
 
-  /// Количество фото в группе
-  int get photoCount => photos.length;
+  /// Есть ли рассчитанный размер группы
+  bool get hasSizeInfo => totalSizeBytes > 0;
 
   /// Форматированный размер (например: "15.3 MB")
   String get formattedSize {

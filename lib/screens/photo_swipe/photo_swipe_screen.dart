@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/month_group.dart';
 import '../../models/photo_item.dart';
-import '../../providers/deleted_photos_provider.dart';
-import '../../providers/viewed_photos_provider.dart';
+import '../../providers/photo_swipe_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/swipeable_photo_card.dart';
 import 'widgets/action_button.dart';
@@ -21,99 +20,165 @@ class PhotoSwipeScreen extends ConsumerStatefulWidget {
 }
 
 class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
-  int currentIndex = 0;
-  List<PhotoItem> remainingPhotos = [];
-  List<PhotoItem> markedForDeletion = [];
-  int alreadyViewedCount = 0; // Счетчик уже просмотренных фото
+  (int, int) get _providerParams => (widget.monthGroup.year, widget.monthGroup.month);
 
   @override
   void initState() {
     super.initState();
-    _initializePhotos();
+    // Загружаем фото при инициализации
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(photoSwipeProvider(_providerParams).notifier).loadPhotosForMonth(
+            widget.monthGroup.year,
+            widget.monthGroup.month,
+          );
+    });
   }
 
-  void _initializePhotos() {
-    final viewedService = ref.read(viewedPhotosServiceProvider);
-
-    // Фильтруем непросмотренные фото
-    final unviewedPhotos =
-        widget.monthGroup.photos.where((photo) => !viewedService.isViewed(photo.id)).toList();
-
-    // Подсчитываем уже просмотренные фото
-    alreadyViewedCount = widget.monthGroup.photos.length - unviewedPhotos.length;
-
-    // Если есть непросмотренные - показываем только их, иначе показываем все
-    remainingPhotos =
-        unviewedPhotos.isNotEmpty ? unviewedPhotos : List.from(widget.monthGroup.photos);
-
-    // Если показываем все фото (пересмотр), сбрасываем счетчик просмотренных
-    if (unviewedPhotos.isEmpty) {
-      alreadyViewedCount = 0;
-    }
-  }
-
-  /// Отмечает фото как просмотренное и увеличивает счетчик, если фото не была просмотрена ранее
-  Future<void> _markPhotoAsViewed(PhotoItem photo) async {
-    final viewedService = ref.read(viewedPhotosServiceProvider);
-
-    // Проверяем, была ли фото уже просмотрена
-    final wasAlreadyViewed = viewedService.isViewed(photo.id);
-
-    // Отмечаем фото как просмотренное
-    await viewedService.markAsViewed(photo.id, widget.monthGroup.year, widget.monthGroup.month);
-
-    // Увеличиваем счетчик просмотренных только если фото не была просмотрена ранее
-    if (!wasAlreadyViewed) {
-      final service = ref.read(deletedPhotosServiceProvider);
-      service.incrementCheckedPhotos();
-    }
-  }
-
-  void _handleKeep() {
-    if (currentIndex < remainingPhotos.length) {
-      final photo = remainingPhotos[currentIndex];
-
-      // Отмечаем фото как просмотренное
-      _markPhotoAsViewed(photo);
-
-      setState(() {
-        currentIndex++;
-      });
-      _checkIfFinished();
-    }
-  }
-
-  Future<void> _handleDelete() async {
-    if (currentIndex < remainingPhotos.length) {
-      final photo = remainingPhotos[currentIndex];
-
-      // Отмечаем фото как просмотренное
-      await _markPhotoAsViewed(photo);
-
-      // Сохраняем в кэш
-      final deletedService = ref.read(deletedPhotosServiceProvider);
-      await deletedService.markForDeletion(photo);
-
-      setState(() {
-        markedForDeletion.add(photo);
-        currentIndex++;
-      });
-      _checkIfFinished();
-    }
-  }
-
-  void _checkIfFinished() {
-    if (currentIndex >= remainingPhotos.length) {
-      // Просто возвращаемся на предыдущий экран
-      Navigator.of(context).pop();
-    }
+  @override
+  void dispose() {
+    // Явно очищаем состояние провайдера при выходе с экрана.
+    ref.invalidate(photoSwipeProvider(_providerParams));
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final progress = widget.monthGroup.photos.isEmpty
+    final state = ref.watch(photoSwipeProvider(_providerParams));
+    final notifier = ref.read(photoSwipeProvider(_providerParams).notifier);
+
+    if (state.isLoading) {
+      return _LoadingScaffold(
+        monthName: widget.monthGroup.monthName,
+        year: widget.monthGroup.year,
+      );
+    }
+
+    if (state.error != null) {
+      return _ErrorScaffold(
+        monthName: widget.monthGroup.monthName,
+        year: widget.monthGroup.year,
+        error: state.error!,
+        onRetry: () {
+          notifier.loadPhotosForMonth(
+            widget.monthGroup.year,
+            widget.monthGroup.month,
+          );
+        },
+      );
+    }
+
+    return _MainScaffold(
+      monthName: widget.monthGroup.monthName,
+      year: widget.monthGroup.year,
+      currentIndex: state.currentIndex,
+      alreadyViewedCount: state.alreadyViewedCount,
+      totalPhotosInMonth: state.totalPhotosInMonth,
+      remainingPhotos: state.remainingPhotos,
+      onDelete: () => notifier.deleteCurrentPhoto(),
+      onKeep: () => notifier.keepCurrentPhoto(),
+    );
+  }
+}
+
+class _LoadingScaffold extends StatelessWidget {
+  final String monthName;
+  final int year;
+
+  const _LoadingScaffold({
+    required this.monthName,
+    required this.year,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.greyExtraLight,
+      appBar: AppBar(
+        backgroundColor: AppColors.greyExtraLight,
+        foregroundColor: AppColors.black,
+        title: Text(
+          '$monthName $year',
+          style: const TextStyle(fontSize: 24),
+        ),
+      ),
+      body: const Center(child: CircularProgressIndicator()),
+    );
+  }
+}
+
+class _ErrorScaffold extends StatelessWidget {
+  final String monthName;
+  final int year;
+  final String error;
+  final VoidCallback onRetry;
+
+  const _ErrorScaffold({
+    required this.monthName,
+    required this.year,
+    required this.error,
+    required this.onRetry,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.greyExtraLight,
+      appBar: AppBar(
+        backgroundColor: AppColors.greyExtraLight,
+        foregroundColor: AppColors.black,
+        title: Text(
+          '$monthName $year',
+          style: const TextStyle(fontSize: 24),
+        ),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.error_outline, size: 64, color: AppColors.deleteRed),
+              const SizedBox(height: 12),
+              Text('Ошибка загрузки фото: $error', textAlign: TextAlign.center),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: onRetry,
+                child: const Text('Повторить'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MainScaffold extends StatelessWidget {
+  final String monthName;
+  final int year;
+  final int currentIndex;
+  final int alreadyViewedCount;
+  final int totalPhotosInMonth;
+  final List<PhotoItem> remainingPhotos;
+  final VoidCallback onDelete;
+  final VoidCallback onKeep;
+
+  const _MainScaffold({
+    required this.monthName,
+    required this.year,
+    required this.currentIndex,
+    required this.alreadyViewedCount,
+    required this.totalPhotosInMonth,
+    required this.remainingPhotos,
+    required this.onDelete,
+    required this.onKeep,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = totalPhotosInMonth == 0
         ? 0.0
-        : ((currentIndex + alreadyViewedCount) / widget.monthGroup.photos.length).clamp(0.0, 1.0);
+        : ((currentIndex + alreadyViewedCount) / totalPhotosInMonth).clamp(0.0, 1.0);
 
     return Scaffold(
       backgroundColor: AppColors.greyExtraLight,
@@ -121,7 +186,7 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
         backgroundColor: AppColors.greyExtraLight,
         foregroundColor: AppColors.black,
         title: Text(
-          '${widget.monthGroup.monthName} ${widget.monthGroup.year}',
+          '$monthName $year',
           style: const TextStyle(fontSize: 24),
         ),
         actions: [
@@ -129,7 +194,7 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
             child: Padding(
               padding: const EdgeInsets.only(right: 16),
               child: Text(
-                '${currentIndex + alreadyViewedCount + 1} / ${widget.monthGroup.photos.length}',
+                '${currentIndex + alreadyViewedCount + 1} / $totalPhotosInMonth',
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
@@ -150,10 +215,10 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
       ),
       body: currentIndex < remainingPhotos.length
           ? SwipeablePhotoCard(
-              key: ValueKey(remainingPhotos[currentIndex].id), // Добавляем уникальный key
+              key: ValueKey(remainingPhotos[currentIndex].id),
               photo: remainingPhotos[currentIndex],
-              onSwipeLeft: _handleDelete,
-              onSwipeRight: _handleKeep,
+              onSwipeLeft: onDelete,
+              onSwipeRight: onKeep,
             )
           : Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -195,7 +260,7 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
                       color: AppColors.deleteButtonBackground,
                       iconColor: AppColors.deleteButtonIcon,
                       icon: Icons.close,
-                      onPressed: _handleDelete,
+                      onPressed: onDelete,
                     ),
                   ),
                   const SizedBox(width: 20),
@@ -203,7 +268,7 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
                     child: ActionButton(
                       color: AppColors.mainButtonBackground,
                       icon: Icons.check,
-                      onPressed: _handleKeep,
+                      onPressed: onKeep,
                     ),
                   ),
                 ],

@@ -102,12 +102,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               itemCount: monthGroups.length,
                               itemBuilder: (context, index) {
                                 final monthGroup = monthGroups[index];
-                                // Берем первые 3 фото для превью
-                                final previewPhotos = monthGroup.photos.take(3).toList();
 
                                 return MonthCard(
                                   monthGroup: monthGroup,
-                                  previewPhotos: previewPhotos,
+                                  previewPhotos: monthGroup.previewPhotos,
                                 );
                               },
                             ),
