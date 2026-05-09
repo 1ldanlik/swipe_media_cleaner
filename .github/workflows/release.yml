@@ -70,8 +70,8 @@ jobs:
       - name: Upload iOS artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-release.ipa
-          path: build/ios/ipa/*.ipa
+          name: ios-build
+          path: build/ios/ipa/Runner.ipa
 
   create-release:
     needs: [build-android, build-ios]
@@ -87,8 +87,8 @@ jobs:
       - name: Download iOS build
         uses: actions/download-artifact@v4
         with:
-          name: app-release.ipa
-          path: ./artifacts
+          name: ios-build
+          path: ./artifacts/ios
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -96,7 +96,7 @@ jobs:
           name: Swipe Cleaner ${{ github.ref_name }}
           files: |
             artifacts/app-release.apk
-            artifacts/*.ipa
+            artifacts/ios/Runner.ipa
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
