@@ -65,7 +65,10 @@ jobs:
         run: flutter pub get
 
       - name: Build iOS
-        run: flutter build ipa --release -t lib/main_release.dart --no-codesign
+        run: flutter build ipa --release -t lib/main_release.dart --no-codesign --export-method ad-hoc
+
+      - name: List iOS IPA output
+        run: ls -la build/ios/ipa || true
 
       - name: Upload iOS artifact
         uses: actions/upload-artifact@v4
