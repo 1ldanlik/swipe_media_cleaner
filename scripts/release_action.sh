@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Укажите новую версию здесь перед запуском.
-VERSION="1.0.6"
+VERSION="1.0.7"
 TAG="v${VERSION}"
 
 if git rev-parse "$TAG" >/dev/null 2>&1; then
