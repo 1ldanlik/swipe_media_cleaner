@@ -1,4 +1,4 @@
-name: Android Release
+name: Build and Release
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  build-android:
     runs-on: ubuntu-latest
 
     steps:
@@ -42,11 +42,61 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
 
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release.apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+  build-ios:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.10.6'
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build iOS
+        run: flutter build ipa --release -t lib/main_release.dart --no-codesign
+
+      - name: Upload iOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release.ipa
+          path: build/ios/ipa/*.ipa
+
+  create-release:
+    needs: [build-android, build-ios]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Android APK
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release.apk
+          path: ./artifacts
+
+      - name: Download iOS build
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release.ipa
+          path: ./artifacts
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: Swipe Cleaner ${{ github.ref_name }}
-          files: build/app/outputs/flutter-apk/app-release.apk
+          files: |
+            artifacts/app-release.apk
+            artifacts/*.ipa
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
