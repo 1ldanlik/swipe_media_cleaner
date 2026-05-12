@@ -70,11 +70,15 @@ jobs:
       - name: List iOS IPA output
         run: ls -laR build/ios/ipa/ || ls -laR build/ios/ || echo "No iOS build directory"
 
+      - name: Find IPA
+        run: |
+          find build/ios/ipa -type f -name '*.ipa' || echo "IPA not found"
+
       - name: Upload iOS artifact
         uses: actions/upload-artifact@v4
         with:
           name: ios-build
-          path: build/ios/ipa/*.ipa
+          path: build/ios/ipa/**/*.ipa
 
   create-release:
     needs: [build-android, build-ios]
