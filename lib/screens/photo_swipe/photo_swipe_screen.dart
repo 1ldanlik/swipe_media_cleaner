@@ -27,18 +27,13 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
     super.initState();
     // Загружаем фото при инициализации
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
       ref.read(photoSwipeProvider(_providerParams).notifier).loadPhotosForMonth(
             widget.monthGroup.year,
             widget.monthGroup.month,
           );
     });
-  }
-
-  @override
-  void dispose() {
-    // Явно очищаем состояние провайдера при выходе с экрана.
-    ref.invalidate(photoSwipeProvider(_providerParams));
-    super.dispose();
   }
 
   @override
@@ -74,8 +69,10 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
       alreadyViewedCount: state.alreadyViewedCount,
       totalPhotosInMonth: state.totalPhotosInMonth,
       remainingPhotos: state.remainingPhotos,
+      currentPhotoIsFavorite: state.currentPhotoIsFavorite,
       onDelete: () => notifier.deleteCurrentPhoto(),
       onKeep: () => notifier.keepCurrentPhoto(),
+      onToggleFavorite: () => notifier.toggleFavorite(),
     );
   }
 }
@@ -160,8 +157,10 @@ class _MainScaffold extends StatelessWidget {
   final int alreadyViewedCount;
   final int totalPhotosInMonth;
   final List<PhotoItem> remainingPhotos;
+  final bool currentPhotoIsFavorite;
   final VoidCallback onDelete;
   final VoidCallback onKeep;
+  final VoidCallback onToggleFavorite;
 
   const _MainScaffold({
     required this.monthName,
@@ -170,8 +169,10 @@ class _MainScaffold extends StatelessWidget {
     required this.alreadyViewedCount,
     required this.totalPhotosInMonth,
     required this.remainingPhotos,
+    required this.currentPhotoIsFavorite,
     required this.onDelete,
     required this.onKeep,
+    required this.onToggleFavorite,
   });
 
   @override
@@ -190,6 +191,15 @@ class _MainScaffold extends StatelessWidget {
           style: const TextStyle(fontSize: 24),
         ),
         actions: [
+          if (currentIndex < remainingPhotos.length)
+            IconButton(
+              onPressed: onToggleFavorite,
+              icon: Icon(
+                currentPhotoIsFavorite ? Icons.favorite : Icons.favorite_border,
+                color: currentPhotoIsFavorite ? AppColors.favoriteRed : AppColors.greyMedium,
+                size: 28,
+              ),
+            ),
           Center(
             child: Padding(
               padding: const EdgeInsets.only(right: 16),

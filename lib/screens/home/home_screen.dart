@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:photo_manager/photo_manager.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../providers/permission_provider.dart';
 import '../../providers/month_groups_by_year_provider.dart';
 import '../../theme/app_colors.dart';
@@ -28,7 +28,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: permissionState.when(
           data: (state) {
             // Проверяем статус разрешения
-            if (state == PermissionState.denied || state == PermissionState.limited) {
+            if (!state.isGranted) {
               return const Column(
                 children: [
                   _HomeScreenHeader(),

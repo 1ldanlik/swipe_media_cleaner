@@ -12,6 +12,7 @@ class PhotoSwipeState {
   final String? error;
   final int totalPhotosInMonth;
   final int alreadyViewedCount;
+  final bool currentPhotoIsFavorite;
 
   const PhotoSwipeState({
     this.remainingPhotos = const [],
@@ -20,6 +21,7 @@ class PhotoSwipeState {
     this.error,
     this.totalPhotosInMonth = 0,
     this.alreadyViewedCount = 0,
+    this.currentPhotoIsFavorite = false,
   });
 
   PhotoSwipeState copyWith({
@@ -29,6 +31,7 @@ class PhotoSwipeState {
     String? error,
     int? totalPhotosInMonth,
     int? alreadyViewedCount,
+    bool? currentPhotoIsFavorite,
   }) {
     return PhotoSwipeState(
       remainingPhotos: remainingPhotos ?? this.remainingPhotos,
@@ -37,6 +40,7 @@ class PhotoSwipeState {
       error: error,
       totalPhotosInMonth: totalPhotosInMonth ?? this.totalPhotosInMonth,
       alreadyViewedCount: alreadyViewedCount ?? this.alreadyViewedCount,
+      currentPhotoIsFavorite: currentPhotoIsFavorite ?? this.currentPhotoIsFavorite,
     );
   }
 }
@@ -92,6 +96,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
         currentIndex: 0,
         totalPhotosInMonth: monthPhotos.length,
         alreadyViewedCount: viewedCount,
+        currentPhotoIsFavorite: photosToShow.isNotEmpty ? photosToShow[0].isFavorite : false,
       );
     } catch (e) {
       state = state.copyWith(
@@ -120,7 +125,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
     _nextPhoto();
   }
 
-  /// Сохранить текущее фото
+  /// Сохранить текущее фото и перейти к следующему
   Future<void> keepCurrentPhoto() async {
     if (state.currentIndex >= state.remainingPhotos.length) {
       return;
@@ -135,8 +140,41 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
     _nextPhoto();
   }
 
+  /// Переключить статус избранного для текущего фото
+  Future<void> toggleFavorite() async {
+    if (state.currentIndex >= state.remainingPhotos.length) {
+      return;
+    }
+    final photo = state.remainingPhotos[state.currentIndex];
+    final newValue = !photo.asset.isFavorite;
+
+    final success = await PhotoManager.plugin.favoriteAsset(
+      photo.asset.id,
+      newValue,
+    );
+
+    if (!success) return;
+
+    final updatedList = state.remainingPhotos.toList();
+    final updatedAsset = await photo.asset.obtainForNewProperties();
+    updatedList[state.currentIndex] =
+        state.remainingPhotos[state.currentIndex].copyWith(asset: updatedAsset);
+
+    state = state.copyWith(
+      currentPhotoIsFavorite: newValue,
+      remainingPhotos: updatedList,
+    );
+  }
+
   void _nextPhoto() {
-    state = state.copyWith(currentIndex: state.currentIndex + 1);
+    final newIndex = state.currentIndex + 1;
+    final newFavoriteStatus = newIndex < state.remainingPhotos.length
+        ? state.remainingPhotos[newIndex].isFavorite
+        : false;
+    state = state.copyWith(
+      currentIndex: newIndex,
+      currentPhotoIsFavorite: newFavoriteStatus,
+    );
   }
 
   /// Отметить фото как просмотренное
@@ -211,7 +249,9 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
 }
 
 /// Провайдер для состояния просмотра фото (семейный по году и месяцу)
-final photoSwipeProvider =
-    StateNotifierProvider.family<PhotoSwipeNotifier, PhotoSwipeState, (int, int)>(
-  (ref, params) => PhotoSwipeNotifier(ref),
+final photoSwipeProvider = StateNotifierProvider.autoDispose
+    .family<PhotoSwipeNotifier, PhotoSwipeState, (int year, int month)>(
+  (ref, params) {
+    return PhotoSwipeNotifier(ref);
+  },
 );

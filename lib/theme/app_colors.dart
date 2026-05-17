@@ -26,6 +26,9 @@ class AppColors {
   /// Красный для удаления
   static const Color deleteRed = Colors.red;
 
+  /// Красный для избранных
+  static const Color favoriteRed = Color(0xFFE91E63);
+
   /// Фоновый цвет кнопки удаления в корзину
   static const Color deleteButtonBackground = Color(0xFFFDECEA);
 
