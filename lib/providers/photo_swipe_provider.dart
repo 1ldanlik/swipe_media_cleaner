@@ -284,7 +284,8 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
   ///
   /// Метод:
   /// - не грузит весь месяц сразу;
-  /// - сканирует галерею батчами;
+  /// - получает из PhotoManager только фото нужного месяца;
+  /// - сканирует фото батчами;
   /// - не теряет подходящие фото из батча;
   /// - пропускает уже просмотренные фото, если мы не в режиме пересмотра.
   Future<void> _fillPhotoBufferForMonth(int year, int month) async {
@@ -301,9 +302,29 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
     try {
       final viewedService = ref.read(viewedPhotosServiceProvider);
 
+      // Начало нужного месяца.
+      final startDate = DateTime(year, month);
+
+      // Начало следующего месяца.
+      final nextMonthDate = month == 12 ? DateTime(year + 1, 1) : DateTime(year, month + 1);
+
+      // Конец нужного месяца.
+      // Делаем так, чтобы не захватить первое число следующего месяца.
+      final endDate = nextMonthDate.subtract(
+        const Duration(milliseconds: 1),
+      );
+
+      // Получаем общий альбом, но сразу с фильтром по дате создания.
+      // В результате recentAlbum будет содержать только фото нужного месяца.
       final albums = await PhotoManager.getAssetPathList(
         type: RequestType.image,
         onlyAll: true,
+        filterOption: FilterOptionGroup(
+          createTimeCond: DateTimeCond(
+            min: startDate,
+            max: endDate,
+          ),
+        ),
       );
 
       if (albums.isEmpty) {
@@ -320,7 +341,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
       }
 
       while (_photoBuffer.length < _targetBufferSize) {
-        // Сначала используем уже найденные подходящие AssetEntity.
+        // Сначала используем уже найденные AssetEntity из очереди.
         if (_matchedAssetQueue.isNotEmpty) {
           final asset = _matchedAssetQueue.removeAt(0);
 
@@ -333,7 +354,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
           continue;
         }
 
-        // Если очередь пустая и вся галерея уже просканирована —
+        // Если очередь пустая и все фото месяца уже просмотрены/просканированы —
         // новых фото больше нет.
         if (!_hasMorePhotos || _photoScanOffset >= totalCount) {
           _hasMorePhotos = false;
@@ -344,7 +365,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
             ? totalCount
             : _photoScanOffset + _scanBatchSize;
 
-        // Берём только небольшой кусок галереи.
+        // Берём небольшой батч уже отфильтрованных фото месяца.
         final assets = await recentAlbum.getAssetListRange(
           start: _photoScanOffset,
           end: end,
@@ -354,13 +375,6 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
         _photoScanOffset = end;
 
         for (final asset in assets) {
-          final date = asset.createDateTime;
-
-          // Пропускаем фото не из нужного месяца.
-          if (date.year != year || date.month != month) {
-            continue;
-          }
-
           final isViewed = viewedService.isViewed(asset.id);
 
           // Если фото уже просмотрено и мы НЕ в режиме пересмотра —
@@ -369,8 +383,8 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
             continue;
           }
 
-          // Все подходящие фото складываем в очередь,
-          // чтобы не потерять их внутри батча.
+          // Фото уже точно из нужного месяца,
+          // поэтому просто кладём его в очередь.
           _matchedAssetQueue.add(asset);
         }
 
