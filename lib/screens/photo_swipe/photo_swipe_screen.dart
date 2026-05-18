@@ -9,10 +9,14 @@ import 'widgets/action_button.dart';
 
 class PhotoSwipeScreen extends ConsumerStatefulWidget {
   final MonthGroup monthGroup;
+  final int viewedCount;
+  final int totalMonthCount;
 
   const PhotoSwipeScreen({
     super.key,
     required this.monthGroup,
+    required this.viewedCount,
+    required this.totalMonthCount,
   });
 
   @override
@@ -30,8 +34,8 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
       if (!mounted) return;
 
       ref.read(photoSwipeProvider(_providerParams).notifier).loadPhotosForMonth(
-            widget.monthGroup.year,
-            widget.monthGroup.month,
+            viewedCount: widget.viewedCount,
+            totalMonthCount: widget.totalMonthCount,
           );
     });
   }
@@ -54,10 +58,7 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
         year: widget.monthGroup.year,
         error: state.error!,
         onRetry: () {
-          notifier.loadPhotosForMonth(
-            widget.monthGroup.year,
-            widget.monthGroup.month,
-          );
+          notifier.loadPhotosForMonth();
         },
       );
     }
@@ -65,12 +66,12 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
     return _MainScaffold(
       monthName: widget.monthGroup.monthName,
       year: widget.monthGroup.year,
-      currentIndex: state.currentIndex,
       alreadyViewedCount: state.alreadyViewedCount,
       totalPhotosInMonth: state.totalPhotosInMonth,
-      remainingPhotos: state.remainingPhotos,
+      bufferedPhotos: state.bufferedPhotos,
       currentPhotoIsFavorite: state.currentPhotoIsFavorite,
       isFullPictureShow: state.isFullPictureShow,
+      isFinished: state.isFinished,
       onFullPictureShowToggle: () => notifier.toggleFullPicture(),
       onDelete: () => notifier.deleteCurrentPhoto(),
       onKeep: () => notifier.keepCurrentPhoto(),
@@ -155,12 +156,12 @@ class _ErrorScaffold extends StatelessWidget {
 class _MainScaffold extends StatelessWidget {
   final String monthName;
   final int year;
-  final int currentIndex;
   final int alreadyViewedCount;
   final int totalPhotosInMonth;
-  final List<PhotoItem> remainingPhotos;
+  final List<PhotoItem> bufferedPhotos;
   final bool currentPhotoIsFavorite;
   final bool isFullPictureShow;
+  final bool isFinished;
   final VoidCallback onFullPictureShowToggle;
   final VoidCallback onDelete;
   final VoidCallback onKeep;
@@ -169,12 +170,12 @@ class _MainScaffold extends StatelessWidget {
   const _MainScaffold({
     required this.monthName,
     required this.year,
-    required this.currentIndex,
     required this.alreadyViewedCount,
     required this.totalPhotosInMonth,
-    required this.remainingPhotos,
+    required this.bufferedPhotos,
     required this.currentPhotoIsFavorite,
     required this.isFullPictureShow,
+    required this.isFinished,
     required this.onFullPictureShowToggle,
     required this.onDelete,
     required this.onKeep,
@@ -185,7 +186,7 @@ class _MainScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     final progress = totalPhotosInMonth == 0
         ? 0.0
-        : ((currentIndex + alreadyViewedCount) / totalPhotosInMonth).clamp(0.0, 1.0);
+        : ((alreadyViewedCount + 1) / totalPhotosInMonth).clamp(0.0, 1.0);
 
     return Scaffold(
       backgroundColor: AppColors.greyExtraLight,
@@ -196,38 +197,40 @@ class _MainScaffold extends StatelessWidget {
           '$monthName $year',
           style: const TextStyle(fontSize: 24),
         ),
-        actions: [
-          IconButton(
-            onPressed: onFullPictureShowToggle,
-            icon: Icon(
-              isFullPictureShow ? Icons.zoom_out_map_rounded : Icons.zoom_in_map_rounded,
-              color: AppColors.black,
-              size: 28,
-            ),
-          ),
-          if (currentIndex < remainingPhotos.length)
-            IconButton(
-              onPressed: onToggleFavorite,
-              icon: Icon(
-                currentPhotoIsFavorite ? Icons.favorite : Icons.favorite_border,
-                color: currentPhotoIsFavorite ? AppColors.favoriteRed : AppColors.greyMedium,
-                size: 28,
-              ),
-            ),
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 16),
-              child: Text(
-                '${currentIndex + alreadyViewedCount + 1} / $totalPhotosInMonth',
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.black,
+        actions: isFinished
+            ? null
+            : [
+                IconButton(
+                  onPressed: onFullPictureShowToggle,
+                  icon: Icon(
+                    isFullPictureShow ? Icons.zoom_out_map_rounded : Icons.zoom_in_map_rounded,
+                    color: AppColors.black,
+                    size: 28,
+                  ),
                 ),
-              ),
-            ),
-          ),
-        ],
+                if (!isFinished)
+                  IconButton(
+                    onPressed: onToggleFavorite,
+                    icon: Icon(
+                      currentPhotoIsFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: currentPhotoIsFavorite ? AppColors.favoriteRed : AppColors.greyMedium,
+                      size: 28,
+                    ),
+                  ),
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: Text(
+                      '${alreadyViewedCount + 1} / $totalPhotosInMonth',
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.black,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4),
           child: LinearProgressIndicator(
@@ -237,13 +240,25 @@ class _MainScaffold extends StatelessWidget {
           ),
         ),
       ),
-      body: currentIndex < remainingPhotos.length
-          ? SwipeablePhotoCard(
-              key: ValueKey(remainingPhotos[currentIndex].id),
-              photo: remainingPhotos[currentIndex],
-              onSwipeLeft: onDelete,
-              onSwipeRight: onKeep,
-              isFullPictureShow: isFullPictureShow,
+      body: !isFinished
+          ? Stack(
+              children: [
+                if (bufferedPhotos.length > 1)
+                  SwipeablePhotoCard(
+                    key: ValueKey(bufferedPhotos[1].id),
+                    photo: bufferedPhotos[1],
+                    onSwipeLeft: onDelete,
+                    onSwipeRight: onKeep,
+                    isFullPictureShow: isFullPictureShow,
+                  ),
+                SwipeablePhotoCard(
+                  key: ValueKey(bufferedPhotos.first.id),
+                  photo: bufferedPhotos.first,
+                  onSwipeLeft: onDelete,
+                  onSwipeRight: onKeep,
+                  isFullPictureShow: isFullPictureShow,
+                ),
+              ],
             )
           : Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -274,7 +289,7 @@ class _MainScaffold extends StatelessWidget {
                 ],
               ),
             ),
-      bottomNavigationBar: currentIndex < remainingPhotos.length
+      bottomNavigationBar: !isFinished
           ? Padding(
               padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
               child: Row(

@@ -6,45 +6,46 @@ import 'viewed_photos_provider.dart';
 
 /// Состояние для PhotoSwipeScreen
 class PhotoSwipeState {
-  final List<PhotoItem> remainingPhotos;
-  final int currentIndex;
+  final List<PhotoItem> bufferedPhotos;
   final bool isLoading;
   final String? error;
   final int totalPhotosInMonth;
   final int alreadyViewedCount;
   final bool currentPhotoIsFavorite;
   final bool isFullPictureShow;
+  final bool isFinished;
 
   const PhotoSwipeState({
-    this.remainingPhotos = const [],
-    this.currentIndex = 0,
+    this.bufferedPhotos = const [],
     this.isLoading = true,
     this.error,
     this.totalPhotosInMonth = 0,
     this.alreadyViewedCount = 0,
     this.currentPhotoIsFavorite = false,
     this.isFullPictureShow = false,
+    this.isFinished = false,
   });
 
   PhotoSwipeState copyWith({
-    List<PhotoItem>? remainingPhotos,
-    int? currentIndex,
+    List<PhotoItem>? bufferedPhotos,
     bool? isLoading,
     String? error,
     int? totalPhotosInMonth,
     int? alreadyViewedCount,
     bool? currentPhotoIsFavorite,
     bool? isFullPictureShow,
+    bool? isFinished,
   }) {
     return PhotoSwipeState(
-      remainingPhotos: remainingPhotos ?? this.remainingPhotos,
-      currentIndex: currentIndex ?? this.currentIndex,
+      bufferedPhotos: bufferedPhotos ?? this.bufferedPhotos,
       isLoading: isLoading ?? this.isLoading,
+      // Специально так оставил, чтобы не хранить предыдущие ошибки.
       error: error,
       totalPhotosInMonth: totalPhotosInMonth ?? this.totalPhotosInMonth,
       alreadyViewedCount: alreadyViewedCount ?? this.alreadyViewedCount,
       currentPhotoIsFavorite: currentPhotoIsFavorite ?? this.currentPhotoIsFavorite,
       isFullPictureShow: isFullPictureShow ?? this.isFullPictureShow,
+      isFinished: isFinished ?? this.isFinished,
     );
   }
 }
@@ -53,54 +54,107 @@ class PhotoSwipeState {
 class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
   final Ref ref;
 
-  PhotoSwipeNotifier(this.ref) : super(const PhotoSwipeState());
+  final int currentYear;
+  final int currentMonth;
 
-  /// Загрузить фото месяца
-  Future<void> loadPhotosForMonth(int year, int month) async {
+  PhotoSwipeNotifier(
+    this.ref, {
+    required this.currentYear,
+    required this.currentMonth,
+  }) : super(const PhotoSwipeState());
+
+  /// Готовые PhotoItem, которые сейчас можно показывать в UI.
+  ///
+  /// [0] — текущая карточка.
+  /// [1] — следующая карточка под ней.
+  /// [2] — запасная карточка.
+  final List<PhotoItem> _photoBuffer = [];
+
+  /// Найденные AssetEntity нужного месяца,
+  /// которые ещё не превращены в PhotoItem.
+  final List<AssetEntity> _matchedAssetQueue = [];
+
+  /// С какого места продолжаем сканировать галерею.
+  int _photoScanOffset = 0;
+
+  /// Защита от параллельной загрузки.
+  bool _isLoadingPhotos = false;
+
+  /// Есть ли ещё непросканированные фото в галерее.
+  bool _hasMorePhotos = true;
+
+  /// false — показываем только непросмотренные.
+  /// true — показываем все фото, если непросмотренных уже нет.
+  bool _showViewedPhotos = false;
+
+  /// Сколько фото держим готовыми для свайпа.
+  static const int _targetBufferSize = 3;
+
+  /// Сколько AssetEntity проверяем за один батч.
+  static const int _scanBatchSize = 80;
+
+  /// Загрузить стартовый буфер фото месяца.
+  ///
+  /// Важно:
+  /// метод НЕ загружает все фото месяца сразу.
+  /// Он только подготавливает первые 2–3 фото для свайпа.
+  Future<void> loadPhotosForMonth({
+    int? viewedCount,
+    int? totalMonthCount,
+  }) async {
     state = state.copyWith(
       isLoading: true,
       error: null,
-      currentIndex: 0,
+      bufferedPhotos: [],
+      totalPhotosInMonth: totalMonthCount,
+      alreadyViewedCount: viewedCount ?? 0,
+      currentPhotoIsFavorite: false,
+      isFinished: false,
     );
 
     try {
-      final monthPhotos = await _loadPhotosForMonth(year, month);
+      // Очищаем готовые карточки для свайпа.
+      _photoBuffer.clear();
 
-      if (monthPhotos.isEmpty) {
-        state = state.copyWith(
-          isLoading: false,
-          remainingPhotos: [],
-          currentIndex: 0,
-          totalPhotosInMonth: 0,
-          alreadyViewedCount: 0,
-        );
-        return;
+      // Очищаем очередь уже найденных AssetEntity.
+      _matchedAssetQueue.clear();
+
+      // Начинаем сканирование галереи с самого начала.
+      _photoScanOffset = 0;
+
+      // Снова разрешаем поиск по галерее.
+      _hasMorePhotos = true;
+
+      // По умолчанию показываем только непросмотренные фото.
+      _showViewedPhotos = false;
+
+      // Заполняем стартовый буфер.
+      await _fillPhotoBufferForMonth(currentYear, currentMonth);
+
+      // Если непросмотренных фото не нашли вообще,
+      // тогда включаем режим пересмотра и показываем уже просмотренные.
+      //
+      // Это аналог старой логики:
+      // если unviewedPhotos.isEmpty — показываем все monthPhotos.
+      if (_photoBuffer.isEmpty && !_hasMorePhotos) {
+        _showViewedPhotos = true;
+
+        _matchedAssetQueue.clear();
+        _photoScanOffset = 0;
+        _hasMorePhotos = true;
+
+        await _fillPhotoBufferForMonth(currentYear, currentMonth);
       }
 
-      final viewedService = ref.read(viewedPhotosServiceProvider);
-
-      // Фильтруем непросмотренные фото
-      final unviewedPhotos =
-          monthPhotos.where((photo) => !viewedService.isViewed(photo.id)).toList();
-
-      // Подсчитываем уже просмотренные фото
-      final alreadyViewed = monthPhotos.length - unviewedPhotos.length;
-
-      // Если есть непросмотренные - показываем только их, иначе показываем все
-      final photosToShow = unviewedPhotos.isNotEmpty
-          ? List<PhotoItem>.from(unviewedPhotos)
-          : List<PhotoItem>.from(monthPhotos);
-
-      // Если показываем все фото (пересмотр), сбрасываем счетчик просмотренных
-      final viewedCount = unviewedPhotos.isEmpty ? 0 : alreadyViewed;
+      final isFinished = _photoBuffer.isEmpty && _matchedAssetQueue.isEmpty && !_hasMorePhotos;
 
       state = state.copyWith(
         isLoading: false,
-        remainingPhotos: photosToShow,
-        currentIndex: 0,
-        totalPhotosInMonth: monthPhotos.length,
-        alreadyViewedCount: viewedCount,
-        currentPhotoIsFavorite: photosToShow.isNotEmpty ? photosToShow[0].isFavorite : false,
+        bufferedPhotos: List<PhotoItem>.from(_photoBuffer),
+        totalPhotosInMonth: totalMonthCount,
+        alreadyViewedCount: _showViewedPhotos ? 0 : viewedCount,
+        currentPhotoIsFavorite: _photoBuffer.isNotEmpty ? _photoBuffer.first.isFavorite : false,
+        isFinished: isFinished,
       );
     } catch (e) {
       state = state.copyWith(
@@ -112,44 +166,45 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
 
   /// Удалить текущее фото
   Future<void> deleteCurrentPhoto() async {
-    if (state.currentIndex >= state.remainingPhotos.length) {
+    if (_photoBuffer.isEmpty) {
       return;
     }
 
-    final photo = state.remainingPhotos[state.currentIndex];
+    final photo = _photoBuffer.first;
 
     // Отмечаем фото как просмотренное
     await _markPhotoAsViewed(photo);
 
-    // Сохраняем в кэш удаленных
+    // Сохраняем в кэш удалённых
     final deletedService = ref.read(deletedPhotosServiceProvider);
     await deletedService.markForDeletion(photo);
 
-    // Переходим к следующему фото
-    _nextPhoto();
+    // Удаляем текущую карточку из буфера и догружаем следующую
+    await _moveToNextPhoto();
   }
 
   /// Сохранить текущее фото и перейти к следующему
   Future<void> keepCurrentPhoto() async {
-    if (state.currentIndex >= state.remainingPhotos.length) {
+    if (_photoBuffer.isEmpty) {
       return;
     }
 
-    final photo = state.remainingPhotos[state.currentIndex];
+    final photo = _photoBuffer.first;
 
     // Отмечаем фото как просмотренное
     await _markPhotoAsViewed(photo);
 
-    // Переходим к следующему фото
-    _nextPhoto();
+    // Удаляем текущую карточку из буфера и догружаем следующую
+    await _moveToNextPhoto();
   }
 
   /// Переключить статус избранного для текущего фото
   Future<void> toggleFavorite() async {
-    if (state.currentIndex >= state.remainingPhotos.length) {
+    if (_photoBuffer.isEmpty) {
       return;
     }
-    final photo = state.remainingPhotos[state.currentIndex];
+
+    final photo = _photoBuffer.first;
     final newValue = !photo.asset.isFavorite;
 
     final success = await PhotoManager.plugin.favoriteAsset(
@@ -157,16 +212,23 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
       newValue,
     );
 
-    if (!success) return;
+    if (!success) {
+      return;
+    }
 
-    final updatedList = state.remainingPhotos.toList();
     final updatedAsset = await photo.asset.obtainForNewProperties();
-    updatedList[state.currentIndex] =
-        state.remainingPhotos[state.currentIndex].copyWith(asset: updatedAsset);
+
+    final updatedPhoto = photo.copyWith(
+      asset: updatedAsset,
+    );
+
+    // Обновляем внутренний буфер,
+    // чтобы при следующем обновлении state избранное не откатилось.
+    _photoBuffer[0] = updatedPhoto;
 
     state = state.copyWith(
       currentPhotoIsFavorite: newValue,
-      remainingPhotos: updatedList,
+      bufferedPhotos: List<PhotoItem>.from(_photoBuffer),
     );
   }
 
@@ -177,14 +239,19 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
     state = state.copyWith(isFullPictureShow: newValue);
   }
 
-  void _nextPhoto() {
-    final newIndex = state.currentIndex + 1;
-    final newFavoriteStatus = newIndex < state.remainingPhotos.length
-        ? state.remainingPhotos[newIndex].isFavorite
-        : false;
+  Future<void> _moveToNextPhoto() async {
+    if (_photoBuffer.isNotEmpty) {
+      _photoBuffer.removeAt(0);
+    }
+
+    await _fillPhotoBufferForMonth(currentYear, currentMonth);
+
+    final isFinished = _photoBuffer.isEmpty && _matchedAssetQueue.isEmpty && !_hasMorePhotos;
+
     state = state.copyWith(
-      currentIndex: newIndex,
-      currentPhotoIsFavorite: newFavoriteStatus,
+      bufferedPhotos: List<PhotoItem>.from(_photoBuffer),
+      currentPhotoIsFavorite: _photoBuffer.isNotEmpty ? _photoBuffer.first.isFavorite : false,
+      isFinished: isFinished,
     );
   }
 
@@ -192,70 +259,144 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
   Future<void> _markPhotoAsViewed(PhotoItem photo) async {
     final viewedService = ref.read(viewedPhotosServiceProvider);
 
-    // Проверяем, была ли фото уже просмотрена
+    // Проверяем, было ли фото уже просмотрено раньше.
     final wasAlreadyViewed = viewedService.isViewed(photo.id);
 
-    // Отмечаем фото как просмотренное
+    // Отмечаем фото как просмотренное.
     await viewedService.markAsViewed(
       photo.id,
       photo.createdDate.year,
       photo.createdDate.month,
     );
 
-    // Увеличиваем счетчик просмотренных только если фото не была просмотрена ранее
+    // Если фото раньше не было просмотрено,
+    // увеличиваем общий счётчик проверенных фото.
     if (!wasAlreadyViewed) {
       final service = ref.read(deletedPhotosServiceProvider);
       service.incrementCheckedPhotos();
     }
+
+    // Обновляем локальный счётчик просмотренных фото месяца.
+    state = state.copyWith(alreadyViewedCount: state.alreadyViewedCount + 1);
   }
 
-  /// Загрузить фото за конкретный месяц и год
-  Future<List<PhotoItem>> _loadPhotosForMonth(int year, int month) async {
-    final List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(
-      type: RequestType.image,
-      onlyAll: true,
-    );
-
-    if (albums.isEmpty) {
-      return [];
+  /// Добрать фото нужного месяца в буфер.
+  ///
+  /// Метод:
+  /// - не грузит весь месяц сразу;
+  /// - сканирует галерею батчами;
+  /// - не теряет подходящие фото из батча;
+  /// - пропускает уже просмотренные фото, если мы не в режиме пересмотра.
+  Future<void> _fillPhotoBufferForMonth(int year, int month) async {
+    if (_isLoadingPhotos) {
+      return;
     }
 
-    final AssetPathEntity recentAlbum = albums.first;
-    final int totalCount = await recentAlbum.assetCountAsync;
-
-    if (totalCount == 0) {
-      return [];
+    if (_photoBuffer.length >= _targetBufferSize) {
+      return;
     }
 
-    final List<AssetEntity> assets = await recentAlbum.getAssetListRange(
-      start: 0,
-      end: totalCount,
-    );
+    _isLoadingPhotos = true;
 
-    final List<PhotoItem> result = [];
+    try {
+      final viewedService = ref.read(viewedPhotosServiceProvider);
 
-    for (final asset in assets) {
-      final date = asset.createDateTime;
-      if (date.year != year || date.month != month) {
-        continue;
+      final albums = await PhotoManager.getAssetPathList(
+        type: RequestType.image,
+        onlyAll: true,
+      );
+
+      if (albums.isEmpty) {
+        _hasMorePhotos = false;
+        return;
       }
 
-      try {
-        final file = await asset.originFile;
-        if (file == null) {
+      final recentAlbum = albums.first;
+      final totalCount = await recentAlbum.assetCountAsync;
+
+      if (totalCount == 0) {
+        _hasMorePhotos = false;
+        return;
+      }
+
+      while (_photoBuffer.length < _targetBufferSize) {
+        // Сначала используем уже найденные подходящие AssetEntity.
+        if (_matchedAssetQueue.isNotEmpty) {
+          final asset = _matchedAssetQueue.removeAt(0);
+
+          final photoItem = await _assetToPhotoItem(asset);
+
+          if (photoItem != null) {
+            _photoBuffer.add(photoItem);
+          }
+
           continue;
         }
 
-        final photoItem = await PhotoItem.fromAsset(asset, file.path);
-        if (photoItem != null) {
-          result.add(photoItem);
+        // Если очередь пустая и вся галерея уже просканирована —
+        // новых фото больше нет.
+        if (!_hasMorePhotos || _photoScanOffset >= totalCount) {
+          _hasMorePhotos = false;
+          break;
         }
-      } catch (_) {
-        continue;
-      }
-    }
 
-    return result;
+        final end = (_photoScanOffset + _scanBatchSize > totalCount)
+            ? totalCount
+            : _photoScanOffset + _scanBatchSize;
+
+        // Берём только небольшой кусок галереи.
+        final assets = await recentAlbum.getAssetListRange(
+          start: _photoScanOffset,
+          end: end,
+        );
+
+        // Сдвигаем offset, чтобы следующий батч начался дальше.
+        _photoScanOffset = end;
+
+        for (final asset in assets) {
+          final date = asset.createDateTime;
+
+          // Пропускаем фото не из нужного месяца.
+          if (date.year != year || date.month != month) {
+            continue;
+          }
+
+          final isViewed = viewedService.isViewed(asset.id);
+
+          // Если фото уже просмотрено и мы НЕ в режиме пересмотра —
+          // не добавляем его в очередь показа.
+          if (isViewed && !_showViewedPhotos) {
+            continue;
+          }
+
+          // Все подходящие фото складываем в очередь,
+          // чтобы не потерять их внутри батча.
+          _matchedAssetQueue.add(asset);
+        }
+
+        if (_photoScanOffset >= totalCount) {
+          _hasMorePhotos = false;
+        }
+      }
+    } finally {
+      _isLoadingPhotos = false;
+    }
+  }
+
+  /// Превращает AssetEntity в PhotoItem только тогда,
+  /// когда фото реально нужно показать в свайпе.
+  Future<PhotoItem?> _assetToPhotoItem(AssetEntity asset) async {
+    try {
+      final file = await asset.originFile;
+
+      if (file == null) {
+        return null;
+      }
+
+      return await PhotoItem.fromAsset(asset, file.path);
+    } catch (_) {
+      return null;
+    }
   }
 }
 
@@ -263,6 +404,10 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
 final photoSwipeProvider = StateNotifierProvider.autoDispose
     .family<PhotoSwipeNotifier, PhotoSwipeState, (int year, int month)>(
   (ref, params) {
-    return PhotoSwipeNotifier(ref);
+    return PhotoSwipeNotifier(
+      ref,
+      currentYear: params.$1,
+      currentMonth: params.$2,
+    );
   },
 );
