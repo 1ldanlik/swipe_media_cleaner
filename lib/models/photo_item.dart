@@ -9,6 +9,7 @@ class PhotoItem {
   final DateTime createdDate;
   final int size; // размер в байтах
   final AssetEntity asset;
+  final bool isFavorite;
 
   PhotoItem({
     required this.id,
@@ -16,7 +17,26 @@ class PhotoItem {
     required this.createdDate,
     required this.size,
     required this.asset,
+    required this.isFavorite,
   });
+
+  PhotoItem copyWith({
+    String? id,
+    String? path,
+    DateTime? createdDate,
+    int? size,
+    AssetEntity? asset,
+    bool? isFavorite,
+  }) {
+    return PhotoItem(
+      id: id ?? this.id,
+      path: path ?? this.path,
+      createdDate: createdDate ?? this.createdDate,
+      size: size ?? this.size,
+      asset: asset ?? this.asset,
+      isFavorite: isFavorite ?? this.isFavorite,
+    );
+  }
 
   static Future<PhotoItem?> fromAsset(AssetEntity asset, String path) async {
     try {
@@ -36,6 +56,7 @@ class PhotoItem {
         createdDate: asset.createDateTime,
         size: fileSize,
         asset: asset,
+        isFavorite: asset.isFavorite,
       );
     } catch (e) {
       debugPrint('❌ Ошибка создания PhotoItem: $e');
