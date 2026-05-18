@@ -70,6 +70,8 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
       totalPhotosInMonth: state.totalPhotosInMonth,
       remainingPhotos: state.remainingPhotos,
       currentPhotoIsFavorite: state.currentPhotoIsFavorite,
+      isFullPictureShow: state.isFullPictureShow,
+      onFullPictureShowToggle: () => notifier.toggleFullPicture(),
       onDelete: () => notifier.deleteCurrentPhoto(),
       onKeep: () => notifier.keepCurrentPhoto(),
       onToggleFavorite: () => notifier.toggleFavorite(),
@@ -158,6 +160,8 @@ class _MainScaffold extends StatelessWidget {
   final int totalPhotosInMonth;
   final List<PhotoItem> remainingPhotos;
   final bool currentPhotoIsFavorite;
+  final bool isFullPictureShow;
+  final VoidCallback onFullPictureShowToggle;
   final VoidCallback onDelete;
   final VoidCallback onKeep;
   final VoidCallback onToggleFavorite;
@@ -170,6 +174,8 @@ class _MainScaffold extends StatelessWidget {
     required this.totalPhotosInMonth,
     required this.remainingPhotos,
     required this.currentPhotoIsFavorite,
+    required this.isFullPictureShow,
+    required this.onFullPictureShowToggle,
     required this.onDelete,
     required this.onKeep,
     required this.onToggleFavorite,
@@ -191,6 +197,14 @@ class _MainScaffold extends StatelessWidget {
           style: const TextStyle(fontSize: 24),
         ),
         actions: [
+          IconButton(
+            onPressed: onFullPictureShowToggle,
+            icon: Icon(
+              isFullPictureShow ? Icons.zoom_out_map_rounded : Icons.zoom_in_map_rounded,
+              color: AppColors.black,
+              size: 28,
+            ),
+          ),
           if (currentIndex < remainingPhotos.length)
             IconButton(
               onPressed: onToggleFavorite,
@@ -229,6 +243,7 @@ class _MainScaffold extends StatelessWidget {
               photo: remainingPhotos[currentIndex],
               onSwipeLeft: onDelete,
               onSwipeRight: onKeep,
+              isFullPictureShow: isFullPictureShow,
             )
           : Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
