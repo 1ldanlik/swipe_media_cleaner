@@ -39,7 +39,11 @@ class MonthCard extends ConsumerWidget {
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => PhotoSwipeScreen(monthGroup: monthGroup),
+              builder: (context) => PhotoSwipeScreen(
+                monthGroup: monthGroup,
+                viewedCount: viewedCount,
+                totalMonthCount: monthGroup.photoCount,
+              ),
             ),
           );
         },
