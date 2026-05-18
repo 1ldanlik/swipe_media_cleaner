@@ -8,12 +8,14 @@ class SwipeablePhotoCard extends StatefulWidget {
   final PhotoItem photo;
   final VoidCallback onSwipeLeft;
   final VoidCallback onSwipeRight;
+  final bool isFullPictureShow;
 
   const SwipeablePhotoCard({
     super.key,
     required this.photo,
     required this.onSwipeLeft,
     required this.onSwipeRight,
+    required this.isFullPictureShow,
   });
 
   @override
@@ -232,7 +234,7 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
                             // Основное изображение
                             Image.file(
                               File(widget.photo.path),
-                              fit: BoxFit.cover,
+                              fit: widget.isFullPictureShow ? BoxFit.contain : BoxFit.cover,
                               width: double.infinity,
                               height: double.infinity,
                               errorBuilder: (context, error, stackTrace) {

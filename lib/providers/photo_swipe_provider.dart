@@ -13,6 +13,7 @@ class PhotoSwipeState {
   final int totalPhotosInMonth;
   final int alreadyViewedCount;
   final bool currentPhotoIsFavorite;
+  final bool isFullPictureShow;
 
   const PhotoSwipeState({
     this.remainingPhotos = const [],
@@ -22,6 +23,7 @@ class PhotoSwipeState {
     this.totalPhotosInMonth = 0,
     this.alreadyViewedCount = 0,
     this.currentPhotoIsFavorite = false,
+    this.isFullPictureShow = false,
   });
 
   PhotoSwipeState copyWith({
@@ -32,6 +34,7 @@ class PhotoSwipeState {
     int? totalPhotosInMonth,
     int? alreadyViewedCount,
     bool? currentPhotoIsFavorite,
+    bool? isFullPictureShow,
   }) {
     return PhotoSwipeState(
       remainingPhotos: remainingPhotos ?? this.remainingPhotos,
@@ -41,6 +44,7 @@ class PhotoSwipeState {
       totalPhotosInMonth: totalPhotosInMonth ?? this.totalPhotosInMonth,
       alreadyViewedCount: alreadyViewedCount ?? this.alreadyViewedCount,
       currentPhotoIsFavorite: currentPhotoIsFavorite ?? this.currentPhotoIsFavorite,
+      isFullPictureShow: isFullPictureShow ?? this.isFullPictureShow,
     );
   }
 }
@@ -164,6 +168,13 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
       currentPhotoIsFavorite: newValue,
       remainingPhotos: updatedList,
     );
+  }
+
+  /// Переключить статус отображения картинок.
+  Future<void> toggleFullPicture() async {
+    final newValue = !state.isFullPictureShow;
+
+    state = state.copyWith(isFullPictureShow: newValue);
   }
 
   void _nextPhoto() {

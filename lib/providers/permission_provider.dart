@@ -21,6 +21,22 @@ final photoPermissionProvider = FutureProvider<PermissionStatus>((ref) async {
 final requestPermissionProvider = FutureProvider.family<bool, void>((ref, _) async {
   debugPrint('📱 Запрашиваем разрешение на доступ к фото...');
 
+  final currentStatus = await Permission.photos.status;
+
+  debugPrint('📱 Текущий Permission.photos status: $currentStatus');
+
+  if (currentStatus.isGranted || currentStatus.isLimited) {
+    ref.invalidate(photoPermissionProvider);
+    return true;
+  }
+
+  if (currentStatus.isPermanentlyDenied || currentStatus.isRestricted) {
+    debugPrint('❌ Доступ заблокирован, открываем настройки');
+    await openAppSettings();
+    ref.invalidate(photoPermissionProvider);
+    return false;
+  }
+
   final status = await Permission.photos.request();
 
   debugPrint('📱 Результат запроса Permission.photos: $status');
@@ -31,20 +47,14 @@ final requestPermissionProvider = FutureProvider.family<bool, void>((ref, _) asy
 
   ref.invalidate(photoPermissionProvider);
 
-  if (status.isGranted) {
-    debugPrint('✅ Полный доступ к фото получен');
+  if (status.isGranted || status.isLimited) {
+    debugPrint('✅ Доступ к фото получен');
     return true;
   }
 
-  if (status.isLimited) {
-    debugPrint('⚠️ Ограниченный доступ к фото получен');
-    return true;
-  }
-
-  if (status.isDenied || status.isPermanentlyDenied || status.isRestricted) {
-    debugPrint('❌ Доступ запрещён, открываем настройки');
+  if (status.isPermanentlyDenied || status.isRestricted) {
+    debugPrint('❌ Доступ запрещён навсегда, открываем настройки');
     await openAppSettings();
-    return false;
   }
 
   return false;
