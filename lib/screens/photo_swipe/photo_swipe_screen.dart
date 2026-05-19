@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:swipe_media_cleaner/screens/photo_swipe/widgets/options_menu.dart';
 import '../../models/month_group.dart';
 import '../../models/photo_item.dart';
 import '../../providers/photo_swipe_provider.dart';
@@ -200,33 +201,14 @@ class _MainScaffold extends StatelessWidget {
         actions: isFinished
             ? null
             : [
-                IconButton(
-                  onPressed: onFullPictureShowToggle,
-                  icon: Icon(
-                    isFullPictureShow ? Icons.zoom_out_map_rounded : Icons.zoom_in_map_rounded,
-                    color: AppColors.black,
-                    size: 28,
-                  ),
-                ),
-                if (!isFinished)
-                  IconButton(
-                    onPressed: onToggleFavorite,
-                    icon: Icon(
-                      currentPhotoIsFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: currentPhotoIsFavorite ? AppColors.favoriteRed : AppColors.greyMedium,
-                      size: 28,
-                    ),
-                  ),
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 16),
-                    child: Text(
-                      '${alreadyViewedCount + 1} / $totalPhotosInMonth',
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.black,
-                      ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 16),
+                  child: Text(
+                    '${alreadyViewedCount + 1} / $totalPhotosInMonth',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.black,
                     ),
                   ),
                 ),
@@ -257,6 +239,17 @@ class _MainScaffold extends StatelessWidget {
                   onSwipeLeft: onDelete,
                   onSwipeRight: onKeep,
                   isFullPictureShow: isFullPictureShow,
+                ),
+                Positioned(
+                  right: 8,
+                  bottom: MediaQuery.of(context).size.height * 0.1,
+                  child: OptionsMenu(
+                    onFullPictureShowToggle: onFullPictureShowToggle,
+                    isFullPictureShow: isFullPictureShow,
+                    isFinished: isFinished,
+                    currentPhotoIsFavorite: currentPhotoIsFavorite,
+                    onToggleFavorite: onToggleFavorite,
+                  ),
                 ),
               ],
             )
