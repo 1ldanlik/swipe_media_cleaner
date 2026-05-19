@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:share_plus/share_plus.dart';
 import '../models/photo_item.dart';
 import 'deleted_photos_provider.dart';
 import 'viewed_photos_provider.dart';
@@ -237,6 +238,18 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
     final newValue = !state.isFullPictureShow;
 
     state = state.copyWith(isFullPictureShow: newValue);
+  }
+
+  Future<void> shareAssetPhoto() async {
+    final file = await _photoBuffer.first.asset.originFile;
+
+    if (file == null) {
+      return;
+    }
+
+    await Share.shareXFiles(
+      [XFile(file.path)],
+    );
   }
 
   Future<void> _moveToNextPhoto() async {
