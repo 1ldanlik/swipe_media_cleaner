@@ -7,6 +7,7 @@ class OptionsMenu extends StatefulWidget {
   final bool currentPhotoIsFavorite;
   final VoidCallback onFullPictureShowToggle;
   final VoidCallback onToggleFavorite;
+  final VoidCallback onShareTap;
 
   const OptionsMenu({
     super.key,
@@ -15,6 +16,7 @@ class OptionsMenu extends StatefulWidget {
     required this.isFinished,
     required this.currentPhotoIsFavorite,
     required this.onToggleFavorite,
+    required this.onShareTap,
   });
 
   @override
@@ -56,19 +58,26 @@ class _OptionsMenuState extends State<OptionsMenu> with SingleTickerProviderStat
           onPressed: widget.onFullPictureShowToggle,
           icon: Icon(
             widget.isFullPictureShow ? Icons.zoom_out_map_rounded : Icons.zoom_in_map_rounded,
-            color: AppColors.black,
+            color: AppColors.greyMedium,
             size: 28,
           ),
         ),
-        if (!widget.isFinished)
-          IconButton(
-            onPressed: widget.onToggleFavorite,
-            icon: Icon(
-              widget.currentPhotoIsFavorite ? Icons.favorite : Icons.favorite_border,
-              color: widget.currentPhotoIsFavorite ? AppColors.favoriteRed : AppColors.greyMedium,
-              size: 28,
-            ),
+        IconButton(
+          onPressed: widget.onShareTap,
+          icon: const Icon(
+            Icons.ios_share_rounded,
+            color: AppColors.greyMedium,
+            size: 28,
           ),
+        ),
+        IconButton(
+          onPressed: widget.onToggleFavorite,
+          icon: Icon(
+            widget.currentPhotoIsFavorite ? Icons.favorite : Icons.favorite_border,
+            color: widget.currentPhotoIsFavorite ? AppColors.favoriteRed : AppColors.greyMedium,
+            size: 28,
+          ),
+        ),
       ],
     );
   }

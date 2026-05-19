@@ -77,6 +77,7 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
       onDelete: () => notifier.deleteCurrentPhoto(),
       onKeep: () => notifier.keepCurrentPhoto(),
       onToggleFavorite: () => notifier.toggleFavorite(),
+      onShareTap: () => notifier.shareAssetPhoto(),
     );
   }
 }
@@ -167,6 +168,7 @@ class _MainScaffold extends StatelessWidget {
   final VoidCallback onDelete;
   final VoidCallback onKeep;
   final VoidCallback onToggleFavorite;
+  final VoidCallback onShareTap;
 
   const _MainScaffold({
     required this.monthName,
@@ -181,6 +183,7 @@ class _MainScaffold extends StatelessWidget {
     required this.onDelete,
     required this.onKeep,
     required this.onToggleFavorite,
+    required this.onShareTap,
   });
 
   @override
@@ -249,6 +252,7 @@ class _MainScaffold extends StatelessWidget {
                     isFinished: isFinished,
                     currentPhotoIsFavorite: currentPhotoIsFavorite,
                     onToggleFavorite: onToggleFavorite,
+                    onShareTap: onShareTap,
                   ),
                 ),
               ],
