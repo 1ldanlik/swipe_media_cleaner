@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:swipe_media_cleaner/screens/photo_swipe/widgets/options_menu.dart';
+import 'package:swipe_media_cleaner/utils/file_size_formatter.dart';
 import '../../models/month_group.dart';
 import '../../models/photo_item.dart';
 import '../../providers/photo_swipe_provider.dart';
@@ -226,33 +227,50 @@ class _MainScaffold extends StatelessWidget {
         ),
       ),
       body: !isFinished
-          ? Stack(
+          ? Column(
               children: [
-                if (bufferedPhotos.length > 1)
-                  SwipeablePhotoCard(
-                    key: ValueKey(bufferedPhotos[1].id),
-                    photo: bufferedPhotos[1],
-                    onSwipeLeft: onDelete,
-                    onSwipeRight: onKeep,
-                    isFullPictureShow: isFullPictureShow,
+                Expanded(
+                  child: Stack(
+                    children: [
+                      if (bufferedPhotos.length > 1)
+                        SwipeablePhotoCard(
+                          key: ValueKey(bufferedPhotos[1].id),
+                          photo: bufferedPhotos[1],
+                          onSwipeLeft: onDelete,
+                          onSwipeRight: onKeep,
+                          isFullPictureShow: isFullPictureShow,
+                        ),
+                      SwipeablePhotoCard(
+                        key: ValueKey(bufferedPhotos.first.id),
+                        photo: bufferedPhotos.first,
+                        onSwipeLeft: onDelete,
+                        onSwipeRight: onKeep,
+                        isFullPictureShow: isFullPictureShow,
+                      ),
+                      Positioned(
+                        right: 8,
+                        bottom: MediaQuery.of(context).size.height * 0.1,
+                        child: OptionsMenu(
+                          onFullPictureShowToggle: onFullPictureShowToggle,
+                          isFullPictureShow: isFullPictureShow,
+                          isFinished: isFinished,
+                          currentPhotoIsFavorite: currentPhotoIsFavorite,
+                          onToggleFavorite: onToggleFavorite,
+                          onShareTap: onShareTap,
+                        ),
+                      ),
+                    ],
                   ),
-                SwipeablePhotoCard(
-                  key: ValueKey(bufferedPhotos.first.id),
-                  photo: bufferedPhotos.first,
-                  onSwipeLeft: onDelete,
-                  onSwipeRight: onKeep,
-                  isFullPictureShow: isFullPictureShow,
                 ),
-                Positioned(
-                  right: 8,
-                  bottom: MediaQuery.of(context).size.height * 0.1,
-                  child: OptionsMenu(
-                    onFullPictureShowToggle: onFullPictureShowToggle,
-                    isFullPictureShow: isFullPictureShow,
-                    isFinished: isFinished,
-                    currentPhotoIsFavorite: currentPhotoIsFavorite,
-                    onToggleFavorite: onToggleFavorite,
-                    onShareTap: onShareTap,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    FileSizeFormatter.formatBytes(bufferedPhotos.first.size),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.greyMedium,
+                    ),
                   ),
                 ),
               ],
