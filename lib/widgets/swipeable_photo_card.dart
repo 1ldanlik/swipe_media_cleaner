@@ -225,7 +225,11 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
                     panEnabled: isZoomMode,
                     scaleEnabled: true,
                     child: Container(
-                      margin: const EdgeInsets.all(20),
+                      margin: const EdgeInsets.only(
+                        top: 20,
+                        right: 20,
+                        left: 20,
+                      ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(32),
                         child: Stack(

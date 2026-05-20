@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:swipe_media_cleaner/screens/home/widgets/month_photo_size_text.dart';
 import '../models/month_group.dart';
 import '../models/photo_item.dart';
 import '../screens/photo_swipe/photo_swipe_screen.dart';
@@ -83,13 +84,22 @@ class MonthCard extends ConsumerWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          '${monthGroup.photoCount} фото • ${monthGroup.formattedSize}',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.greyMedium,
-                          ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '${monthGroup.photoCount} фото • ',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.greyMedium,
+                              ),
+                            ),
+                            MonthPhotoSizeText(
+                              year: monthGroup.year,
+                              month: monthGroup.month,
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 12),
                         // Превью фотографий
