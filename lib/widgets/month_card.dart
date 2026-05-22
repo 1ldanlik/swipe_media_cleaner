@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:swipe_media_cleaner/providers/month_groups_by_year_provider.dart';
+import 'package:swipe_media_cleaner/screens/home/home_screen_notifier.dart';
 import 'package:swipe_media_cleaner/screens/home/widgets/month_photo_size_text.dart';
 import '../models/month_group.dart';
 import '../models/photo_item.dart';
@@ -37,8 +39,8 @@ class MonthCard extends ConsumerWidget {
         ),
       ),
       child: InkWell(
-        onTap: () {
-          Navigator.of(context).push(
+        onTap: () async {
+          await Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => PhotoSwipeScreen(
                 monthGroup: monthGroup,
@@ -47,6 +49,9 @@ class MonthCard extends ConsumerWidget {
               ),
             ),
           );
+
+          final homeState = ref.watch(homeScreenNotifierProvider);
+          ref.invalidate(monthGroupsByYearProvider(homeState.selectedYear));
         },
         borderRadius: BorderRadius.circular(16),
         child: Padding(
