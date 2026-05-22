@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../models/photo_item.dart';
 import '../models/card_interaction_mode.dart';
@@ -235,7 +236,25 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
-                            // Основное изображение
+                            if (widget.isFullPictureShow)
+                              ImageFiltered(
+                                imageFilter: ImageFilter.blur(
+                                  sigmaX: 10.0,
+                                  sigmaY: 10.0,
+                                ),
+                                child: Image.file(
+                                  File(widget.photo.path),
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      color: AppColors.greyLight,
+                                    );
+                                  },
+                                ),
+                              ),
+
                             Image.file(
                               File(widget.photo.path),
                               fit: widget.isFullPictureShow ? BoxFit.contain : BoxFit.cover,
