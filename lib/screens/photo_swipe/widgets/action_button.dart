@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ActionButton extends StatelessWidget {
   final Color color;
   final IconData icon;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final Color? iconColor;
 
   const ActionButton({

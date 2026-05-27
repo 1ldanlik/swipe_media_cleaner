@@ -15,6 +15,7 @@ class PhotoSwipeState {
   final bool currentPhotoIsFavorite;
   final bool isFullPictureShow;
   final bool isFinished;
+  final bool canUndoLastAction;
 
   const PhotoSwipeState({
     this.bufferedPhotos = const [],
@@ -25,6 +26,7 @@ class PhotoSwipeState {
     this.currentPhotoIsFavorite = false,
     this.isFullPictureShow = false,
     this.isFinished = false,
+    this.canUndoLastAction = false,
   });
 
   PhotoSwipeState copyWith({
@@ -36,6 +38,7 @@ class PhotoSwipeState {
     bool? currentPhotoIsFavorite,
     bool? isFullPictureShow,
     bool? isFinished,
+    bool? canUndoLastAction,
   }) {
     return PhotoSwipeState(
       bufferedPhotos: bufferedPhotos ?? this.bufferedPhotos,
@@ -47,6 +50,7 @@ class PhotoSwipeState {
       currentPhotoIsFavorite: currentPhotoIsFavorite ?? this.currentPhotoIsFavorite,
       isFullPictureShow: isFullPictureShow ?? this.isFullPictureShow,
       isFinished: isFinished ?? this.isFinished,
+      canUndoLastAction: canUndoLastAction ?? this.canUndoLastAction,
     );
   }
 }
@@ -93,6 +97,8 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
 
   /// Сколько AssetEntity проверяем за один батч.
   static const int _scanBatchSize = 80;
+
+  final List<PhotoItem> _listToUndoPhotos = [];
 
   /// Загрузить стартовый буфер фото месяца.
   ///
@@ -199,6 +205,39 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
     await _moveToNextPhoto();
   }
 
+  /// Отменить последнее действие.
+  Future<void> undoLastAction() async {
+    if (_listToUndoPhotos.isEmpty) return;
+
+    final lastPhoto = _listToUndoPhotos.last;
+    final deletedService = ref.read(deletedPhotosServiceProvider);
+    final isMarkedForDeletion = deletedService.isMarkedForDeletion(lastPhoto.id);
+
+    // Была ли картинка добавлена в корзину.
+    if (isMarkedForDeletion) {
+      // Убираем фотку из корзины.
+      await deletedService.restore(lastPhoto.id);
+    }
+
+    // Убираем картинку из просмотренных.
+    final viewedService = ref.read(viewedPhotosServiceProvider);
+    await viewedService.cleanupPhotos([lastPhoto.id]);
+
+    // логика локального обновления, без исползования лишних сложных методов.
+    final photo = _listToUndoPhotos.removeLast();
+    _photoBuffer.insert(0, photo);
+    if (_photoBuffer.length > _targetBufferSize) {
+      _matchedAssetQueue.insert(0, _photoBuffer.last.asset);
+    }
+
+    // обновление состояния с уменьшением счетчика просмотренных, т.к. отменяем последнее действие.
+    state = state.copyWith(
+      bufferedPhotos: _photoBuffer,
+      alreadyViewedCount: state.alreadyViewedCount - 1,
+      canUndoLastAction: _listToUndoPhotos.isNotEmpty,
+    );
+  }
+
   /// Переключить статус избранного для текущего фото
   Future<void> toggleFavorite() async {
     if (_photoBuffer.isEmpty) {
@@ -254,6 +293,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
 
   Future<void> _moveToNextPhoto() async {
     if (_photoBuffer.isNotEmpty) {
+      _listToUndoPhotos.add(_photoBuffer[0]);
       _photoBuffer.removeAt(0);
     }
 
@@ -265,6 +305,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
       bufferedPhotos: List<PhotoItem>.from(_photoBuffer),
       currentPhotoIsFavorite: _photoBuffer.isNotEmpty ? _photoBuffer.first.isFavorite : false,
       isFinished: isFinished,
+      canUndoLastAction: _listToUndoPhotos.isNotEmpty,
     );
   }
 

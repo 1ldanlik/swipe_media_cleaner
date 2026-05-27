@@ -100,6 +100,12 @@ class AppColors {
 
   // === Цвета для виджетов ===
 
+  /// Фон кнопки отмены действия с фото
+  static const Color undoButtonBackground = Color(0xFFE3F2FD);
+
+  /// Цвет текста/иконки кнопки отмены действия с фото
+  static const Color undoButtonForeground = Color(0xFF1565C0);
+
   /// Цвет иконки broken_image
   static const Color brokenImageIcon = Colors.grey;
 

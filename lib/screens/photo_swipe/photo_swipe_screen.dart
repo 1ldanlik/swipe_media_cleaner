@@ -74,11 +74,15 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
       currentPhotoIsFavorite: state.currentPhotoIsFavorite,
       isFullPictureShow: state.isFullPictureShow,
       isFinished: state.isFinished,
+      canUndoLastAction: state.canUndoLastAction,
       onFullPictureShowToggle: () => notifier.toggleFullPicture(),
       onDelete: () => notifier.deleteCurrentPhoto(),
       onKeep: () => notifier.keepCurrentPhoto(),
       onToggleFavorite: () => notifier.toggleFavorite(),
       onShareTap: () => notifier.shareAssetPhoto(),
+      onUndoTap: () {
+        ref.read(photoSwipeProvider(_providerParams).notifier).undoLastAction();
+      },
     );
   }
 }
@@ -165,11 +169,13 @@ class _MainScaffold extends StatelessWidget {
   final bool currentPhotoIsFavorite;
   final bool isFullPictureShow;
   final bool isFinished;
+  final bool canUndoLastAction;
   final VoidCallback onFullPictureShowToggle;
   final VoidCallback onDelete;
   final VoidCallback onKeep;
   final VoidCallback onToggleFavorite;
   final VoidCallback onShareTap;
+  final VoidCallback onUndoTap;
 
   const _MainScaffold({
     required this.monthName,
@@ -180,11 +186,13 @@ class _MainScaffold extends StatelessWidget {
     required this.currentPhotoIsFavorite,
     required this.isFullPictureShow,
     required this.isFinished,
+    required this.canUndoLastAction,
     required this.onFullPictureShowToggle,
     required this.onDelete,
     required this.onKeep,
     required this.onToggleFavorite,
     required this.onShareTap,
+    required this.onUndoTap,
   });
 
   @override
@@ -311,6 +319,7 @@ class _MainScaffold extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
+                    flex: 2,
                     child: ActionButton(
                       color: AppColors.deleteButtonBackground,
                       iconColor: AppColors.deleteButtonIcon,
@@ -318,8 +327,18 @@ class _MainScaffold extends StatelessWidget {
                       onPressed: onDelete,
                     ),
                   ),
-                  const SizedBox(width: 20),
+                  const SizedBox(width: 10),
+                  Flexible(
+                    child: ActionButton(
+                      color: AppColors.undoButtonBackground,
+                      iconColor: AppColors.undoButtonForeground,
+                      icon: Icons.undo_rounded,
+                      onPressed: canUndoLastAction ? onUndoTap : null,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
                   Expanded(
+                    flex: 2,
                     child: ActionButton(
                       color: AppColors.mainButtonBackground,
                       icon: Icons.check,
