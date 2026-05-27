@@ -75,11 +75,11 @@ class ViewedPhotosService {
   }
 
   /// Очистить просмотренные фото, которых больше нет на устройстве
-  Future<void> cleanupMissingPhotos(List<String> existingPhotoIds) async {
+  Future<void> cleanupPhotos(List<String> existingPhotoIds) async {
     final toDelete = <dynamic>[];
 
     for (var photo in _box.values) {
-      if (!existingPhotoIds.contains(photo.id)) {
+      if (existingPhotoIds.contains(photo.id)) {
         toDelete.add(photo.key);
       }
     }
