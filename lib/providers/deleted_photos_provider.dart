@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../models/deleted_photo.dart';
 import '../models/photo_item.dart';
 import '../models/app_statistics.dart';
@@ -47,6 +48,13 @@ final statisticsProvider = StreamProvider.autoDispose<AppStatistics>((ref) {
       yield getStats();
     }
   });
+});
+
+/// Провайдер информации о версии и метаданных приложения.
+final appVersionProvider = FutureProvider<String>((ref) async {
+  final packageInfo = await PackageInfo.fromPlatform();
+
+  return packageInfo.version;
 });
 
 /// Сервис для работы с удалёнными фото

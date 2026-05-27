@@ -58,6 +58,9 @@ class StatisticsScreen extends ConsumerWidget {
                     title: 'Освобождено памяти',
                     value: stats.formattedFreedSpace,
                   ),
+                  const Spacer(),
+                  const Center(child: _AppVersionText()),
+                  const SizedBox(height: 8),
                 ],
               ),
             );
@@ -67,6 +70,30 @@ class StatisticsScreen extends ConsumerWidget {
             child: Text('Ошибка: $error'),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _AppVersionText extends ConsumerWidget {
+  const _AppVersionText();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final versionAsync = ref.watch(appVersionProvider);
+
+    final versionText = versionAsync.when(
+      data: (version) => 'Версия $version',
+      loading: () => '-',
+      error: (_, __) => '-',
+    );
+
+    return Text(
+      versionText,
+      textAlign: TextAlign.end,
+      style: const TextStyle(
+        fontSize: 14,
+        color: AppColors.greyMedium,
       ),
     );
   }
