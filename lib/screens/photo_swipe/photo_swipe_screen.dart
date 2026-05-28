@@ -43,6 +43,13 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
   }
 
   @override
+  void didUpdateWidget(covariant PhotoSwipeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    ref.read(photoSwipeProvider(_providerParams).notifier).removeDeletedPhotos();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final state = ref.watch(photoSwipeProvider(_providerParams));
     final notifier = ref.read(photoSwipeProvider(_providerParams).notifier);

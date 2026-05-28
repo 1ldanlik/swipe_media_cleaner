@@ -98,7 +98,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
   /// Сколько AssetEntity проверяем за один батч.
   static const int _scanBatchSize = 80;
 
-  final List<PhotoItem> _listToUndoPhotos = [];
+  List<PhotoItem> _listToUndoPhotos = [];
 
   /// Загрузить стартовый буфер фото месяца.
   ///
@@ -171,6 +171,32 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
     }
   }
 
+  /// Актуализация списка фоток, для которых можно отменить действие.
+  ///
+  /// Метод используется для актуализации списка после перехода из другого таба.
+  /// Т.к. мы могли удалить фотки на экране корзины и перейти обратно на экран свайпа.
+  Future<void> removeDeletedPhotos() async {
+    final existingPhotos = <PhotoItem>[];
+
+    for (final element in _listToUndoPhotos) {
+      final exists = await element.asset.exists;
+
+      if (exists) {
+        existingPhotos.add(element);
+      }
+    }
+
+    final deletePhotosQty = _listToUndoPhotos.length - existingPhotos.length;
+    _listToUndoPhotos = existingPhotos;
+
+    state = state.copyWith(
+      alreadyViewedCount: state.alreadyViewedCount - deletePhotosQty,
+      totalPhotosInMonth: state.totalPhotosInMonth - deletePhotosQty,
+      canUndoLastAction: _listToUndoPhotos.isNotEmpty,
+      currentPhotoIsFavorite: _photoBuffer.isNotEmpty ? _photoBuffer.first.isFavorite : false,
+    );
+  }
+
   /// Удалить текущее фото
   Future<void> deleteCurrentPhoto() async {
     if (_photoBuffer.isEmpty) {
@@ -235,6 +261,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
       bufferedPhotos: _photoBuffer,
       alreadyViewedCount: state.alreadyViewedCount - 1,
       canUndoLastAction: _listToUndoPhotos.isNotEmpty,
+      currentPhotoIsFavorite: _photoBuffer.isNotEmpty ? _photoBuffer.first.isFavorite : false,
     );
   }
 
