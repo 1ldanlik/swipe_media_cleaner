@@ -252,8 +252,11 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
     // логика локального обновления, без исползования лишних сложных методов.
     final photo = _listToUndoPhotos.removeLast();
     _photoBuffer.insert(0, photo);
+
+    // убираем и переносим лишнюю фотку из списка буффера.
     if (_photoBuffer.length > _targetBufferSize) {
       _matchedAssetQueue.insert(0, _photoBuffer.last.asset);
+      _photoBuffer.removeLast();
     }
 
     // обновление состояния с уменьшением счетчика просмотренных, т.к. отменяем последнее действие.
