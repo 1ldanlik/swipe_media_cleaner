@@ -1,0 +1,14 @@
+import 'package:swipe_media_cleaner/database/converters/millis_date_converter.dart';
+
+CREATE TABLE viewed_photos (
+  id TEXT NOT NULL PRIMARY KEY,
+  year INTEGER NOT NULL,
+  month INTEGER NOT NULL,
+  viewed_at INTEGER NOT NULL MAPPED BY `const MillisDateConverter()`
+) AS ViewedPhotoDB;
+
+CREATE INDEX viewed_photos_year_month_idx
+ON viewed_photos (year, month);
+
+CREATE INDEX viewed_photos_viewed_at_idx
+ON viewed_photos (viewed_at);

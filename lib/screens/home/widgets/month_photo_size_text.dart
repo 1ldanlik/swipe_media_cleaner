@@ -24,7 +24,7 @@ class _MonthPhotoSizeTextState extends ConsumerState<MonthPhotoSizeText> {
     super.initState();
 
     Future.microtask(() {
-      ref.read(homeScreenNotifierProvider.notifier).loadMonthPhotoSize(
+      ref.read(homeScreenProvider.notifier).loadMonthPhotoSize(
             year: widget.year,
             month: widget.month,
           );
@@ -33,7 +33,7 @@ class _MonthPhotoSizeTextState extends ConsumerState<MonthPhotoSizeText> {
 
   @override
   Widget build(BuildContext context) {
-    final homeState = ref.watch(homeScreenNotifierProvider);
+    final homeState = ref.watch(homeScreenProvider);
 
     final sizeBytes = homeState.monthPhotoSizes[widget.month];
     final isLoading = homeState.loadingSizeMonths.contains(widget.month);

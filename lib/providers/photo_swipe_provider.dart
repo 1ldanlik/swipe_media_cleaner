@@ -1,7 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:share_plus/share_plus.dart';
-import '../models/photo_item.dart';
+import 'package:swipe_media_cleaner/models/photo_item.dart';
 import 'deleted_photos_provider.dart';
 import 'viewed_photos_provider.dart';
 
@@ -209,7 +210,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
     await _markPhotoAsViewed(photo);
 
     // Сохраняем в кэш удалённых
-    final deletedService = ref.read(deletedPhotosServiceProvider);
+    final deletedService = ref.read(deletedPhotosControllerProvider);
     await deletedService.markForDeletion(photo);
 
     // Удаляем текущую карточку из буфера и догружаем следующую
@@ -236,8 +237,8 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
     if (_listToUndoPhotos.isEmpty) return;
 
     final lastPhoto = _listToUndoPhotos.last;
-    final deletedService = ref.read(deletedPhotosServiceProvider);
-    final isMarkedForDeletion = deletedService.isMarkedForDeletion(lastPhoto.id);
+    final deletedService = ref.read(deletedPhotosControllerProvider);
+    final isMarkedForDeletion = await deletedService.isMarkedForDeletion(lastPhoto.id);
 
     // Была ли картинка добавлена в корзину.
     if (isMarkedForDeletion) {
@@ -246,7 +247,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
     }
 
     // Убираем картинку из просмотренных.
-    final viewedService = ref.read(viewedPhotosServiceProvider);
+    final viewedService = ref.read(viewedPhotosControllerProvider);
     await viewedService.cleanupPhotos([lastPhoto.id]);
 
     // логика локального обновления, без исползования лишних сложных методов.
@@ -341,10 +342,10 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
 
   /// Отметить фото как просмотренное
   Future<void> _markPhotoAsViewed(PhotoItem photo) async {
-    final viewedService = ref.read(viewedPhotosServiceProvider);
+    final viewedService = ref.read(viewedPhotosControllerProvider);
 
     // Проверяем, было ли фото уже просмотрено раньше.
-    final wasAlreadyViewed = viewedService.isViewed(photo.id);
+    final wasAlreadyViewed = await viewedService.isViewed(photo.id);
 
     // Отмечаем фото как просмотренное.
     await viewedService.markAsViewed(
@@ -384,7 +385,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
     _isLoadingPhotos = true;
 
     try {
-      final viewedService = ref.read(viewedPhotosServiceProvider);
+      final viewedService = ref.read(viewedPhotosControllerProvider);
 
       // Начало нужного месяца.
       final startDate = DateTime(year, month);
@@ -459,7 +460,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
         _photoScanOffset = end;
 
         for (final asset in assets) {
-          final isViewed = viewedService.isViewed(asset.id);
+          final isViewed = await viewedService.isViewed(asset.id);
 
           // Если фото уже просмотрено и мы НЕ в режиме пересмотра —
           // не добавляем его в очередь показа.

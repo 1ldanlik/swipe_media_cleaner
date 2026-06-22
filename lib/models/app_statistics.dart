@@ -1,64 +1,44 @@
-import 'package:hive/hive.dart';
+/// Доменная модель статистики приложения.
+class AppStatistic {
+  final int id;
+  final int checkedPhotos;
+  final int deletedPhotos;
+  final int freedSpace;
 
-part 'app_statistics.g.dart';
-
-@HiveType(typeId: 1)
-class AppStatistics extends HiveObject {
-  @HiveField(0)
-  int checkedPhotos;
-
-  @HiveField(1)
-  int deletedPhotos;
-
-  @HiveField(2)
-  int freedSpace; // в байтах
-
-  AppStatistics({
-    this.checkedPhotos = 0,
-    this.deletedPhotos = 0,
-    this.freedSpace = 0,
+  const AppStatistic({
+    required this.id,
+    required this.checkedPhotos,
+    required this.deletedPhotos,
+    required this.freedSpace,
   });
 
-  /// Увеличить счетчик просмотренных фото
-  void incrementChecked() {
-    checkedPhotos++;
-    save();
+  AppStatistic copyWith({
+    int? id,
+    int? checkedPhotos,
+    int? deletedPhotos,
+    int? freedSpace,
+  }) {
+    return AppStatistic(
+      id: id ?? this.id,
+      checkedPhotos: checkedPhotos ?? this.checkedPhotos,
+      deletedPhotos: deletedPhotos ?? this.deletedPhotos,
+      freedSpace: freedSpace ?? this.freedSpace,
+    );
   }
 
-  /// Добавить удаленное фото
-  void addDeleted(int photoSize) {
-    deletedPhotos++;
-    freedSpace += photoSize;
-    save();
-  }
+  @override
+  int get hashCode => Object.hash(id, checkedPhotos, deletedPhotos, freedSpace);
 
-  /// Восстановить фото (уменьшить счетчики)
-  void restorePhoto(int photoSize) {
-    if (deletedPhotos > 0) {
-      deletedPhotos--;
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
     }
-    if (freedSpace >= photoSize) {
-      freedSpace -= photoSize;
-    }
-    save();
-  }
 
-  /// Сбросить статистику удаленных (после окончательного удаления)
-  void resetDeleted() {
-    deletedPhotos = 0;
-    freedSpace = 0;
-    save();
-  }
-
-  /// Форматированный размер освобожденной памяти
-  String get formattedFreedSpace {
-    if (freedSpace < 1024) return '$freedSpace B';
-    if (freedSpace < 1024 * 1024) {
-      return '${(freedSpace / 1024).toStringAsFixed(1)} KB';
-    }
-    if (freedSpace < 1024 * 1024 * 1024) {
-      return '${(freedSpace / (1024 * 1024)).toStringAsFixed(1)} MB';
-    }
-    return '${(freedSpace / (1024 * 1024 * 1024)).toStringAsFixed(2)} GB';
+    return other is AppStatistic &&
+        other.id == id &&
+        other.checkedPhotos == checkedPhotos &&
+        other.deletedPhotos == deletedPhotos &&
+        other.freedSpace == freedSpace;
   }
 }

@@ -1,22 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'models/deleted_photo.dart';
-import 'models/app_statistics.dart';
-import 'models/viewed_photo.dart';
 import 'screens/main_navigation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Инициализация Hive
-  await Hive.initFlutter();
-  Hive.registerAdapter(DeletedPhotoAdapter());
-  Hive.registerAdapter(AppStatisticsAdapter());
-  Hive.registerAdapter(ViewedPhotoAdapter());
-  await Hive.openBox<DeletedPhoto>('deleted_photos');
-  await Hive.openBox<AppStatistics>('statistics');
-  await Hive.openBox<ViewedPhoto>('viewedPhotos');
 
   runApp(
     const ProviderScope(
