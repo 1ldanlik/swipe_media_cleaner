@@ -1,27 +1,44 @@
-import 'package:hive/hive.dart';
-
-part 'viewed_photo.g.dart';
-
-@HiveType(typeId: 2)
-class ViewedPhoto extends HiveObject {
-  @HiveField(0)
+/// Доменная модель просмотренного фото.
+class ViewedPhoto {
   final String id;
-
-  @HiveField(1)
   final int year;
-
-  @HiveField(2)
   final int month;
-
-  @HiveField(3)
   final DateTime viewedAt;
 
-  ViewedPhoto({
+  const ViewedPhoto({
     required this.id,
     required this.year,
     required this.month,
     required this.viewedAt,
   });
 
-  String get monthKey => '$year-$month';
+  ViewedPhoto copyWith({
+    String? id,
+    int? year,
+    int? month,
+    DateTime? viewedAt,
+  }) {
+    return ViewedPhoto(
+      id: id ?? this.id,
+      year: year ?? this.year,
+      month: month ?? this.month,
+      viewedAt: viewedAt ?? this.viewedAt,
+    );
+  }
+
+  @override
+  int get hashCode => Object.hash(id, year, month, viewedAt);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+
+    return other is ViewedPhoto &&
+        other.id == id &&
+        other.year == year &&
+        other.month == month &&
+        other.viewedAt == viewedAt;
+  }
 }

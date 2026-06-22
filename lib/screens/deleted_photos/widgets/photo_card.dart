@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../../../models/deleted_photo.dart';
-import '../../../theme/app_colors.dart';
-import '../notifiers/deleted_photos_notifier.dart';
+import 'package:swipe_media_cleaner/models/deleted_photo.dart';
+import 'package:swipe_media_cleaner/screens/deleted_photos/notifiers/deleted_photos_notifier.dart';
+import 'package:swipe_media_cleaner/theme/app_colors.dart';
 
 class PhotoCard extends StatelessWidget {
-  final DeletedPhotosNotifier notifier;
+  final DeletedPhotosScreenController notifier;
   final DeletedPhoto photo;
   final bool isSelected;
 

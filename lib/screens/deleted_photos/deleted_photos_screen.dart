@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../models/deleted_photo.dart';
+import 'package:swipe_media_cleaner/models/deleted_photo.dart';
 import '../../providers/deleted_photos_provider.dart';
 import '../../theme/app_colors.dart';
 import 'notifiers/deleted_photos_notifier.dart';
@@ -13,8 +13,8 @@ class DeletedPhotosScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final screenState = ref.watch(deletedPhotosNotifierProvider);
-    final notifier = ref.read(deletedPhotosNotifierProvider.notifier);
+    final screenState = ref.watch(deletedPhotosScreenControllerProvider);
+    final notifier = ref.read(deletedPhotosScreenControllerProvider.notifier);
     final deletedPhotosAsync = ref.watch(deletedPhotosProvider);
 
     return Scaffold(
@@ -93,7 +93,7 @@ class DeletedPhotosScreen extends ConsumerWidget {
 }
 
 class _InfoBanner extends StatelessWidget {
-  final DeletedPhotosNotifier notifier;
+  final DeletedPhotosScreenController notifier;
   final DeletedPhotosScreenState state;
   final List<DeletedPhoto> photos;
 
@@ -140,7 +140,7 @@ class _InfoBanner extends StatelessWidget {
 }
 
 class _PhotoGrid extends StatelessWidget {
-  final DeletedPhotosNotifier notifier;
+  final DeletedPhotosScreenController notifier;
   final DeletedPhotosScreenState state;
   final List<DeletedPhoto> photos;
 

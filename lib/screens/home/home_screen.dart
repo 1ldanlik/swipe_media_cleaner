@@ -20,7 +20,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final permissionState = ref.watch(photoPermissionProvider);
-    final homeState = ref.watch(homeScreenNotifierProvider);
+    final homeState = ref.watch(homeScreenProvider);
     final availableYearsAsync = ref.watch(availableYearsProvider);
 
     return Scaffold(
@@ -43,7 +43,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 // Устанавливаем доступные года в notifier (только один раз)
                 if (homeState.availableYears.isEmpty && years.isNotEmpty) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    ref.read(homeScreenNotifierProvider.notifier).setAvailableYears(years);
+                    ref.read(homeScreenProvider.notifier).setAvailableYears(years);
                   });
                 }
 
@@ -75,7 +75,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       years: homeState.availableYears,
                       selectedYear: homeState.selectedYear,
                       onYearSelected: (year) {
-                        ref.read(homeScreenNotifierProvider.notifier).selectYear(year);
+                        ref.read(homeScreenProvider.notifier).selectYear(year);
                       },
                     ),
 

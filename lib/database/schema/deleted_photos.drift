@@ -1,0 +1,13 @@
+import 'package:swipe_media_cleaner/database/converters/millis_date_converter.dart';
+
+CREATE TABLE deleted_photos (
+  id TEXT NOT NULL PRIMARY KEY,
+  path TEXT NOT NULL,
+  size INTEGER NOT NULL,
+  deleted_at INTEGER MAPPED BY `const MillisDateConverter()` NOT NULL,
+  year INTEGER NOT NULL,
+  month INTEGER NOT NULL
+) AS DeletedPhotoDB;
+
+CREATE INDEX deleted_photos_year_month_idx
+ON deleted_photos (year, month);

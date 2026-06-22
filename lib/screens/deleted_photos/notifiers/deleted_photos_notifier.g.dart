@@ -6,22 +6,79 @@ part of 'deleted_photos_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$deletedPhotosNotifierHash() => r'135e9d65382f6357c7be612b7518eca2c43e313e';
-
-/// Notifier для управления состоянием экрана корзины
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+/// Controller для управления состоянием экрана корзины.
 ///
-/// Copied from [DeletedPhotosNotifier].
-@ProviderFor(DeletedPhotosNotifier)
-final deletedPhotosNotifierProvider =
-    AutoDisposeNotifierProvider<DeletedPhotosNotifier, DeletedPhotosScreenState>.internal(
-  DeletedPhotosNotifier.new,
-  name: r'deletedPhotosNotifierProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$deletedPhotosNotifierHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+/// Важно:
+/// класс не должен называться DeletedPhotosNotifier,
+/// потому что Riverpod сгенерирует deletedPhotosProvider,
+/// и он будет конфликтовать с provider'ом списка удалённых фото.
 
-typedef _$DeletedPhotosNotifier = AutoDisposeNotifier<DeletedPhotosScreenState>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+@ProviderFor(DeletedPhotosScreenController)
+final deletedPhotosScreenControllerProvider = DeletedPhotosScreenControllerProvider._();
+
+/// Controller для управления состоянием экрана корзины.
+///
+/// Важно:
+/// класс не должен называться DeletedPhotosNotifier,
+/// потому что Riverpod сгенерирует deletedPhotosProvider,
+/// и он будет конфликтовать с provider'ом списка удалённых фото.
+final class DeletedPhotosScreenControllerProvider
+    extends $NotifierProvider<DeletedPhotosScreenController, DeletedPhotosScreenState> {
+  /// Controller для управления состоянием экрана корзины.
+  ///
+  /// Важно:
+  /// класс не должен называться DeletedPhotosNotifier,
+  /// потому что Riverpod сгенерирует deletedPhotosProvider,
+  /// и он будет конфликтовать с provider'ом списка удалённых фото.
+  DeletedPhotosScreenControllerProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'deletedPhotosScreenControllerProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$deletedPhotosScreenControllerHash();
+
+  @$internal
+  @override
+  DeletedPhotosScreenController create() => DeletedPhotosScreenController();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DeletedPhotosScreenState value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DeletedPhotosScreenState>(value),
+    );
+  }
+}
+
+String _$deletedPhotosScreenControllerHash() => r'7b0903c759d72002a65cb1e0d749628685961e03';
+
+/// Controller для управления состоянием экрана корзины.
+///
+/// Важно:
+/// класс не должен называться DeletedPhotosNotifier,
+/// потому что Riverpod сгенерирует deletedPhotosProvider,
+/// и он будет конфликтовать с provider'ом списка удалённых фото.
+
+abstract class _$DeletedPhotosScreenController extends $Notifier<DeletedPhotosScreenState> {
+  DeletedPhotosScreenState build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<DeletedPhotosScreenState, DeletedPhotosScreenState>;
+    final element = ref.element as $ClassProviderElement<
+        AnyNotifier<DeletedPhotosScreenState, DeletedPhotosScreenState>,
+        DeletedPhotosScreenState,
+        Object?,
+        Object?>;
+    element.handleCreate(ref, build);
+  }
+}

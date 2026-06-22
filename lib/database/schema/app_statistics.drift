@@ -1,0 +1,6 @@
+CREATE TABLE app_statistics (
+  id INTEGER NOT NULL PRIMARY KEY CHECK (id = 1),
+  checked_photos INTEGER NOT NULL DEFAULT 0,
+  deleted_photos INTEGER NOT NULL DEFAULT 0,
+  freed_space INTEGER NOT NULL DEFAULT 0
+) AS AppStatisticsDB;
