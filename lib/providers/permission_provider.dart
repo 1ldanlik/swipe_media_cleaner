@@ -75,18 +75,12 @@ final hasPhotoAccessProvider = Provider<bool>((ref) {
 final hasFullPhotoAccessProvider = Provider<bool>((ref) {
   final permissionAsync = ref.watch(photoPermissionProvider);
 
-  return permissionAsync.maybeWhen(
-    data: (status) => status.isGranted,
-    orElse: () => false,
-  );
+  return permissionAsync.maybeWhen(data: (status) => status.isGranted, orElse: () => false);
 });
 
 /// Limited-доступ.
 final hasLimitedPhotoAccessProvider = Provider<bool>((ref) {
   final permissionAsync = ref.watch(photoPermissionProvider);
 
-  return permissionAsync.maybeWhen(
-    data: (status) => status.isLimited,
-    orElse: () => false,
-  );
+  return permissionAsync.maybeWhen(data: (status) => status.isLimited, orElse: () => false);
 });

@@ -7,10 +7,7 @@ import '../theme/app_colors.dart';
 class MonthPreviewPhotos extends StatelessWidget {
   final List<PhotoItem> previewPhotos;
 
-  const MonthPreviewPhotos({
-    super.key,
-    required this.previewPhotos,
-  });
+  const MonthPreviewPhotos({super.key, required this.previewPhotos});
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +42,7 @@ class MonthPreviewPhotos extends StatelessWidget {
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       color: AppColors.greyLight,
-                      child: const Icon(
-                        Icons.broken_image,
-                        color: AppColors.brokenImageIcon,
-                      ),
+                      child: const Icon(Icons.broken_image, color: AppColors.brokenImageIcon),
                     );
                   },
                 ),

@@ -105,10 +105,7 @@ class DeletedPhotosController {
       final photos = await _deletedPhotosService.getAllDeletedPhotos();
 
       final totalCount = photos.length;
-      final totalSize = photos.fold<int>(
-        0,
-        (sum, photo) => sum + photo.size,
-      );
+      final totalSize = photos.fold<int>(0, (sum, photo) => sum + photo.size);
 
       if (totalCount == 0) {
         return;
@@ -116,10 +113,7 @@ class DeletedPhotosController {
 
       await _deletedPhotosService.deleteAllDeletedPhotos();
 
-      await _deletedPhotosService.addDeletedStatistics(
-        count: totalCount,
-        freedSpace: totalSize,
-      );
+      await _deletedPhotosService.addDeletedStatistics(count: totalCount, freedSpace: totalSize);
     });
   }
 
@@ -135,10 +129,7 @@ class DeletedPhotosController {
       final photosToDelete = await _deletedPhotosService.getDeletedPhotosByIds(ids);
 
       final totalCount = photosToDelete.length;
-      final totalSize = photosToDelete.fold<int>(
-        0,
-        (sum, photo) => sum + photo.size,
-      );
+      final totalSize = photosToDelete.fold<int>(0, (sum, photo) => sum + photo.size);
 
       if (totalCount == 0) {
         return;
@@ -146,10 +137,7 @@ class DeletedPhotosController {
 
       await _deletedPhotosService.deleteDeletedPhotosByIds(ids);
 
-      await _deletedPhotosService.addDeletedStatistics(
-        count: totalCount,
-        freedSpace: totalSize,
-      );
+      await _deletedPhotosService.addDeletedStatistics(count: totalCount, freedSpace: totalSize);
     });
   }
 

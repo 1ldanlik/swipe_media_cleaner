@@ -12,11 +12,7 @@ class EmptyTrashWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.delete_sweep_outlined,
-              size: 120,
-              color: AppColors.greyLight,
-            ),
+            Icon(Icons.delete_sweep_outlined, size: 120, color: AppColors.greyLight),
             SizedBox(height: 24),
             Text(
               'Корзина пуста',
@@ -30,10 +26,7 @@ class EmptyTrashWidget extends StatelessWidget {
             Text(
               'Свайпните фото влево на экране просмотра, чтобы добавить их в корзину',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: AppColors.greyMedium,
-              ),
+              style: TextStyle(fontSize: 16, color: AppColors.greyMedium),
             ),
           ],
         ),

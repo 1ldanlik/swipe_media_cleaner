@@ -63,11 +63,8 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
   final int currentYear;
   final int currentMonth;
 
-  PhotoSwipeNotifier(
-    this.ref, {
-    required this.currentYear,
-    required this.currentMonth,
-  }) : super(const PhotoSwipeState());
+  PhotoSwipeNotifier(this.ref, {required this.currentYear, required this.currentMonth})
+    : super(const PhotoSwipeState());
 
   /// Готовые PhotoItem, которые сейчас можно показывать в UI.
   ///
@@ -106,10 +103,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
   /// Важно:
   /// метод НЕ загружает все фото месяца сразу.
   /// Он только подготавливает первые 2–3 фото для свайпа.
-  Future<void> loadPhotosForMonth({
-    int? viewedCount,
-    int? totalMonthCount,
-  }) async {
+  Future<void> loadPhotosForMonth({int? viewedCount, int? totalMonthCount}) async {
     state = state.copyWith(
       isLoading: true,
       error: null,
@@ -165,10 +159,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
         isFinished: isFinished,
       );
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -278,10 +269,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
     final photo = _photoBuffer.first;
     final newValue = !photo.asset.isFavorite;
 
-    final success = await PhotoManager.plugin.favoriteAsset(
-      photo.asset.id,
-      newValue,
-    );
+    final success = await PhotoManager.plugin.favoriteAsset(photo.asset.id, newValue);
 
     if (!success) {
       return;
@@ -289,9 +277,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
 
     final updatedAsset = await photo.asset.obtainForNewProperties();
 
-    final updatedPhoto = photo.copyWith(
-      asset: updatedAsset,
-    );
+    final updatedPhoto = photo.copyWith(asset: updatedAsset);
 
     // Обновляем внутренний буфер,
     // чтобы при следующем обновлении state избранное не откатилось.
@@ -348,11 +334,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
     final wasAlreadyViewed = await viewedService.isViewed(photo.id);
 
     // Отмечаем фото как просмотренное.
-    await viewedService.markAsViewed(
-      photo.id,
-      photo.createdDate.year,
-      photo.createdDate.month,
-    );
+    await viewedService.markAsViewed(photo.id, photo.createdDate.year, photo.createdDate.month);
 
     // Если фото раньше не было просмотрено,
     // увеличиваем общий счётчик проверенных фото.
@@ -395,9 +377,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
 
       // Конец нужного месяца.
       // Делаем так, чтобы не захватить первое число следующего месяца.
-      final endDate = nextMonthDate.subtract(
-        const Duration(milliseconds: 1),
-      );
+      final endDate = nextMonthDate.subtract(const Duration(milliseconds: 1));
 
       // Получаем общий альбом, но сразу с фильтром по дате создания.
       // В результате recentAlbum будет содержать только фото нужного месяца.
@@ -405,10 +385,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
         type: RequestType.image,
         onlyAll: true,
         filterOption: FilterOptionGroup(
-          createTimeCond: DateTimeCond(
-            min: startDate,
-            max: endDate,
-          ),
+          createTimeCond: DateTimeCond(min: startDate, max: endDate),
         ),
       );
 
@@ -451,10 +428,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
             : _photoScanOffset + _scanBatchSize;
 
         // Берём небольшой батч уже отфильтрованных фото месяца.
-        final assets = await recentAlbum.getAssetListRange(
-          start: _photoScanOffset,
-          end: end,
-        );
+        final assets = await recentAlbum.getAssetListRange(start: _photoScanOffset, end: end);
 
         // Сдвигаем offset, чтобы следующий батч начался дальше.
         _photoScanOffset = end;
@@ -501,12 +475,6 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
 
 /// Провайдер для состояния просмотра фото (семейный по году и месяцу)
 final photoSwipeProvider = StateNotifierProvider.autoDispose
-    .family<PhotoSwipeNotifier, PhotoSwipeState, (int year, int month)>(
-  (ref, params) {
-    return PhotoSwipeNotifier(
-      ref,
-      currentYear: params.$1,
-      currentMonth: params.$2,
-    );
-  },
-);
+    .family<PhotoSwipeNotifier, PhotoSwipeState, (int year, int month)>((ref, params) {
+      return PhotoSwipeNotifier(ref, currentYear: params.$1, currentMonth: params.$2);
+    });

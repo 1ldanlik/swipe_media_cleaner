@@ -33,15 +33,15 @@ final class DeletedPhotosScreenControllerProvider
   /// потому что Riverpod сгенерирует deletedPhotosProvider,
   /// и он будет конфликтовать с provider'ом списка удалённых фото.
   DeletedPhotosScreenControllerProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'deletedPhotosScreenControllerProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'deletedPhotosScreenControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$deletedPhotosScreenControllerHash();
@@ -59,7 +59,7 @@ final class DeletedPhotosScreenControllerProvider
   }
 }
 
-String _$deletedPhotosScreenControllerHash() => r'7b0903c759d72002a65cb1e0d749628685961e03';
+String _$deletedPhotosScreenControllerHash() => r'7999ceb88b3350e424139107c40bfed35766103c';
 
 /// Controller для управления состоянием экрана корзины.
 ///
@@ -72,13 +72,16 @@ abstract class _$DeletedPhotosScreenController extends $Notifier<DeletedPhotosSc
   DeletedPhotosScreenState build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<DeletedPhotosScreenState, DeletedPhotosScreenState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<DeletedPhotosScreenState, DeletedPhotosScreenState>,
-        DeletedPhotosScreenState,
-        Object?,
-        Object?>;
-    element.handleCreate(ref, build);
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<DeletedPhotosScreenState, DeletedPhotosScreenState>,
+              DeletedPhotosScreenState,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
   }
 }

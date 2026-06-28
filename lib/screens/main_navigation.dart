@@ -85,9 +85,7 @@ class _MainNavigationState extends ConsumerState<MainNavigation> {
     return Navigator(
       key: _navigatorKeys[index],
       onGenerateRoute: (settings) {
-        return MaterialPageRoute(
-          builder: (context) => child,
-        );
+        return MaterialPageRoute(builder: (context) => child);
       },
     );
   }

@@ -46,30 +46,16 @@ class DeletedPhotosScreen extends ConsumerWidget {
 
             return Column(
               children: [
-                _InfoBanner(
-                  notifier: notifier,
-                  state: screenState,
-                  photos: deletedPhotos,
-                ),
+                _InfoBanner(notifier: notifier, state: screenState, photos: deletedPhotos),
                 Expanded(
-                  child: _PhotoGrid(
-                    notifier: notifier,
-                    state: screenState,
-                    photos: deletedPhotos,
-                  ),
+                  child: _PhotoGrid(notifier: notifier, state: screenState, photos: deletedPhotos),
                 ),
               ],
             );
           },
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, stack) => Column(
-            children: [
-              Expanded(
-                child: Center(
-                  child: Text('Ошибка: $error'),
-                ),
-              ),
-            ],
+            children: [Expanded(child: Center(child: Text('Ошибка: $error')))],
           ),
         ),
       ),
@@ -97,11 +83,7 @@ class _InfoBanner extends StatelessWidget {
   final DeletedPhotosScreenState state;
   final List<DeletedPhoto> photos;
 
-  const _InfoBanner({
-    required this.notifier,
-    required this.state,
-    required this.photos,
-  });
+  const _InfoBanner({required this.notifier, required this.state, required this.photos});
 
   @override
   Widget build(BuildContext context) {
@@ -144,11 +126,7 @@ class _PhotoGrid extends StatelessWidget {
   final DeletedPhotosScreenState state;
   final List<DeletedPhoto> photos;
 
-  const _PhotoGrid({
-    required this.notifier,
-    required this.state,
-    required this.photos,
-  });
+  const _PhotoGrid({required this.notifier, required this.state, required this.photos});
 
   @override
   Widget build(BuildContext context) {
@@ -163,11 +141,7 @@ class _PhotoGrid extends StatelessWidget {
       itemBuilder: (context, index) {
         final photo = photos[index];
         final isSelected = state.selectedPhotoIds.contains(photo.id);
-        return PhotoCard(
-          notifier: notifier,
-          photo: photo,
-          isSelected: isSelected,
-        );
+        return PhotoCard(notifier: notifier, photo: photo, isSelected: isSelected);
       },
     );
   }

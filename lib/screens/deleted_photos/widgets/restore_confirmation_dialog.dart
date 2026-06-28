@@ -5,10 +5,7 @@ import '../../../theme/app_colors.dart';
 class RestoreConfirmationDialog extends StatelessWidget {
   final int photoCount;
 
-  const RestoreConfirmationDialog({
-    super.key,
-    required this.photoCount,
-  });
+  const RestoreConfirmationDialog({super.key, required this.photoCount});
 
   /// Показать диалог и вернуть результат подтверждения
   static Future<bool> show(BuildContext context, int photoCount) async {
@@ -23,14 +20,9 @@ class RestoreConfirmationDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Восстановить фотографии?'),
-      content: Text(
-        'Вы действительно хотите восстановить $photoCount фото?',
-      ),
+      content: Text('Вы действительно хотите восстановить $photoCount фото?'),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(false),
-          child: const Text('Отмена'),
-        ),
+        TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Отмена')),
         FilledButton(
           onPressed: () => Navigator.of(context).pop(true),
           style: FilledButton.styleFrom(backgroundColor: AppColors.restoreBlue),

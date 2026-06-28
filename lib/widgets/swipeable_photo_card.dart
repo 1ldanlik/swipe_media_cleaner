@@ -154,9 +154,7 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
     _animation = Tween<double>(
       begin: _dragPosition,
       end: target,
-    ).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
-    );
+    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOut));
 
     void animationListener() {
       setState(() {
@@ -226,11 +224,7 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
                     panEnabled: isZoomMode,
                     scaleEnabled: true,
                     child: Container(
-                      margin: const EdgeInsets.only(
-                        top: 20,
-                        right: 20,
-                        left: 20,
-                      ),
+                      margin: const EdgeInsets.only(top: 20, right: 20, left: 20),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(32),
                         child: Stack(
@@ -238,19 +232,14 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
                           children: [
                             if (widget.isFullPictureShow)
                               ImageFiltered(
-                                imageFilter: ImageFilter.blur(
-                                  sigmaX: 10.0,
-                                  sigmaY: 10.0,
-                                ),
+                                imageFilter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
                                 child: Image.file(
                                   File(widget.photo.path),
                                   fit: BoxFit.cover,
                                   width: double.infinity,
                                   height: double.infinity,
                                   errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      color: AppColors.greyLight,
-                                    );
+                                    return Container(color: AppColors.greyLight);
                                   },
                                 ),
                               ),

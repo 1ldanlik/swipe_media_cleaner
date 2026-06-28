@@ -5,48 +5,54 @@ publish_to: 'none'
 version: 1.1.0
 
 environment:
-  sdk: '>=3.0.6 <4.0.0'
+  sdk: '>=3.12.0 <4.0.0'
+  flutter: '>=3.44.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.2
-  package_info_plus: ^4.2.0
-  
+
+  cupertino_icons: ^1.0.9
+  package_info_plus: ^10.2.0
+
   # State management
-  flutter_riverpod: ^3.3.1
-  riverpod_annotation: ^4.0.2
-  
+  flutter_riverpod: ^3.3.2
+  riverpod_annotation: ^4.0.3
+
   # Photo gallery access
   photo_manager: ^3.9.0
-  share_plus: ^7.2.2
-  
+  share_plus: ^13.2.0
+
   # Permissions
-  permission_handler: ^10.4.5
-  
+  permission_handler: ^12.0.3
+
   # Intl for date formatting
-  intl: ^0.18.1
-  
+  intl: ^0.20.3
+
   # Local storage
-  drift: ^2.33.0
+  drift: ^2.34.0
   drift_flutter: ^0.3.0
-  path_provider: ^2.1.5
+  path_provider: ^2.1.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
-  flutter_launcher_icons: ^0.13.1
-  
+
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
   # Riverpod code generation
-  riverpod_generator: ^4.0.3
+  riverpod_generator: ^4.0.4
   build_runner: ^2.15.0
-  
-  # Hive code generation
-  drift_dev: ^2.33.0
+
+  # Drift code generation
+  drift_dev: ^2.34.0
 
 flutter:
   uses-material-design: true
+
+  config:
+    enable-swift-package-manager: false
 
 flutter_launcher_icons:
   android: true

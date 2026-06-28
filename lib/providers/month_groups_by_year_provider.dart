@@ -36,10 +36,7 @@ final monthGroupsByYearProvider = FutureProvider.family<List<MonthGroup>, int?>(
     }
 
     // Загружаем все фото
-    final List<AssetEntity> assets = await recentAlbum.getAssetListRange(
-      start: 0,
-      end: totalCount,
-    );
+    final List<AssetEntity> assets = await recentAlbum.getAssetListRange(start: 0, end: totalCount);
 
     debugPrint('✅ Загружено AssetEntity: ${assets.length}');
 
@@ -85,12 +82,14 @@ final monthGroupsByYearProvider = FutureProvider.family<List<MonthGroup>, int?>(
 
       final previewPhotos = await _buildPreviewPhotos(monthAssets);
 
-      monthGroups.add(MonthGroup(
-        year: monthYear,
-        month: month,
-        photoCount: monthAssets.length,
-        previewPhotos: previewPhotos,
-      ));
+      monthGroups.add(
+        MonthGroup(
+          year: monthYear,
+          month: month,
+          photoCount: monthAssets.length,
+          previewPhotos: previewPhotos,
+        ),
+      );
     }
 
     // Сортируем по месяцу (новые сверху)
@@ -163,10 +162,7 @@ final availableYearsProvider = FutureProvider<List<int>>((ref) async {
     }
 
     // Загружаем все фото (только метаданные, без файлов)
-    final List<AssetEntity> assets = await recentAlbum.getAssetListRange(
-      start: 0,
-      end: totalCount,
-    );
+    final List<AssetEntity> assets = await recentAlbum.getAssetListRange(start: 0, end: totalCount);
 
     // Собираем уникальные года
     final Set<int> years = {};

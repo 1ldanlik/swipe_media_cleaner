@@ -9,11 +9,11 @@ class DatabaseToDeletedPhotoMapper extends IDataMapper<DeletedPhotoDB, DeletedPh
 
   @override
   DeletedPhoto map() => DeletedPhoto(
-        id: input.id,
-        path: input.path,
-        size: input.size,
-        deletedAt: input.deletedAt,
-        year: input.year,
-        month: input.month,
-      );
+    id: input.id,
+    path: input.path,
+    size: input.size,
+    deletedAt: input.deletedAt,
+    year: input.year,
+    month: input.month,
+  );
 }

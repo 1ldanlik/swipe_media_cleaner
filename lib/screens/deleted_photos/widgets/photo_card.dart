@@ -50,26 +50,14 @@ class PhotoCard extends StatelessWidget {
                             child: SizedBox(
                               height: 32,
                               width: 32,
-                              child: Icon(
-                                Icons.check_rounded,
-                                color: Colors.white,
-                                size: 24,
-                              ),
+                              child: Icon(Icons.check_rounded, color: Colors.white, size: 24),
                             ),
                           ),
                         ),
-                        const Icon(
-                          Icons.radio_button_unchecked,
-                          color: Colors.white,
-                          size: 38,
-                        ),
+                        const Icon(Icons.radio_button_unchecked, color: Colors.white, size: 38),
                       ],
                     )
-                  : const Icon(
-                      Icons.radio_button_unchecked,
-                      color: Colors.white,
-                      size: 38,
-                    ),
+                  : const Icon(Icons.radio_button_unchecked, color: Colors.white, size: 38),
             ),
           ],
         ),

@@ -18,15 +18,15 @@ final class HomeScreenNotifierProvider
     extends $NotifierProvider<HomeScreenNotifier, HomeScreenState> {
   /// Notifier для управления состоянием главного экрана
   HomeScreenNotifierProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'homeScreenProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'homeScreenProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$homeScreenNotifierHash();
@@ -52,10 +52,16 @@ abstract class _$HomeScreenNotifier extends $Notifier<HomeScreenState> {
   HomeScreenState build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<HomeScreenState, HomeScreenState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<HomeScreenState, HomeScreenState>, HomeScreenState, Object?, Object?>;
-    element.handleCreate(ref, build);
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<HomeScreenState, HomeScreenState>,
+              HomeScreenState,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
   }
 }

@@ -16,10 +16,7 @@ class ViewedPhotosService {
   }
 
   Future<void> insertViewedPhoto(ViewedPhotosCompanion photo) {
-    return _db.into(_db.viewedPhotos).insert(
-          photo,
-          mode: InsertMode.insertOrIgnore,
-        );
+    return _db.into(_db.viewedPhotos).insert(photo, mode: InsertMode.insertOrIgnore);
   }
 
   Future<ViewedPhoto?> getViewedPhotoById(String photoId) {
@@ -32,22 +29,17 @@ class ViewedPhotosService {
     return (_db.delete(_db.viewedPhotos)..where((tbl) => tbl.id.isIn(ids))).go();
   }
 
-  Future<int> getViewedCountByMonth({
-    required int year,
-    required int month,
-  }) async {
-    final rows = await (_db.select(_db.viewedPhotos)
-          ..where((tbl) => tbl.year.equals(year))
-          ..where((tbl) => tbl.month.equals(month)))
-        .get();
+  Future<int> getViewedCountByMonth({required int year, required int month}) async {
+    final rows =
+        await (_db.select(_db.viewedPhotos)
+              ..where((tbl) => tbl.year.equals(year))
+              ..where((tbl) => tbl.month.equals(month)))
+            .get();
 
     return rows.length;
   }
 
-  Future<void> deleteViewedPhotosByMonth({
-    required int year,
-    required int month,
-  }) {
+  Future<void> deleteViewedPhotosByMonth({required int year, required int month}) {
     return (_db.delete(_db.viewedPhotos)
           ..where((tbl) => tbl.year.equals(year))
           ..where((tbl) => tbl.month.equals(month)))

@@ -11,22 +11,21 @@ class DeletedPhotosService {
   DeletedPhotosService(this._db);
 
   Stream<List<DeletedPhoto>> watchDeletedPhotos() {
-    return (_db.select(_db.deletedPhotos)
-          ..orderBy([
-            (tbl) => OrderingTerm.desc(tbl.deletedAt),
-          ]))
+    return (_db.select(_db.deletedPhotos)..orderBy([(tbl) => OrderingTerm.desc(tbl.deletedAt)]))
         .watch()
         .map((rows) => rows.map((row) => DatabaseToDeletedPhotoMapper(row).transform()).toList());
   }
 
   Stream<AppStatistic> watchStatistics() {
-    return (_db.select(_db.appStatistics)..where((tbl) => tbl.id.equals(1)))
-        .watchSingle()
-        .map((row) => DatabaseToAppStatisticMapper(row).transform());
+    return (_db.select(_db.appStatistics)..where((tbl) => tbl.id.equals(1))).watchSingle().map(
+      (row) => DatabaseToAppStatisticMapper(row).transform(),
+    );
   }
 
   Future<void> insertStatisticsIfMissing() {
-    return _db.into(_db.appStatistics).insert(
+    return _db
+        .into(_db.appStatistics)
+        .insert(
           const AppStatisticsCompanion(
             id: Value(1),
             checkedPhotos: Value(0),
@@ -49,9 +48,9 @@ class DeletedPhotosService {
   }
 
   Future<List<DeletedPhoto>> getDeletedPhotosByIds(List<String> ids) {
-    return (_db.select(_db.deletedPhotos)..where((tbl) => tbl.id.isIn(ids)))
-        .get()
-        .then((rows) => rows.map((row) => DatabaseToDeletedPhotoMapper(row).transform()).toList());
+    return (_db.select(_db.deletedPhotos)..where((tbl) => tbl.id.isIn(ids))).get().then(
+      (rows) => rows.map((row) => DatabaseToDeletedPhotoMapper(row).transform()).toList(),
+    );
   }
 
   Future<DeletedPhoto?> getDeletedPhotoById(String id) {
@@ -83,10 +82,7 @@ class DeletedPhotosService {
     );
   }
 
-  Future<void> addDeletedStatistics({
-    required int count,
-    required int freedSpace,
-  }) {
+  Future<void> addDeletedStatistics({required int count, required int freedSpace}) {
     return _db.customUpdate(
       '''
       UPDATE app_statistics
@@ -95,10 +91,7 @@ class DeletedPhotosService {
         freed_space = freed_space + ?
       WHERE id = 1
       ''',
-      variables: [
-        Variable.withInt(count),
-        Variable.withInt(freedSpace),
-      ],
+      variables: [Variable.withInt(count), Variable.withInt(freedSpace)],
       updates: {_db.appStatistics},
     );
   }

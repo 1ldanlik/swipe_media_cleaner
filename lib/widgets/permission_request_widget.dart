@@ -22,19 +22,13 @@ class PermissionRequestWidget extends ConsumerWidget {
             const SizedBox(height: 32),
             const Text(
               'Доступ к фотографиям',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
             const Text(
               'Для работы приложения необходим доступ к вашим фотографиям',
-              style: TextStyle(
-                fontSize: 16,
-                color: AppColors.greyMedium,
-              ),
+              style: TextStyle(fontSize: 16, color: AppColors.greyMedium),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 48),
@@ -46,10 +40,7 @@ class PermissionRequestWidget extends ConsumerWidget {
               icon: const Icon(Icons.check_circle_outline),
               label: const Text('Предоставить доступ'),
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 16,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                 textStyle: const TextStyle(fontSize: 16),
               ),
             ),

@@ -8,11 +8,7 @@ class MonthPhotoSizeText extends ConsumerStatefulWidget {
   final int year;
   final int month;
 
-  const MonthPhotoSizeText({
-    super.key,
-    required this.year,
-    required this.month,
-  });
+  const MonthPhotoSizeText({super.key, required this.year, required this.month});
 
   @override
   ConsumerState<MonthPhotoSizeText> createState() => _MonthPhotoSizeTextState();
@@ -24,10 +20,9 @@ class _MonthPhotoSizeTextState extends ConsumerState<MonthPhotoSizeText> {
     super.initState();
 
     Future.microtask(() {
-      ref.read(homeScreenProvider.notifier).loadMonthPhotoSize(
-            year: widget.year,
-            month: widget.month,
-          );
+      ref
+          .read(homeScreenProvider.notifier)
+          .loadMonthPhotoSize(year: widget.year, month: widget.month);
     });
   }
 
@@ -45,26 +40,18 @@ class _MonthPhotoSizeTextState extends ConsumerState<MonthPhotoSizeText> {
     );
 
     if (sizeBytes != null) {
-      return Text(
-        FileSizeFormatter.formatBytes(sizeBytes),
-        style: textStyle,
-      );
+      return Text(FileSizeFormatter.formatBytes(sizeBytes), style: textStyle);
     }
 
     if (isLoading) {
       return const SizedBox(
         width: 14,
         height: 14,
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-        ),
+        child: CircularProgressIndicator(strokeWidth: 2),
       );
     }
 
     // этот виджет нужен, например, если подгрузка размера завершилась ошибкой.
-    return const Text(
-      '—',
-      style: textStyle,
-    );
+    return const Text('—', style: textStyle);
   }
 }
