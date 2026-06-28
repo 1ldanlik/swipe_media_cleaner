@@ -173,11 +173,11 @@ class _MainEyeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: controller,
-      builder: (_, __) {
+      builder: (_, _) {
         final opacity = 0.5 + controller.value * 0.5;
 
         return Material(
-          color: AppColors.favoriteRed.withOpacity(opacity),
+          color: AppColors.favoriteRed.withValues(alpha: opacity),
           shape: const CircleBorder(),
           elevation: 8,
           child: InkWell(

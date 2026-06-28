@@ -303,9 +303,7 @@ class PhotoSwipeNotifier extends StateNotifier<PhotoSwipeState> {
       return;
     }
 
-    await Share.shareXFiles(
-      [XFile(file.path)],
-    );
+    await SharePlus.instance.share(ShareParams(files: [XFile(file.path)]));
   }
 
   Future<void> _moveToNextPhoto() async {

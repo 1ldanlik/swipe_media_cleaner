@@ -17,7 +17,7 @@ class PermissionRequestWidget extends ConsumerWidget {
             Icon(
               Icons.photo_library_outlined,
               size: 120,
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 32),
             const Text(

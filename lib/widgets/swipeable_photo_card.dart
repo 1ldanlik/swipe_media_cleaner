@@ -26,9 +26,12 @@ class SwipeablePhotoCard extends StatefulWidget {
 class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
     with SingleTickerProviderStateMixin {
   // Константы
-  static const double _swipeThresholdRatio = 0.25; // 25% ширины экрана для срабатывания свайпа
-  static const double _maxOverlayAlpha = 0.35; // Максимальная прозрачность overlay
-  static const double _minOverlayDistance = 10.0; // Минимальное смещение для показа overlay
+  // 25% ширины экрана для срабатывания свайпа
+  static const double _swipeThresholdRatio = 0.25;
+  // Максимальная прозрачность overlay
+  static const double _maxOverlayAlpha = 0.35;
+  // Минимальное смещение для показа overlay
+  static const double _minOverlayDistance = 10.0;
 
   double _dragPosition = 0;
   late AnimationController _animationController;
@@ -112,8 +115,8 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
     final focalPointDelta = details.focalPoint - _initialFocalPoint;
 
     final matrix = Matrix4.identity()
-      ..translate(focalPointDelta.dx, focalPointDelta.dy)
-      ..scale(newScale);
+      ..translateByDouble(focalPointDelta.dx, focalPointDelta.dy, 0, 1)
+      ..scaleByDouble(newScale, newScale, 1, 1);
 
     _transformationController.value = matrix;
   }
@@ -267,8 +270,8 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
                             if (!isZoomMode && showOverlay)
                               Container(
                                 color: isSwipingRight
-                                    ? AppColors.mainButtonBackground.withOpacity(overlayAlpha)
-                                    : AppColors.deleteButtonIcon.withOpacity(overlayAlpha),
+                                    ? AppColors.mainButtonBackground.withValues(alpha: overlayAlpha)
+                                    : AppColors.deleteButtonIcon.withValues(alpha: overlayAlpha),
                               ),
 
                             // Label с иконкой и текстом
@@ -287,7 +290,7 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
                                         vertical: 10,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.2),
+                                        color: Colors.white.withValues(alpha: 0.2),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Row(

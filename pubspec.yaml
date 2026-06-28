@@ -12,6 +12,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  meta: ^1.18.0
+
   cupertino_icons: ^1.0.9
   package_info_plus: ^10.2.0
 

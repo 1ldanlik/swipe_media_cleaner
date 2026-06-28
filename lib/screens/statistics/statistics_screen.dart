@@ -80,7 +80,7 @@ class _AppVersionText extends ConsumerWidget {
     final versionText = versionAsync.when(
       data: (version) => 'Версия $version',
       loading: () => '-',
-      error: (_, __) => '-',
+      error: (_, _) => '-',
     );
 
     return Text(
@@ -132,7 +132,7 @@ class _StatCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: iconColor.withOpacity(0.1),
+                    color: iconColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(icon, size: 32, color: iconColor),
