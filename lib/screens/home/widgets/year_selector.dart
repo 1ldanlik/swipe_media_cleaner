@@ -33,11 +33,7 @@ class YearSelector extends StatelessWidget {
 
           return Padding(
             padding: const EdgeInsets.only(right: 12),
-            child: _YearChip(
-              year: year,
-              isSelected: isSelected,
-              onTap: () => onYearSelected(year),
-            ),
+            child: _YearChip(year: year, isSelected: isSelected, onTap: () => onYearSelected(year)),
           );
         },
       ),
@@ -51,11 +47,7 @@ class _YearChip extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _YearChip({
-    required this.year,
-    required this.isSelected,
-    required this.onTap,
-  });
+  const _YearChip({required this.year, required this.isSelected, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

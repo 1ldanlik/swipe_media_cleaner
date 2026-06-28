@@ -26,9 +26,12 @@ class SwipeablePhotoCard extends StatefulWidget {
 class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
     with SingleTickerProviderStateMixin {
   // Константы
-  static const double _swipeThresholdRatio = 0.25; // 25% ширины экрана для срабатывания свайпа
-  static const double _maxOverlayAlpha = 0.35; // Максимальная прозрачность overlay
-  static const double _minOverlayDistance = 10.0; // Минимальное смещение для показа overlay
+  // 25% ширины экрана для срабатывания свайпа
+  static const double _swipeThresholdRatio = 0.25;
+  // Максимальная прозрачность overlay
+  static const double _maxOverlayAlpha = 0.35;
+  // Минимальное смещение для показа overlay
+  static const double _minOverlayDistance = 10.0;
 
   double _dragPosition = 0;
   late AnimationController _animationController;
@@ -112,8 +115,8 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
     final focalPointDelta = details.focalPoint - _initialFocalPoint;
 
     final matrix = Matrix4.identity()
-      ..translate(focalPointDelta.dx, focalPointDelta.dy)
-      ..scale(newScale);
+      ..translateByDouble(focalPointDelta.dx, focalPointDelta.dy, 0, 1)
+      ..scaleByDouble(newScale, newScale, 1, 1);
 
     _transformationController.value = matrix;
   }
@@ -154,9 +157,7 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
     _animation = Tween<double>(
       begin: _dragPosition,
       end: target,
-    ).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
-    );
+    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOut));
 
     void animationListener() {
       setState(() {
@@ -226,11 +227,7 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
                     panEnabled: isZoomMode,
                     scaleEnabled: true,
                     child: Container(
-                      margin: const EdgeInsets.only(
-                        top: 20,
-                        right: 20,
-                        left: 20,
-                      ),
+                      margin: const EdgeInsets.only(top: 20, right: 20, left: 20),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(32),
                         child: Stack(
@@ -238,19 +235,14 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
                           children: [
                             if (widget.isFullPictureShow)
                               ImageFiltered(
-                                imageFilter: ImageFilter.blur(
-                                  sigmaX: 10.0,
-                                  sigmaY: 10.0,
-                                ),
+                                imageFilter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
                                 child: Image.file(
                                   File(widget.photo.path),
                                   fit: BoxFit.cover,
                                   width: double.infinity,
                                   height: double.infinity,
                                   errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      color: AppColors.greyLight,
-                                    );
+                                    return Container(color: AppColors.greyLight);
                                   },
                                 ),
                               ),
@@ -278,8 +270,8 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
                             if (!isZoomMode && showOverlay)
                               Container(
                                 color: isSwipingRight
-                                    ? AppColors.mainButtonBackground.withOpacity(overlayAlpha)
-                                    : AppColors.deleteButtonIcon.withOpacity(overlayAlpha),
+                                    ? AppColors.mainButtonBackground.withValues(alpha: overlayAlpha)
+                                    : AppColors.deleteButtonIcon.withValues(alpha: overlayAlpha),
                               ),
 
                             // Label с иконкой и текстом
@@ -298,7 +290,7 @@ class _SwipeablePhotoCardState extends State<SwipeablePhotoCard>
                                         vertical: 10,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.2),
+                                        color: Colors.white.withValues(alpha: 0.2),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Row(

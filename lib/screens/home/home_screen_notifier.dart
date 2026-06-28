@@ -55,10 +55,7 @@ class HomeScreenNotifier extends _$HomeScreenNotifier {
   /// Установить доступные года из фотографий
   void setAvailableYears(List<int> years) {
     if (years.isEmpty) {
-      state = HomeScreenState(
-        availableYears: [],
-        selectedYear: null,
-      );
+      state = HomeScreenState(availableYears: [], selectedYear: null);
       return;
     }
 
@@ -66,10 +63,7 @@ class HomeScreenNotifier extends _$HomeScreenNotifier {
     final sortedYears = List<int>.from(years)..sort((a, b) => b.compareTo(a));
 
     // Выбираем последний (самый новый) год по умолчанию
-    state = HomeScreenState(
-      availableYears: sortedYears,
-      selectedYear: sortedYears.first,
-    );
+    state = HomeScreenState(availableYears: sortedYears, selectedYear: sortedYears.first);
   }
 
   /// Изменить выбранный год
@@ -84,10 +78,7 @@ class HomeScreenNotifier extends _$HomeScreenNotifier {
     state = state.copyWith(isLoading: isLoading);
   }
 
-  Future<void> loadMonthPhotoSize({
-    required int year,
-    required int month,
-  }) async {
+  Future<void> loadMonthPhotoSize({required int year, required int month}) async {
     // Если уже посчитали — не считаем повторно
     if (state.monthPhotoSizes.containsKey(month)) {
       return;
@@ -98,60 +89,33 @@ class HomeScreenNotifier extends _$HomeScreenNotifier {
       return;
     }
 
-    state = state.copyWith(
-      loadingSizeMonths: {
-        ...state.loadingSizeMonths,
-        month,
-      },
-    );
+    state = state.copyWith(loadingSizeMonths: {...state.loadingSizeMonths, month});
 
     try {
-      final bytes = await calculatePhotoSizeForMonth(
-        year: year,
-        month: month,
-      );
+      final bytes = await calculatePhotoSizeForMonth(year: year, month: month);
 
-      final updatedSizes = {
-        ...state.monthPhotoSizes,
-        month: bytes,
-      };
+      final updatedSizes = {...state.monthPhotoSizes, month: bytes};
 
       final updatedLoading = {...state.loadingSizeMonths}..remove(month);
 
-      state = state.copyWith(
-        monthPhotoSizes: updatedSizes,
-        loadingSizeMonths: updatedLoading,
-      );
+      state = state.copyWith(monthPhotoSizes: updatedSizes, loadingSizeMonths: updatedLoading);
     } catch (e) {
       final updatedLoading = {...state.loadingSizeMonths}..remove(month);
 
-      state = state.copyWith(
-        loadingSizeMonths: updatedLoading,
-      );
+      state = state.copyWith(loadingSizeMonths: updatedLoading);
 
       rethrow;
     }
   }
 
-  Future<int> calculatePhotoSizeForMonth({
-    required int year,
-    required int month,
-  }) async {
+  Future<int> calculatePhotoSizeForMonth({required int year, required int month}) async {
     try {
       final startOfMonth = DateTime(year, month, 1);
       final startOfNextMonth = DateTime(year, month + 1, 1);
 
       final filter = FilterOptionGroup(
-        createTimeCond: DateTimeCond(
-          min: startOfMonth,
-          max: startOfNextMonth,
-        ),
-        orders: [
-          const OrderOption(
-            type: OrderOptionType.createDate,
-            asc: true,
-          ),
-        ],
+        createTimeCond: DateTimeCond(min: startOfMonth, max: startOfNextMonth),
+        orders: [const OrderOption(type: OrderOptionType.createDate, asc: true)],
       );
 
       final int totalCount = await PhotoManager.getAssetCount(
@@ -181,14 +145,9 @@ class HomeScreenNotifier extends _$HomeScreenNotifier {
         for (int i = 0; i < assets.length; i += fileBatchSize) {
           final batch = assets.skip(i).take(fileBatchSize).toList();
 
-          final sizes = await Future.wait(
-            batch.map(_getAssetSizeBytes),
-          );
+          final sizes = await Future.wait(batch.map(_getAssetSizeBytes));
 
-          totalBytes += sizes.fold<int>(
-            0,
-            (sum, size) => sum + size,
-          );
+          totalBytes += sizes.fold<int>(0, (sum, size) => sum + size);
         }
 
         debugPrint('⏳ Размер фото за $month.$year: обработано $end / $totalCount');

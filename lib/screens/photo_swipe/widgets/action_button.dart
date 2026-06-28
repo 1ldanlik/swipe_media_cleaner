@@ -25,9 +25,7 @@ class ActionButton extends StatelessWidget {
           foregroundColor: iconColor ?? Colors.white,
           elevation: 0,
           shadowColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           padding: EdgeInsets.zero,
         ),
         child: Icon(icon, size: 32),

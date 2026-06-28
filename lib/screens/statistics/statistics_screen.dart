@@ -24,10 +24,7 @@ class StatisticsScreen extends ConsumerWidget {
                   const SizedBox(height: 8),
                   const Text(
                     'Отслеживайте свои достижения',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: AppColors.greyMedium,
-                    ),
+                    style: TextStyle(fontSize: 16, color: AppColors.greyMedium),
                   ),
                   const SizedBox(height: 24),
                   Row(
@@ -66,9 +63,7 @@ class StatisticsScreen extends ConsumerWidget {
             );
           },
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stack) => Center(
-            child: Text('Ошибка: $error'),
-          ),
+          error: (error, stack) => Center(child: Text('Ошибка: $error')),
         ),
       ),
     );
@@ -85,16 +80,13 @@ class _AppVersionText extends ConsumerWidget {
     final versionText = versionAsync.when(
       data: (version) => 'Версия $version',
       loading: () => '-',
-      error: (_, __) => '-',
+      error: (_, _) => '-',
     );
 
     return Text(
       versionText,
       textAlign: TextAlign.end,
-      style: const TextStyle(
-        fontSize: 14,
-        color: AppColors.greyMedium,
-      ),
+      style: const TextStyle(fontSize: 14, color: AppColors.greyMedium),
     );
   }
 }
@@ -104,13 +96,7 @@ class _StatisticsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text(
-      'Ваш прогресс',
-      style: TextStyle(
-        fontSize: 28,
-        fontWeight: FontWeight.bold,
-      ),
-    );
+    return const Text('Ваш прогресс', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold));
   }
 }
 
@@ -131,10 +117,7 @@ class _StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(
-          color: AppColors.cardBorder,
-          width: 2,
-        ),
+        border: Border.all(color: AppColors.cardBorder, width: 2),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(
@@ -142,36 +125,20 @@ class _StatCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 14,
-                color: AppColors.greyMedium,
-              ),
-            ),
+            Text(title, style: const TextStyle(fontSize: 14, color: AppColors.greyMedium)),
             const SizedBox(height: 8),
             Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: iconColor.withOpacity(0.1),
+                    color: iconColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
-                    icon,
-                    size: 32,
-                    color: iconColor,
-                  ),
+                  child: Icon(icon, size: 32, color: iconColor),
                 ),
                 const SizedBox(width: 16),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                Text(value, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
               ],
             ),
           ],

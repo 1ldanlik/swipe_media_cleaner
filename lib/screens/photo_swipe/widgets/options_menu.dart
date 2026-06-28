@@ -32,10 +32,7 @@ class _OptionsMenuState extends State<OptionsMenu> with SingleTickerProviderStat
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 240),
-    );
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 240));
   }
 
   void toggle() {
@@ -64,11 +61,7 @@ class _OptionsMenuState extends State<OptionsMenu> with SingleTickerProviderStat
         ),
         IconButton(
           onPressed: widget.onShareTap,
-          icon: const Icon(
-            Icons.ios_share_rounded,
-            color: AppColors.greyMedium,
-            size: 28,
-          ),
+          icon: const Icon(Icons.ios_share_rounded, color: AppColors.greyMedium, size: 28),
         ),
         IconButton(
           onPressed: widget.onToggleFavorite,
@@ -84,11 +77,7 @@ class _OptionsMenuState extends State<OptionsMenu> with SingleTickerProviderStat
 }
 
 class _SlidingIconPanel extends StatelessWidget {
-  const _SlidingIconPanel({
-    required this.controller,
-    required this.onMainTap,
-    required this.items,
-  });
+  const _SlidingIconPanel({required this.controller, required this.onMainTap, required this.items});
 
   final AnimationController controller;
   final VoidCallback onMainTap;
@@ -121,11 +110,7 @@ class _SlidingIconPanel extends StatelessWidget {
                 final t = Curves.easeOutCubic.transform(controller.value);
 
                 return ClipRect(
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    heightFactor: t,
-                    child: child,
-                  ),
+                  child: Align(alignment: Alignment.topCenter, heightFactor: t, child: child),
                 );
               },
               child: _PanelBody(
@@ -138,10 +123,7 @@ class _SlidingIconPanel extends StatelessWidget {
               ),
             ),
           ),
-          _MainEyeButton(
-            onTap: onMainTap,
-            controller: controller,
-          ),
+          _MainEyeButton(onTap: onMainTap, controller: controller),
         ],
       ),
     );
@@ -169,17 +151,12 @@ class _PanelBody extends StatelessWidget {
       padding: const EdgeInsets.all(6),
       decoration: const BoxDecoration(
         color: AppColors.navigationBarBackground,
-        borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(28),
-        ),
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(28)),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          for (final item in items) ...[
-            item,
-            if (item != items.last) const SizedBox(height: 6),
-          ],
+          for (final item in items) ...[item, if (item != items.last) const SizedBox(height: 6)],
         ],
       ),
     );
@@ -187,10 +164,7 @@ class _PanelBody extends StatelessWidget {
 }
 
 class _MainEyeButton extends StatelessWidget {
-  const _MainEyeButton({
-    required this.onTap,
-    required this.controller,
-  });
+  const _MainEyeButton({required this.onTap, required this.controller});
 
   final VoidCallback onTap;
   final AnimationController controller;
@@ -198,31 +172,28 @@ class _MainEyeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-        animation: controller,
-        builder: (_, __) {
-          final opacity = 0.5 + controller.value * 0.5;
+      animation: controller,
+      builder: (_, _) {
+        final opacity = 0.5 + controller.value * 0.5;
 
-          return Material(
-            color: AppColors.favoriteRed.withOpacity(opacity),
-            shape: const CircleBorder(),
-            elevation: 8,
-            child: InkWell(
-              customBorder: const CircleBorder(),
-              onTap: onTap,
-              child: SizedBox(
-                width: 56,
-                height: 56,
-                child: Transform.rotate(
-                  angle: controller.value * 3.14159,
-                  child: const Icon(
-                    Icons.remove_red_eye_outlined,
-                    color: Colors.white,
-                    size: 26,
-                  ),
-                ),
+        return Material(
+          color: AppColors.favoriteRed.withValues(alpha: opacity),
+          shape: const CircleBorder(),
+          elevation: 8,
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: onTap,
+            child: SizedBox(
+              width: 56,
+              height: 56,
+              child: Transform.rotate(
+                angle: controller.value * 3.14159,
+                child: const Icon(Icons.remove_red_eye_outlined, color: Colors.white, size: 26),
               ),
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 }

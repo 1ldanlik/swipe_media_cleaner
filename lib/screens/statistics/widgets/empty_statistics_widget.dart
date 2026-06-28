@@ -16,17 +16,11 @@ class EmptyStatisticsWidget extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.info_outline,
-                  color: AppColors.restoreBlue,
-                ),
+                Icon(Icons.info_outline, color: AppColors.restoreBlue),
                 SizedBox(width: 12),
                 Text(
                   'Начните очистку',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -34,10 +28,7 @@ class EmptyStatisticsWidget extends StatelessWidget {
             Text(
               'Перейдите на вкладку "Галерея", выберите месяц и начните просматривать фотографии. '
               'Свайпайте влево, чтобы удалить, или вправо, чтобы оставить.',
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.greyVeryDark,
-              ),
+              style: TextStyle(fontSize: 14, color: AppColors.greyVeryDark),
             ),
           ],
         ),

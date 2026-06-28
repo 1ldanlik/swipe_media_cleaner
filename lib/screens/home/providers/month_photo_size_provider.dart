@@ -5,10 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-Future<int> calculatePhotoSizeForMonth({
-  required int year,
-  required int month,
-}) async {
+Future<int> calculatePhotoSizeForMonth({required int year, required int month}) async {
   try {
     debugPrint('📦 Лениво считаем размер фото за $month.$year');
 
@@ -16,16 +13,8 @@ Future<int> calculatePhotoSizeForMonth({
     final startOfNextMonth = DateTime(year, month + 1, 1);
 
     final filter = FilterOptionGroup(
-      createTimeCond: DateTimeCond(
-        min: startOfMonth,
-        max: startOfNextMonth,
-      ),
-      orders: [
-        const OrderOption(
-          type: OrderOptionType.createDate,
-          asc: true,
-        ),
-      ],
+      createTimeCond: DateTimeCond(min: startOfMonth, max: startOfNextMonth),
+      orders: [const OrderOption(type: OrderOptionType.createDate, asc: true)],
     );
 
     final int totalCount = await PhotoManager.getAssetCount(
@@ -56,14 +45,9 @@ Future<int> calculatePhotoSizeForMonth({
       for (int i = 0; i < assets.length; i += fileBatchSize) {
         final batch = assets.skip(i).take(fileBatchSize).toList();
 
-        final sizes = await Future.wait(
-          batch.map(_getAssetSizeBytes),
-        );
+        final sizes = await Future.wait(batch.map(_getAssetSizeBytes));
 
-        totalBytes += sizes.fold<int>(
-          0,
-          (sum, size) => sum + size,
-        );
+        totalBytes += sizes.fold<int>(0, (sum, size) => sum + size);
       }
 
       debugPrint('⏳ Размер фото за $month.$year: обработано $end / $totalCount');
@@ -97,10 +81,7 @@ class MonthSizeParams {
   final int year;
   final int month;
 
-  const MonthSizeParams({
-    required this.year,
-    required this.month,
-  });
+  const MonthSizeParams({required this.year, required this.month});
 
   @override
   bool operator ==(Object other) {
@@ -113,8 +94,5 @@ class MonthSizeParams {
 }
 
 final monthPhotoSizeProvider = FutureProvider.family<int, MonthSizeParams>((ref, params) async {
-  return calculatePhotoSizeForMonth(
-    year: params.year,
-    month: params.month,
-  );
+  return calculatePhotoSizeForMonth(year: params.year, month: params.month);
 });

@@ -21,11 +21,7 @@ class BottomActionButtons extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.white,
         boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowLight,
-            blurRadius: 4,
-            offset: const Offset(0, -2),
-          ),
+          BoxShadow(color: AppColors.shadowLight, blurRadius: 4, offset: const Offset(0, -2)),
         ],
       ),
       child: SafeArea(
@@ -38,10 +34,7 @@ class BottomActionButtons extends StatelessWidget {
                   backgroundColor: AppColors.deleteRed,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
-                child: const Text(
-                  'Удалить',
-                  style: TextStyle(fontSize: 18),
-                ),
+                child: const Text('Удалить', style: TextStyle(fontSize: 18)),
               ),
             ),
             const SizedBox(width: 12),
@@ -52,10 +45,7 @@ class BottomActionButtons extends StatelessWidget {
                   backgroundColor: AppColors.restoreBlue,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
-                child: const Text(
-                  'Восстановить',
-                  style: TextStyle(fontSize: 18),
-                ),
+                child: const Text('Восстановить', style: TextStyle(fontSize: 18)),
               ),
             ),
           ],

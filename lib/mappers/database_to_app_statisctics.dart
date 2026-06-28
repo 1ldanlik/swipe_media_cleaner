@@ -9,9 +9,9 @@ class DatabaseToAppStatisticMapper extends IDataMapper<AppStatisticsDB, AppStati
 
   @override
   AppStatistic map() => AppStatistic(
-        id: input.id,
-        checkedPhotos: input.checkedPhotos,
-        deletedPhotos: input.deletedPhotos,
-        freedSpace: input.freedSpace,
-      );
+    id: input.id,
+    checkedPhotos: input.checkedPhotos,
+    deletedPhotos: input.deletedPhotos,
+    freedSpace: input.freedSpace,
+  );
 }

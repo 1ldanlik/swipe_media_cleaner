@@ -25,8 +25,10 @@ final viewedPhotosProvider = StreamProvider.autoDispose<List<ViewedPhoto>>((ref)
 });
 
 /// Провайдер для получения просмотренных фото по месяцу
-final viewedPhotosByMonthProvider =
-    Provider.autoDispose.family<List<ViewedPhoto>, String>((ref, monthKey) {
+final viewedPhotosByMonthProvider = Provider.autoDispose.family<List<ViewedPhoto>, String>((
+  ref,
+  monthKey,
+) {
   final viewedPhotosAsync = ref.watch(viewedPhotosProvider);
   final viewedPhotos = viewedPhotosAsync.maybeWhen(
     data: (photos) => photos,
@@ -46,8 +48,10 @@ final viewedPhotosByMonthProvider =
 });
 
 /// Провайдер для подсчета процента просмотренных фото по месяцу
-final monthProgressProvider =
-    Provider.autoDispose.family<double, MapEntry<String, int>>((ref, data) {
+final monthProgressProvider = Provider.autoDispose.family<double, MapEntry<String, int>>((
+  ref,
+  data,
+) {
   final monthKey = data.key;
   final totalPhotos = data.value;
 
@@ -98,18 +102,12 @@ class ViewedPhotosController {
 
   /// Получить количество просмотренных фото по месяцу
   Future<int> getViewedCountByMonth(int year, int month) {
-    return _viewedPhotosService.getViewedCountByMonth(
-      year: year,
-      month: month,
-    );
+    return _viewedPhotosService.getViewedCountByMonth(year: year, month: month);
   }
 
   /// Очистить все просмотренные фото по месяцу
   Future<void> clearMonth(int year, int month) {
-    return _viewedPhotosService.deleteViewedPhotosByMonth(
-      year: year,
-      month: month,
-    );
+    return _viewedPhotosService.deleteViewedPhotosByMonth(year: year, month: month);
   }
 }
 

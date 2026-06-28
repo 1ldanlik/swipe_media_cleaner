@@ -8,10 +8,6 @@ class DatabaseToViewedPhotoMapper extends IDataMapper<ViewedPhotoDB, ViewedPhoto
   DatabaseToViewedPhotoMapper(super.input);
 
   @override
-  ViewedPhoto map() => ViewedPhoto(
-        id: input.id,
-        year: input.year,
-        month: input.month,
-        viewedAt: input.viewedAt,
-      );
+  ViewedPhoto map() =>
+      ViewedPhoto(id: input.id, year: input.year, month: input.month, viewedAt: input.viewedAt);
 }

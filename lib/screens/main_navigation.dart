@@ -14,6 +14,7 @@ class MainNavigation extends ConsumerStatefulWidget {
 
 class _MainNavigationState extends ConsumerState<MainNavigation> {
   int _currentIndex = 0;
+  bool _canPop = false;
 
   // GlobalKey для каждого Navigator
   final List<GlobalKey<NavigatorState>> _navigatorKeys = [
@@ -23,17 +24,22 @@ class _MainNavigationState extends ConsumerState<MainNavigation> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+
+    // Если текущий Navigator может pop, делаем это
+    final currentNavigator = _navigatorKeys[_currentIndex].currentState;
+    if (currentNavigator != null && currentNavigator.canPop()) {
+      currentNavigator.pop();
+      _canPop = false;
+    }
+    _canPop = true;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        // Если текущий Navigator может pop, делаем это
-        final currentNavigator = _navigatorKeys[_currentIndex].currentState;
-        if (currentNavigator != null && currentNavigator.canPop()) {
-          currentNavigator.pop();
-          return false;
-        }
-        return true;
-      },
+    return PopScope(
+      canPop: _canPop,
       child: Scaffold(
         body: IndexedStack(
           index: _currentIndex,
@@ -85,9 +91,7 @@ class _MainNavigationState extends ConsumerState<MainNavigation> {
     return Navigator(
       key: _navigatorKeys[index],
       onGenerateRoute: (settings) {
-        return MaterialPageRoute(
-          builder: (context) => child,
-        );
+        return MaterialPageRoute(builder: (context) => child);
       },
     );
   }

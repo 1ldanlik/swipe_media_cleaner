@@ -35,7 +35,9 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
 
-      ref.read(photoSwipeProvider(_providerParams).notifier).loadPhotosForMonth(
+      ref
+          .read(photoSwipeProvider(_providerParams).notifier)
+          .loadPhotosForMonth(
             viewedCount: widget.viewedCount,
             totalMonthCount: widget.totalMonthCount,
           );
@@ -55,10 +57,7 @@ class _PhotoSwipeScreenState extends ConsumerState<PhotoSwipeScreen> {
     final notifier = ref.read(photoSwipeProvider(_providerParams).notifier);
 
     if (state.isLoading) {
-      return _LoadingScaffold(
-        monthName: widget.monthGroup.monthName,
-        year: widget.monthGroup.year,
-      );
+      return _LoadingScaffold(monthName: widget.monthGroup.monthName, year: widget.monthGroup.year);
     }
 
     if (state.error != null) {
@@ -98,10 +97,7 @@ class _LoadingScaffold extends StatelessWidget {
   final String monthName;
   final int year;
 
-  const _LoadingScaffold({
-    required this.monthName,
-    required this.year,
-  });
+  const _LoadingScaffold({required this.monthName, required this.year});
 
   @override
   Widget build(BuildContext context) {
@@ -110,10 +106,7 @@ class _LoadingScaffold extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.greyExtraLight,
         foregroundColor: AppColors.black,
-        title: Text(
-          '$monthName $year',
-          style: const TextStyle(fontSize: 24),
-        ),
+        title: Text('$monthName $year', style: const TextStyle(fontSize: 24)),
       ),
       body: const Center(child: CircularProgressIndicator()),
     );
@@ -140,10 +133,7 @@ class _ErrorScaffold extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.greyExtraLight,
         foregroundColor: AppColors.black,
-        title: Text(
-          '$monthName $year',
-          style: const TextStyle(fontSize: 24),
-        ),
+        title: Text('$monthName $year', style: const TextStyle(fontSize: 24)),
       ),
       body: Center(
         child: Padding(
@@ -155,10 +145,7 @@ class _ErrorScaffold extends StatelessWidget {
               const SizedBox(height: 12),
               Text('Ошибка загрузки фото: $error', textAlign: TextAlign.center),
               const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: onRetry,
-                child: const Text('Повторить'),
-              ),
+              ElevatedButton(onPressed: onRetry, child: const Text('Повторить')),
             ],
           ),
         ),
@@ -213,10 +200,7 @@ class _MainScaffold extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.greyExtraLight,
         foregroundColor: AppColors.black,
-        title: Text(
-          '$monthName $year',
-          style: const TextStyle(fontSize: 24),
-        ),
+        title: Text('$monthName $year', style: const TextStyle(fontSize: 24)),
         actions: isFinished
             ? null
             : [
@@ -295,11 +279,7 @@ class _MainScaffold extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.check_circle_outline,
-                    size: 100,
-                    color: AppColors.successGreen,
-                  ),
+                  const Icon(Icons.check_circle_outline, size: 100, color: AppColors.successGreen),
                   const SizedBox(height: 24),
                   const Text(
                     'Все фотографии просмотрены!',

@@ -12,25 +12,20 @@ import '../theme/app_colors.dart';
 import 'month_preview_photos.dart';
 import 'circular_progress_indicator_widget.dart';
 
-final viewedCountByMonthProvider =
-    FutureProvider.autoDispose.family<int, (int year, int month)>((ref, params) {
+final viewedCountByMonthProvider = FutureProvider.autoDispose.family<int, (int year, int month)>((
+  ref,
+  params,
+) {
   final viewedPhotosController = ref.watch(viewedPhotosControllerProvider);
 
-  return viewedPhotosController.getViewedCountByMonth(
-    params.$1,
-    params.$2,
-  );
+  return viewedPhotosController.getViewedCountByMonth(params.$1, params.$2);
 });
 
 class MonthCard extends ConsumerWidget {
   final MonthGroup monthGroup;
   final List<PhotoItem> previewPhotos;
 
-  const MonthCard({
-    super.key,
-    required this.monthGroup,
-    required this.previewPhotos,
-  });
+  const MonthCard({super.key, required this.monthGroup, required this.previewPhotos});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -47,10 +42,7 @@ class MonthCard extends ConsumerWidget {
           margin: const EdgeInsets.only(bottom: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(
-              color: AppColors.cardBorder,
-              width: 2,
-            ),
+            side: const BorderSide(color: AppColors.cardBorder, width: 2),
           ),
           child: InkWell(
             onTap: () async {
@@ -66,11 +58,7 @@ class MonthCard extends ConsumerWidget {
 
               final homeState = ref.read(homeScreenProvider);
               ref.invalidate(monthGroupsByYearProvider(homeState.selectedYear));
-              ref.invalidate(
-                viewedCountByMonthProvider(
-                  (monthGroup.year, monthGroup.month),
-                ),
-              );
+              ref.invalidate(viewedCountByMonthProvider((monthGroup.year, monthGroup.month)));
             },
             borderRadius: BorderRadius.circular(16),
             child: Padding(
@@ -85,18 +73,12 @@ class MonthCard extends ConsumerWidget {
                         children: [
                           Text(
                             monthGroup.monthName,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(width: 8),
                           Text(
                             '${monthGroup.year}',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: AppColors.greyMedium,
-                            ),
+                            style: const TextStyle(fontSize: 16, color: AppColors.greyMedium),
                           ),
                         ],
                       ),
@@ -116,10 +98,7 @@ class MonthCard extends ConsumerWidget {
                                     color: AppColors.greyMedium,
                                   ),
                                 ),
-                                MonthPhotoSizeText(
-                                  year: monthGroup.year,
-                                  month: monthGroup.month,
-                                ),
+                                MonthPhotoSizeText(year: monthGroup.year, month: monthGroup.month),
                               ],
                             ),
                             const SizedBox(height: 12),
@@ -129,11 +108,7 @@ class MonthCard extends ConsumerWidget {
                       ],
                     ],
                   ),
-                  CircularProgressIndicatorWidget(
-                    progress: progress,
-                    size: 110,
-                    strokeWidth: 12,
-                  ),
+                  CircularProgressIndicatorWidget(progress: progress, size: 110, strokeWidth: 12),
                 ],
               ),
             ),
@@ -146,9 +121,7 @@ class MonthCard extends ConsumerWidget {
           margin: EdgeInsets.only(bottom: 16),
           child: Padding(
             padding: EdgeInsets.all(20),
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
+            child: Center(child: CircularProgressIndicator()),
           ),
         );
       },
@@ -156,10 +129,7 @@ class MonthCard extends ConsumerWidget {
         return Card(
           elevation: 0,
           margin: const EdgeInsets.only(bottom: 16),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Text('Ошибка: $error'),
-          ),
+          child: Padding(padding: const EdgeInsets.all(20), child: Text('Ошибка: $error')),
         );
       },
     );

@@ -52,10 +52,7 @@ class _CircularProgressPainter extends CustomPainter {
   final double progress;
   final double strokeWidth;
 
-  _CircularProgressPainter({
-    required this.progress,
-    required this.strokeWidth,
-  });
+  _CircularProgressPainter({required this.progress, required this.strokeWidth});
 
   @override
   void paint(Canvas canvas, Size size) {

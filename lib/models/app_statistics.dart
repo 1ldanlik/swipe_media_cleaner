@@ -12,12 +12,7 @@ class AppStatistic {
     required this.freedSpace,
   });
 
-  AppStatistic copyWith({
-    int? id,
-    int? checkedPhotos,
-    int? deletedPhotos,
-    int? freedSpace,
-  }) {
+  AppStatistic copyWith({int? id, int? checkedPhotos, int? deletedPhotos, int? freedSpace}) {
     return AppStatistic(
       id: id ?? this.id,
       checkedPhotos: checkedPhotos ?? this.checkedPhotos,

@@ -9,31 +9,44 @@ class AppStatistics extends Table with TableInfo<AppStatistics, AppStatisticsDB>
   final String? _alias;
   AppStatistics(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
-  late final GeneratedColumn<int> id = GeneratedColumn<int>('id', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      $customConstraints: 'NOT NULL PRIMARY KEY CHECK (id = 1)');
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL PRIMARY KEY CHECK (id = 1)',
+  );
   static const VerificationMeta _checkedPhotosMeta = const VerificationMeta('checkedPhotos');
   late final GeneratedColumn<int> checkedPhotos = GeneratedColumn<int>(
-      'checked_photos', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      $customConstraints: 'NOT NULL DEFAULT 0',
-      defaultValue: const CustomExpression('0'));
+    'checked_photos',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT 0',
+    defaultValue: const CustomExpression('0'),
+  );
   static const VerificationMeta _deletedPhotosMeta = const VerificationMeta('deletedPhotos');
   late final GeneratedColumn<int> deletedPhotos = GeneratedColumn<int>(
-      'deleted_photos', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      $customConstraints: 'NOT NULL DEFAULT 0',
-      defaultValue: const CustomExpression('0'));
+    'deleted_photos',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT 0',
+    defaultValue: const CustomExpression('0'),
+  );
   static const VerificationMeta _freedSpaceMeta = const VerificationMeta('freedSpace');
   late final GeneratedColumn<int> freedSpace = GeneratedColumn<int>(
-      'freed_space', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      $customConstraints: 'NOT NULL DEFAULT 0',
-      defaultValue: const CustomExpression('0'));
+    'freed_space',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT 0',
+    defaultValue: const CustomExpression('0'),
+  );
   @override
   List<GeneratedColumn> get $columns => [id, checkedPhotos, deletedPhotos, freedSpace];
   @override
@@ -42,24 +55,32 @@ class AppStatistics extends Table with TableInfo<AppStatistics, AppStatisticsDB>
   String get actualTableName => $name;
   static const String $name = 'app_statistics';
   @override
-  VerificationContext validateIntegrity(Insertable<AppStatisticsDB> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<AppStatisticsDB> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
     if (data.containsKey('checked_photos')) {
-      context.handle(_checkedPhotosMeta,
-          checkedPhotos.isAcceptableOrUnknown(data['checked_photos']!, _checkedPhotosMeta));
+      context.handle(
+        _checkedPhotosMeta,
+        checkedPhotos.isAcceptableOrUnknown(data['checked_photos']!, _checkedPhotosMeta),
+      );
     }
     if (data.containsKey('deleted_photos')) {
-      context.handle(_deletedPhotosMeta,
-          deletedPhotos.isAcceptableOrUnknown(data['deleted_photos']!, _deletedPhotosMeta));
+      context.handle(
+        _deletedPhotosMeta,
+        deletedPhotos.isAcceptableOrUnknown(data['deleted_photos']!, _deletedPhotosMeta),
+      );
     }
     if (data.containsKey('freed_space')) {
       context.handle(
-          _freedSpaceMeta, freedSpace.isAcceptableOrUnknown(data['freed_space']!, _freedSpaceMeta));
+        _freedSpaceMeta,
+        freedSpace.isAcceptableOrUnknown(data['freed_space']!, _freedSpaceMeta),
+      );
     }
     return context;
   }
@@ -71,12 +92,18 @@ class AppStatistics extends Table with TableInfo<AppStatistics, AppStatisticsDB>
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return AppStatisticsDB(
       id: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      checkedPhotos: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}checked_photos'])!,
-      deletedPhotos: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}deleted_photos'])!,
-      freedSpace: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}freed_space'])!,
+      checkedPhotos: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}checked_photos'],
+      )!,
+      deletedPhotos: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_photos'],
+      )!,
+      freedSpace: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}freed_space'],
+      )!,
     );
   }
 
@@ -94,11 +121,12 @@ class AppStatisticsDB extends DataClass implements Insertable<AppStatisticsDB> {
   final int checkedPhotos;
   final int deletedPhotos;
   final int freedSpace;
-  const AppStatisticsDB(
-      {required this.id,
-      required this.checkedPhotos,
-      required this.deletedPhotos,
-      required this.freedSpace});
+  const AppStatisticsDB({
+    required this.id,
+    required this.checkedPhotos,
+    required this.deletedPhotos,
+    required this.freedSpace,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -208,11 +236,12 @@ class AppStatisticsCompanion extends UpdateCompanion<AppStatisticsDB> {
     });
   }
 
-  AppStatisticsCompanion copyWith(
-      {Value<int>? id,
-      Value<int>? checkedPhotos,
-      Value<int>? deletedPhotos,
-      Value<int>? freedSpace}) {
+  AppStatisticsCompanion copyWith({
+    Value<int>? id,
+    Value<int>? checkedPhotos,
+    Value<int>? deletedPhotos,
+    Value<int>? freedSpace,
+  }) {
     return AppStatisticsCompanion(
       id: id ?? this.id,
       checkedPhotos: checkedPhotos ?? this.checkedPhotos,
@@ -257,20 +286,40 @@ class ViewedPhotos extends Table with TableInfo<ViewedPhotos, ViewedPhotoDB> {
   final String? _alias;
   ViewedPhotos(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
-  late final GeneratedColumn<String> id = GeneratedColumn<String>('id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL PRIMARY KEY');
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL PRIMARY KEY',
+  );
   static const VerificationMeta _yearMeta = const VerificationMeta('year');
-  late final GeneratedColumn<int> year = GeneratedColumn<int>('year', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true, $customConstraints: 'NOT NULL');
+  late final GeneratedColumn<int> year = GeneratedColumn<int>(
+    'year',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
   static const VerificationMeta _monthMeta = const VerificationMeta('month');
-  late final GeneratedColumn<int> month = GeneratedColumn<int>('month', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true, $customConstraints: 'NOT NULL');
+  late final GeneratedColumn<int> month = GeneratedColumn<int>(
+    'month',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
   late final GeneratedColumnWithTypeConverter<DateTime, int> viewedAt = GeneratedColumn<int>(
-          'viewed_at', aliasedName, false,
-          type: DriftSqlType.int, requiredDuringInsert: true, $customConstraints: 'NOT NULL')
-      .withConverter<DateTime>(ViewedPhotos.$converterviewedAt);
+    'viewed_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  ).withConverter<DateTime>(ViewedPhotos.$converterviewedAt);
   @override
   List<GeneratedColumn> get $columns => [id, year, month, viewedAt];
   @override
@@ -279,8 +328,10 @@ class ViewedPhotos extends Table with TableInfo<ViewedPhotos, ViewedPhotoDB> {
   String get actualTableName => $name;
   static const String $name = 'viewed_photos';
   @override
-  VerificationContext validateIntegrity(Insertable<ViewedPhotoDB> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<ViewedPhotoDB> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
@@ -310,8 +361,9 @@ class ViewedPhotos extends Table with TableInfo<ViewedPhotos, ViewedPhotoDB> {
       id: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       year: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}year'])!,
       month: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}month'])!,
-      viewedAt: ViewedPhotos.$converterviewedAt.fromSql(attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}viewed_at'])!),
+      viewedAt: ViewedPhotos.$converterviewedAt.fromSql(
+        attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}viewed_at'])!,
+      ),
     );
   }
 
@@ -330,8 +382,12 @@ class ViewedPhotoDB extends DataClass implements Insertable<ViewedPhotoDB> {
   final int year;
   final int month;
   final DateTime viewedAt;
-  const ViewedPhotoDB(
-      {required this.id, required this.year, required this.month, required this.viewedAt});
+  const ViewedPhotoDB({
+    required this.id,
+    required this.year,
+    required this.month,
+    required this.viewedAt,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -374,11 +430,11 @@ class ViewedPhotoDB extends DataClass implements Insertable<ViewedPhotoDB> {
   }
 
   ViewedPhotoDB copyWith({String? id, int? year, int? month, DateTime? viewedAt}) => ViewedPhotoDB(
-        id: id ?? this.id,
-        year: year ?? this.year,
-        month: month ?? this.month,
-        viewedAt: viewedAt ?? this.viewedAt,
-      );
+    id: id ?? this.id,
+    year: year ?? this.year,
+    month: month ?? this.month,
+    viewedAt: viewedAt ?? this.viewedAt,
+  );
   ViewedPhotoDB copyWithCompanion(ViewedPhotosCompanion data) {
     return ViewedPhotoDB(
       id: data.id.present ? data.id.value : this.id,
@@ -430,10 +486,10 @@ class ViewedPhotosCompanion extends UpdateCompanion<ViewedPhotoDB> {
     required int month,
     required DateTime viewedAt,
     this.rowid = const Value.absent(),
-  })  : id = Value(id),
-        year = Value(year),
-        month = Value(month),
-        viewedAt = Value(viewedAt);
+  }) : id = Value(id),
+       year = Value(year),
+       month = Value(month),
+       viewedAt = Value(viewedAt);
   static Insertable<ViewedPhotoDB> custom({
     Expression<String>? id,
     Expression<int>? year,
@@ -450,12 +506,13 @@ class ViewedPhotosCompanion extends UpdateCompanion<ViewedPhotoDB> {
     });
   }
 
-  ViewedPhotosCompanion copyWith(
-      {Value<String>? id,
-      Value<int>? year,
-      Value<int>? month,
-      Value<DateTime>? viewedAt,
-      Value<int>? rowid}) {
+  ViewedPhotosCompanion copyWith({
+    Value<String>? id,
+    Value<int>? year,
+    Value<int>? month,
+    Value<DateTime>? viewedAt,
+    Value<int>? rowid,
+  }) {
     return ViewedPhotosCompanion(
       id: id ?? this.id,
       year: year ?? this.year,
@@ -505,26 +562,58 @@ class DeletedPhotos extends Table with TableInfo<DeletedPhotos, DeletedPhotoDB> 
   final String? _alias;
   DeletedPhotos(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
-  late final GeneratedColumn<String> id = GeneratedColumn<String>('id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL PRIMARY KEY');
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL PRIMARY KEY',
+  );
   static const VerificationMeta _pathMeta = const VerificationMeta('path');
-  late final GeneratedColumn<String> path = GeneratedColumn<String>('path', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true, $customConstraints: 'NOT NULL');
+  late final GeneratedColumn<String> path = GeneratedColumn<String>(
+    'path',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
   static const VerificationMeta _sizeMeta = const VerificationMeta('size');
-  late final GeneratedColumn<int> size = GeneratedColumn<int>('size', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true, $customConstraints: 'NOT NULL');
+  late final GeneratedColumn<int> size = GeneratedColumn<int>(
+    'size',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
   late final GeneratedColumnWithTypeConverter<DateTime, int> deletedAt = GeneratedColumn<int>(
-          'deleted_at', aliasedName, false,
-          type: DriftSqlType.int, requiredDuringInsert: true, $customConstraints: 'NOT NULL')
-      .withConverter<DateTime>(DeletedPhotos.$converterdeletedAt);
+    'deleted_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  ).withConverter<DateTime>(DeletedPhotos.$converterdeletedAt);
   static const VerificationMeta _yearMeta = const VerificationMeta('year');
-  late final GeneratedColumn<int> year = GeneratedColumn<int>('year', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true, $customConstraints: 'NOT NULL');
+  late final GeneratedColumn<int> year = GeneratedColumn<int>(
+    'year',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
   static const VerificationMeta _monthMeta = const VerificationMeta('month');
-  late final GeneratedColumn<int> month = GeneratedColumn<int>('month', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true, $customConstraints: 'NOT NULL');
+  late final GeneratedColumn<int> month = GeneratedColumn<int>(
+    'month',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
   @override
   List<GeneratedColumn> get $columns => [id, path, size, deletedAt, year, month];
   @override
@@ -533,8 +622,10 @@ class DeletedPhotos extends Table with TableInfo<DeletedPhotos, DeletedPhotoDB> 
   String get actualTableName => $name;
   static const String $name = 'deleted_photos';
   @override
-  VerificationContext validateIntegrity(Insertable<DeletedPhotoDB> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<DeletedPhotoDB> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
@@ -574,8 +665,9 @@ class DeletedPhotos extends Table with TableInfo<DeletedPhotos, DeletedPhotoDB> 
       id: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       path: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}path'])!,
       size: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}size'])!,
-      deletedAt: DeletedPhotos.$converterdeletedAt.fromSql(attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}deleted_at'])!),
+      deletedAt: DeletedPhotos.$converterdeletedAt.fromSql(
+        attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}deleted_at'])!,
+      ),
       year: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}year'])!,
       month: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}month'])!,
     );
@@ -598,13 +690,14 @@ class DeletedPhotoDB extends DataClass implements Insertable<DeletedPhotoDB> {
   final DateTime deletedAt;
   final int year;
   final int month;
-  const DeletedPhotoDB(
-      {required this.id,
-      required this.path,
-      required this.size,
-      required this.deletedAt,
-      required this.year,
-      required this.month});
+  const DeletedPhotoDB({
+    required this.id,
+    required this.path,
+    required this.size,
+    required this.deletedAt,
+    required this.year,
+    required this.month,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -654,16 +747,21 @@ class DeletedPhotoDB extends DataClass implements Insertable<DeletedPhotoDB> {
     };
   }
 
-  DeletedPhotoDB copyWith(
-          {String? id, String? path, int? size, DateTime? deletedAt, int? year, int? month}) =>
-      DeletedPhotoDB(
-        id: id ?? this.id,
-        path: path ?? this.path,
-        size: size ?? this.size,
-        deletedAt: deletedAt ?? this.deletedAt,
-        year: year ?? this.year,
-        month: month ?? this.month,
-      );
+  DeletedPhotoDB copyWith({
+    String? id,
+    String? path,
+    int? size,
+    DateTime? deletedAt,
+    int? year,
+    int? month,
+  }) => DeletedPhotoDB(
+    id: id ?? this.id,
+    path: path ?? this.path,
+    size: size ?? this.size,
+    deletedAt: deletedAt ?? this.deletedAt,
+    year: year ?? this.year,
+    month: month ?? this.month,
+  );
   DeletedPhotoDB copyWithCompanion(DeletedPhotosCompanion data) {
     return DeletedPhotoDB(
       id: data.id.present ? data.id.value : this.id,
@@ -727,12 +825,12 @@ class DeletedPhotosCompanion extends UpdateCompanion<DeletedPhotoDB> {
     required int year,
     required int month,
     this.rowid = const Value.absent(),
-  })  : id = Value(id),
-        path = Value(path),
-        size = Value(size),
-        deletedAt = Value(deletedAt),
-        year = Value(year),
-        month = Value(month);
+  }) : id = Value(id),
+       path = Value(path),
+       size = Value(size),
+       deletedAt = Value(deletedAt),
+       year = Value(year),
+       month = Value(month);
   static Insertable<DeletedPhotoDB> custom({
     Expression<String>? id,
     Expression<String>? path,
@@ -753,14 +851,15 @@ class DeletedPhotosCompanion extends UpdateCompanion<DeletedPhotoDB> {
     });
   }
 
-  DeletedPhotosCompanion copyWith(
-      {Value<String>? id,
-      Value<String>? path,
-      Value<int>? size,
-      Value<DateTime>? deletedAt,
-      Value<int>? year,
-      Value<int>? month,
-      Value<int>? rowid}) {
+  DeletedPhotosCompanion copyWith({
+    Value<String>? id,
+    Value<String>? path,
+    Value<int>? size,
+    Value<DateTime>? deletedAt,
+    Value<int>? year,
+    Value<int>? month,
+    Value<int>? rowid,
+  }) {
     return DeletedPhotosCompanion(
       id: id ?? this.id,
       path: path ?? this.path,
@@ -819,39 +918,47 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final AppStatistics appStatistics = AppStatistics(this);
   late final ViewedPhotos viewedPhotos = ViewedPhotos(this);
-  late final Index viewedPhotosYearMonthIdx = Index('viewed_photos_year_month_idx',
-      'CREATE INDEX viewed_photos_year_month_idx ON viewed_photos (year, month)');
-  late final Index viewedPhotosViewedAtIdx = Index('viewed_photos_viewed_at_idx',
-      'CREATE INDEX viewed_photos_viewed_at_idx ON viewed_photos (viewed_at)');
+  late final Index viewedPhotosYearMonthIdx = Index(
+    'viewed_photos_year_month_idx',
+    'CREATE INDEX viewed_photos_year_month_idx ON viewed_photos (year, month)',
+  );
+  late final Index viewedPhotosViewedAtIdx = Index(
+    'viewed_photos_viewed_at_idx',
+    'CREATE INDEX viewed_photos_viewed_at_idx ON viewed_photos (viewed_at)',
+  );
   late final DeletedPhotos deletedPhotos = DeletedPhotos(this);
-  late final Index deletedPhotosYearMonthIdx = Index('deleted_photos_year_month_idx',
-      'CREATE INDEX deleted_photos_year_month_idx ON deleted_photos (year, month)');
+  late final Index deletedPhotosYearMonthIdx = Index(
+    'deleted_photos_year_month_idx',
+    'CREATE INDEX deleted_photos_year_month_idx ON deleted_photos (year, month)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
-        appStatistics,
-        viewedPhotos,
-        viewedPhotosYearMonthIdx,
-        viewedPhotosViewedAtIdx,
-        deletedPhotos,
-        deletedPhotosYearMonthIdx
-      ];
+    appStatistics,
+    viewedPhotos,
+    viewedPhotosYearMonthIdx,
+    viewedPhotosViewedAtIdx,
+    deletedPhotos,
+    deletedPhotosYearMonthIdx,
+  ];
 }
 
-typedef $AppStatisticsCreateCompanionBuilder = AppStatisticsCompanion Function({
-  Value<int> id,
-  Value<int> checkedPhotos,
-  Value<int> deletedPhotos,
-  Value<int> freedSpace,
-});
-typedef $AppStatisticsUpdateCompanionBuilder = AppStatisticsCompanion Function({
-  Value<int> id,
-  Value<int> checkedPhotos,
-  Value<int> deletedPhotos,
-  Value<int> freedSpace,
-});
+typedef $AppStatisticsCreateCompanionBuilder =
+    AppStatisticsCompanion Function({
+      Value<int> id,
+      Value<int> checkedPhotos,
+      Value<int> deletedPhotos,
+      Value<int> freedSpace,
+    });
+typedef $AppStatisticsUpdateCompanionBuilder =
+    AppStatisticsCompanion Function({
+      Value<int> id,
+      Value<int> checkedPhotos,
+      Value<int> deletedPhotos,
+      Value<int> freedSpace,
+    });
 
 class $AppStatisticsFilterComposer extends Composer<_$AppDatabase, AppStatistics> {
   $AppStatisticsFilterComposer({
@@ -886,10 +993,14 @@ class $AppStatisticsOrderingComposer extends Composer<_$AppDatabase, AppStatisti
       $composableBuilder(column: $table.id, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get checkedPhotos => $composableBuilder(
-      column: $table.checkedPhotos, builder: (column) => ColumnOrderings(column));
+    column: $table.checkedPhotos,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<int> get deletedPhotos => $composableBuilder(
-      column: $table.deletedPhotos, builder: (column) => ColumnOrderings(column));
+    column: $table.deletedPhotos,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<int> get freedSpace =>
       $composableBuilder(column: $table.freedSpace, builder: (column) => ColumnOrderings(column));
@@ -915,82 +1026,91 @@ class $AppStatisticsAnnotationComposer extends Composer<_$AppDatabase, AppStatis
       $composableBuilder(column: $table.freedSpace, builder: (column) => column);
 }
 
-class $AppStatisticsTableManager extends RootTableManager<
-    _$AppDatabase,
-    AppStatistics,
-    AppStatisticsDB,
-    $AppStatisticsFilterComposer,
-    $AppStatisticsOrderingComposer,
-    $AppStatisticsAnnotationComposer,
-    $AppStatisticsCreateCompanionBuilder,
-    $AppStatisticsUpdateCompanionBuilder,
-    (AppStatisticsDB, BaseReferences<_$AppDatabase, AppStatistics, AppStatisticsDB>),
-    AppStatisticsDB,
-    PrefetchHooks Function()> {
+class $AppStatisticsTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          AppStatistics,
+          AppStatisticsDB,
+          $AppStatisticsFilterComposer,
+          $AppStatisticsOrderingComposer,
+          $AppStatisticsAnnotationComposer,
+          $AppStatisticsCreateCompanionBuilder,
+          $AppStatisticsUpdateCompanionBuilder,
+          (AppStatisticsDB, BaseReferences<_$AppDatabase, AppStatistics, AppStatisticsDB>),
+          AppStatisticsDB,
+          PrefetchHooks Function()
+        > {
   $AppStatisticsTableManager(_$AppDatabase db, AppStatistics table)
-      : super(TableManagerState(
+    : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () => $AppStatisticsFilterComposer($db: db, $table: table),
           createOrderingComposer: () => $AppStatisticsOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $AppStatisticsAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<int> checkedPhotos = const Value.absent(),
-            Value<int> deletedPhotos = const Value.absent(),
-            Value<int> freedSpace = const Value.absent(),
-          }) =>
-              AppStatisticsCompanion(
-            id: id,
-            checkedPhotos: checkedPhotos,
-            deletedPhotos: deletedPhotos,
-            freedSpace: freedSpace,
-          ),
-          createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<int> checkedPhotos = const Value.absent(),
-            Value<int> deletedPhotos = const Value.absent(),
-            Value<int> freedSpace = const Value.absent(),
-          }) =>
-              AppStatisticsCompanion.insert(
-            id: id,
-            checkedPhotos: checkedPhotos,
-            deletedPhotos: deletedPhotos,
-            freedSpace: freedSpace,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> checkedPhotos = const Value.absent(),
+                Value<int> deletedPhotos = const Value.absent(),
+                Value<int> freedSpace = const Value.absent(),
+              }) => AppStatisticsCompanion(
+                id: id,
+                checkedPhotos: checkedPhotos,
+                deletedPhotos: deletedPhotos,
+                freedSpace: freedSpace,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> checkedPhotos = const Value.absent(),
+                Value<int> deletedPhotos = const Value.absent(),
+                Value<int> freedSpace = const Value.absent(),
+              }) => AppStatisticsCompanion.insert(
+                id: id,
+                checkedPhotos: checkedPhotos,
+                deletedPhotos: deletedPhotos,
+                freedSpace: freedSpace,
+              ),
           withReferenceMapper: (p0) =>
               p0.map((e) => (e.readTable(table), BaseReferences(db, table, e))).toList(),
           prefetchHooksCallback: null,
-        ));
+        ),
+      );
 }
 
-typedef $AppStatisticsProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    AppStatistics,
-    AppStatisticsDB,
-    $AppStatisticsFilterComposer,
-    $AppStatisticsOrderingComposer,
-    $AppStatisticsAnnotationComposer,
-    $AppStatisticsCreateCompanionBuilder,
-    $AppStatisticsUpdateCompanionBuilder,
-    (AppStatisticsDB, BaseReferences<_$AppDatabase, AppStatistics, AppStatisticsDB>),
-    AppStatisticsDB,
-    PrefetchHooks Function()>;
-typedef $ViewedPhotosCreateCompanionBuilder = ViewedPhotosCompanion Function({
-  required String id,
-  required int year,
-  required int month,
-  required DateTime viewedAt,
-  Value<int> rowid,
-});
-typedef $ViewedPhotosUpdateCompanionBuilder = ViewedPhotosCompanion Function({
-  Value<String> id,
-  Value<int> year,
-  Value<int> month,
-  Value<DateTime> viewedAt,
-  Value<int> rowid,
-});
+typedef $AppStatisticsProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      AppStatistics,
+      AppStatisticsDB,
+      $AppStatisticsFilterComposer,
+      $AppStatisticsOrderingComposer,
+      $AppStatisticsAnnotationComposer,
+      $AppStatisticsCreateCompanionBuilder,
+      $AppStatisticsUpdateCompanionBuilder,
+      (AppStatisticsDB, BaseReferences<_$AppDatabase, AppStatistics, AppStatisticsDB>),
+      AppStatisticsDB,
+      PrefetchHooks Function()
+    >;
+typedef $ViewedPhotosCreateCompanionBuilder =
+    ViewedPhotosCompanion Function({
+      required String id,
+      required int year,
+      required int month,
+      required DateTime viewedAt,
+      Value<int> rowid,
+    });
+typedef $ViewedPhotosUpdateCompanionBuilder =
+    ViewedPhotosCompanion Function({
+      Value<String> id,
+      Value<int> year,
+      Value<int> month,
+      Value<DateTime> viewedAt,
+      Value<int> rowid,
+    });
 
 class $ViewedPhotosFilterComposer extends Composer<_$AppDatabase, ViewedPhotos> {
   $ViewedPhotosFilterComposer({
@@ -1010,7 +1130,9 @@ class $ViewedPhotosFilterComposer extends Composer<_$AppDatabase, ViewedPhotos> 
       $composableBuilder(column: $table.month, builder: (column) => ColumnFilters(column));
 
   ColumnWithTypeConverterFilters<DateTime, DateTime, int> get viewedAt => $composableBuilder(
-      column: $table.viewedAt, builder: (column) => ColumnWithTypeConverterFilters(column));
+    column: $table.viewedAt,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 }
 
 class $ViewedPhotosOrderingComposer extends Composer<_$AppDatabase, ViewedPhotos> {
@@ -1055,90 +1177,99 @@ class $ViewedPhotosAnnotationComposer extends Composer<_$AppDatabase, ViewedPhot
       $composableBuilder(column: $table.viewedAt, builder: (column) => column);
 }
 
-class $ViewedPhotosTableManager extends RootTableManager<
-    _$AppDatabase,
-    ViewedPhotos,
-    ViewedPhotoDB,
-    $ViewedPhotosFilterComposer,
-    $ViewedPhotosOrderingComposer,
-    $ViewedPhotosAnnotationComposer,
-    $ViewedPhotosCreateCompanionBuilder,
-    $ViewedPhotosUpdateCompanionBuilder,
-    (ViewedPhotoDB, BaseReferences<_$AppDatabase, ViewedPhotos, ViewedPhotoDB>),
-    ViewedPhotoDB,
-    PrefetchHooks Function()> {
+class $ViewedPhotosTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          ViewedPhotos,
+          ViewedPhotoDB,
+          $ViewedPhotosFilterComposer,
+          $ViewedPhotosOrderingComposer,
+          $ViewedPhotosAnnotationComposer,
+          $ViewedPhotosCreateCompanionBuilder,
+          $ViewedPhotosUpdateCompanionBuilder,
+          (ViewedPhotoDB, BaseReferences<_$AppDatabase, ViewedPhotos, ViewedPhotoDB>),
+          ViewedPhotoDB,
+          PrefetchHooks Function()
+        > {
   $ViewedPhotosTableManager(_$AppDatabase db, ViewedPhotos table)
-      : super(TableManagerState(
+    : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () => $ViewedPhotosFilterComposer($db: db, $table: table),
           createOrderingComposer: () => $ViewedPhotosOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $ViewedPhotosAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<String> id = const Value.absent(),
-            Value<int> year = const Value.absent(),
-            Value<int> month = const Value.absent(),
-            Value<DateTime> viewedAt = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              ViewedPhotosCompanion(
-            id: id,
-            year: year,
-            month: month,
-            viewedAt: viewedAt,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            required String id,
-            required int year,
-            required int month,
-            required DateTime viewedAt,
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              ViewedPhotosCompanion.insert(
-            id: id,
-            year: year,
-            month: month,
-            viewedAt: viewedAt,
-            rowid: rowid,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<int> year = const Value.absent(),
+                Value<int> month = const Value.absent(),
+                Value<DateTime> viewedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ViewedPhotosCompanion(
+                id: id,
+                year: year,
+                month: month,
+                viewedAt: viewedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required int year,
+                required int month,
+                required DateTime viewedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => ViewedPhotosCompanion.insert(
+                id: id,
+                year: year,
+                month: month,
+                viewedAt: viewedAt,
+                rowid: rowid,
+              ),
           withReferenceMapper: (p0) =>
               p0.map((e) => (e.readTable(table), BaseReferences(db, table, e))).toList(),
           prefetchHooksCallback: null,
-        ));
+        ),
+      );
 }
 
-typedef $ViewedPhotosProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    ViewedPhotos,
-    ViewedPhotoDB,
-    $ViewedPhotosFilterComposer,
-    $ViewedPhotosOrderingComposer,
-    $ViewedPhotosAnnotationComposer,
-    $ViewedPhotosCreateCompanionBuilder,
-    $ViewedPhotosUpdateCompanionBuilder,
-    (ViewedPhotoDB, BaseReferences<_$AppDatabase, ViewedPhotos, ViewedPhotoDB>),
-    ViewedPhotoDB,
-    PrefetchHooks Function()>;
-typedef $DeletedPhotosCreateCompanionBuilder = DeletedPhotosCompanion Function({
-  required String id,
-  required String path,
-  required int size,
-  required DateTime deletedAt,
-  required int year,
-  required int month,
-  Value<int> rowid,
-});
-typedef $DeletedPhotosUpdateCompanionBuilder = DeletedPhotosCompanion Function({
-  Value<String> id,
-  Value<String> path,
-  Value<int> size,
-  Value<DateTime> deletedAt,
-  Value<int> year,
-  Value<int> month,
-  Value<int> rowid,
-});
+typedef $ViewedPhotosProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      ViewedPhotos,
+      ViewedPhotoDB,
+      $ViewedPhotosFilterComposer,
+      $ViewedPhotosOrderingComposer,
+      $ViewedPhotosAnnotationComposer,
+      $ViewedPhotosCreateCompanionBuilder,
+      $ViewedPhotosUpdateCompanionBuilder,
+      (ViewedPhotoDB, BaseReferences<_$AppDatabase, ViewedPhotos, ViewedPhotoDB>),
+      ViewedPhotoDB,
+      PrefetchHooks Function()
+    >;
+typedef $DeletedPhotosCreateCompanionBuilder =
+    DeletedPhotosCompanion Function({
+      required String id,
+      required String path,
+      required int size,
+      required DateTime deletedAt,
+      required int year,
+      required int month,
+      Value<int> rowid,
+    });
+typedef $DeletedPhotosUpdateCompanionBuilder =
+    DeletedPhotosCompanion Function({
+      Value<String> id,
+      Value<String> path,
+      Value<int> size,
+      Value<DateTime> deletedAt,
+      Value<int> year,
+      Value<int> month,
+      Value<int> rowid,
+    });
 
 class $DeletedPhotosFilterComposer extends Composer<_$AppDatabase, DeletedPhotos> {
   $DeletedPhotosFilterComposer({
@@ -1158,7 +1289,9 @@ class $DeletedPhotosFilterComposer extends Composer<_$AppDatabase, DeletedPhotos
       $composableBuilder(column: $table.size, builder: (column) => ColumnFilters(column));
 
   ColumnWithTypeConverterFilters<DateTime, DateTime, int> get deletedAt => $composableBuilder(
-      column: $table.deletedAt, builder: (column) => ColumnWithTypeConverterFilters(column));
+    column: $table.deletedAt,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 
   ColumnFilters<int> get year =>
       $composableBuilder(column: $table.year, builder: (column) => ColumnFilters(column));
@@ -1221,80 +1354,87 @@ class $DeletedPhotosAnnotationComposer extends Composer<_$AppDatabase, DeletedPh
       $composableBuilder(column: $table.month, builder: (column) => column);
 }
 
-class $DeletedPhotosTableManager extends RootTableManager<
-    _$AppDatabase,
-    DeletedPhotos,
-    DeletedPhotoDB,
-    $DeletedPhotosFilterComposer,
-    $DeletedPhotosOrderingComposer,
-    $DeletedPhotosAnnotationComposer,
-    $DeletedPhotosCreateCompanionBuilder,
-    $DeletedPhotosUpdateCompanionBuilder,
-    (DeletedPhotoDB, BaseReferences<_$AppDatabase, DeletedPhotos, DeletedPhotoDB>),
-    DeletedPhotoDB,
-    PrefetchHooks Function()> {
+class $DeletedPhotosTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          DeletedPhotos,
+          DeletedPhotoDB,
+          $DeletedPhotosFilterComposer,
+          $DeletedPhotosOrderingComposer,
+          $DeletedPhotosAnnotationComposer,
+          $DeletedPhotosCreateCompanionBuilder,
+          $DeletedPhotosUpdateCompanionBuilder,
+          (DeletedPhotoDB, BaseReferences<_$AppDatabase, DeletedPhotos, DeletedPhotoDB>),
+          DeletedPhotoDB,
+          PrefetchHooks Function()
+        > {
   $DeletedPhotosTableManager(_$AppDatabase db, DeletedPhotos table)
-      : super(TableManagerState(
+    : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () => $DeletedPhotosFilterComposer($db: db, $table: table),
           createOrderingComposer: () => $DeletedPhotosOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $DeletedPhotosAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<String> id = const Value.absent(),
-            Value<String> path = const Value.absent(),
-            Value<int> size = const Value.absent(),
-            Value<DateTime> deletedAt = const Value.absent(),
-            Value<int> year = const Value.absent(),
-            Value<int> month = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              DeletedPhotosCompanion(
-            id: id,
-            path: path,
-            size: size,
-            deletedAt: deletedAt,
-            year: year,
-            month: month,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            required String id,
-            required String path,
-            required int size,
-            required DateTime deletedAt,
-            required int year,
-            required int month,
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              DeletedPhotosCompanion.insert(
-            id: id,
-            path: path,
-            size: size,
-            deletedAt: deletedAt,
-            year: year,
-            month: month,
-            rowid: rowid,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> path = const Value.absent(),
+                Value<int> size = const Value.absent(),
+                Value<DateTime> deletedAt = const Value.absent(),
+                Value<int> year = const Value.absent(),
+                Value<int> month = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DeletedPhotosCompanion(
+                id: id,
+                path: path,
+                size: size,
+                deletedAt: deletedAt,
+                year: year,
+                month: month,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String path,
+                required int size,
+                required DateTime deletedAt,
+                required int year,
+                required int month,
+                Value<int> rowid = const Value.absent(),
+              }) => DeletedPhotosCompanion.insert(
+                id: id,
+                path: path,
+                size: size,
+                deletedAt: deletedAt,
+                year: year,
+                month: month,
+                rowid: rowid,
+              ),
           withReferenceMapper: (p0) =>
               p0.map((e) => (e.readTable(table), BaseReferences(db, table, e))).toList(),
           prefetchHooksCallback: null,
-        ));
+        ),
+      );
 }
 
-typedef $DeletedPhotosProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    DeletedPhotos,
-    DeletedPhotoDB,
-    $DeletedPhotosFilterComposer,
-    $DeletedPhotosOrderingComposer,
-    $DeletedPhotosAnnotationComposer,
-    $DeletedPhotosCreateCompanionBuilder,
-    $DeletedPhotosUpdateCompanionBuilder,
-    (DeletedPhotoDB, BaseReferences<_$AppDatabase, DeletedPhotos, DeletedPhotoDB>),
-    DeletedPhotoDB,
-    PrefetchHooks Function()>;
+typedef $DeletedPhotosProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      DeletedPhotos,
+      DeletedPhotoDB,
+      $DeletedPhotosFilterComposer,
+      $DeletedPhotosOrderingComposer,
+      $DeletedPhotosAnnotationComposer,
+      $DeletedPhotosCreateCompanionBuilder,
+      $DeletedPhotosUpdateCompanionBuilder,
+      (DeletedPhotoDB, BaseReferences<_$AppDatabase, DeletedPhotos, DeletedPhotoDB>),
+      DeletedPhotoDB,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;

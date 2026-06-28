@@ -53,10 +53,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       _HomeScreenHeader(),
                       Expanded(
                         child: Center(
-                          child: Text(
-                            'Фотографии не найдены',
-                            style: TextStyle(fontSize: 18),
-                          ),
+                          child: Text('Фотографии не найдены', style: TextStyle(fontSize: 18)),
                         ),
                       ),
                     ],
@@ -64,8 +61,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 }
 
                 // Загружаем фото для выбранного года
-                final monthGroupsAsync =
-                    ref.watch(monthGroupsByYearProvider(homeState.selectedYear));
+                final monthGroupsAsync = ref.watch(
+                  monthGroupsByYearProvider(homeState.selectedYear),
+                );
 
                 return Column(
                   children: [
@@ -111,19 +109,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                           );
                         },
-                        loading: () => const Center(
-                          child: CircularProgressIndicator(),
-                        ),
+                        loading: () => const Center(child: CircularProgressIndicator()),
                         error: (error, stack) => Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Icon(Icons.error_outline, size: 64, color: AppColors.deleteRed),
                               const SizedBox(height: 16),
-                              Text(
-                                'Ошибка загрузки фото:\n$error',
-                                textAlign: TextAlign.center,
-                              ),
+                              Text('Ошибка загрузки фото:\n$error', textAlign: TextAlign.center),
                               const SizedBox(height: 16),
                               ElevatedButton(
                                 onPressed: () {
@@ -155,10 +148,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         children: [
                           const Icon(Icons.error_outline, size: 64, color: AppColors.deleteRed),
                           const SizedBox(height: 16),
-                          Text(
-                            'Ошибка загрузки годов:\n$error',
-                            textAlign: TextAlign.center,
-                          ),
+                          Text('Ошибка загрузки годов:\n$error', textAlign: TextAlign.center),
                           const SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () {
@@ -183,11 +173,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           error: (error, stack) => Column(
             children: [
               const _HomeScreenHeader(),
-              Expanded(
-                child: Center(
-                  child: Text('Ошибка проверки разрешений: $error'),
-                ),
-              ),
+              Expanded(child: Center(child: Text('Ошибка проверки разрешений: $error'))),
             ],
           ),
         ),
@@ -205,10 +191,7 @@ class _HomeScreenHeader extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 16),
       child: Text(
         'Swipe Cleaner',
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         textAlign: TextAlign.center,
       ),
     );

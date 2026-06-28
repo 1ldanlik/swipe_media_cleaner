@@ -51,10 +51,10 @@ class AppColors {
   static const Color photoBorderPurple = Color(0xFF9C27B0);
 
   /// Красный оверлей для фото в корзине (0.3 opacity)
-  static Color trashPhotoOverlay = Colors.red.withOpacity(0.3);
+  static Color trashPhotoOverlay = Colors.red.withValues(alpha: 0.3);
 
   /// Синий оверлей для выбранного фото (0.5 opacity)
-  static Color selectedPhotoOverlay = Colors.blue.withOpacity(0.5);
+  static Color selectedPhotoOverlay = Colors.blue.withValues(alpha: 0.5);
 
   // === Серые оттенки ===
 
@@ -96,7 +96,7 @@ class AppColors {
   // === Цвета теней ===
 
   /// Тень с прозрачностью 0.1
-  static Color shadowLight = Colors.black.withOpacity(0.1);
+  static Color shadowLight = Colors.black.withValues(alpha: 0.1);
 
   // === Цвета для виджетов ===
 

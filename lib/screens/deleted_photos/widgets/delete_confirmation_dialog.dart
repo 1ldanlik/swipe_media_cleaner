@@ -5,10 +5,7 @@ import '../../../theme/app_colors.dart';
 class DeleteConfirmationDialog extends StatelessWidget {
   final int photoCount;
 
-  const DeleteConfirmationDialog({
-    super.key,
-    required this.photoCount,
-  });
+  const DeleteConfirmationDialog({super.key, required this.photoCount});
 
   /// Показать диалог и вернуть результат подтверждения
   static Future<bool> show(BuildContext context, int photoCount) async {
@@ -28,10 +25,7 @@ class DeleteConfirmationDialog extends StatelessWidget {
         'Это действие нельзя отменить!',
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(false),
-          child: const Text('Отмена'),
-        ),
+        TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Отмена')),
         FilledButton(
           onPressed: () => Navigator.of(context).pop(true),
           style: FilledButton.styleFrom(backgroundColor: AppColors.deleteRed),

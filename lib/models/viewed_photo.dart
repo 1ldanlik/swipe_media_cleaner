@@ -12,12 +12,7 @@ class ViewedPhoto {
     required this.viewedAt,
   });
 
-  ViewedPhoto copyWith({
-    String? id,
-    int? year,
-    int? month,
-    DateTime? viewedAt,
-  }) {
+  ViewedPhoto copyWith({String? id, int? year, int? month, DateTime? viewedAt}) {
     return ViewedPhoto(
       id: id ?? this.id,
       year: year ?? this.year,

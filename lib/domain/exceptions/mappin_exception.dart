@@ -10,17 +10,11 @@ class MappingException implements Exception {
   final String? actualValue;
 
   /// Создаёт [MappingException].
-  const MappingException({
-    required this.fieldName,
-    required this.type,
-    this.actualValue,
-  });
+  const MappingException({required this.fieldName, required this.type, this.actualValue});
 
   /// Конструктор для исключения заглушки, которое не подходит под остальные типы ошибок.
-  factory MappingException.stub() => const MappingException(
-        fieldName: 'NOT_HANDLED',
-        type: MappingExceptionType.unknown,
-      );
+  factory MappingException.stub() =>
+      const MappingException(fieldName: 'NOT_HANDLED', type: MappingExceptionType.unknown);
 
   @override
   String toString() =>

@@ -16,15 +16,9 @@ class DeletedPhotosScreenState {
   final Set<String> selectedPhotoIds;
   final bool isProcessing;
 
-  const DeletedPhotosScreenState({
-    required this.selectedPhotoIds,
-    required this.isProcessing,
-  });
+  const DeletedPhotosScreenState({required this.selectedPhotoIds, required this.isProcessing});
 
-  DeletedPhotosScreenState copyWith({
-    Set<String>? selectedPhotoIds,
-    bool? isProcessing,
-  }) {
+  DeletedPhotosScreenState copyWith({Set<String>? selectedPhotoIds, bool? isProcessing}) {
     return DeletedPhotosScreenState(
       selectedPhotoIds: selectedPhotoIds ?? this.selectedPhotoIds,
       isProcessing: isProcessing ?? this.isProcessing,
@@ -46,10 +40,7 @@ class DeletedPhotosScreenState {
 class DeletedPhotosScreenController extends _$DeletedPhotosScreenController {
   @override
   DeletedPhotosScreenState build() {
-    return const DeletedPhotosScreenState(
-      selectedPhotoIds: {},
-      isProcessing: false,
-    );
+    return const DeletedPhotosScreenState(selectedPhotoIds: {}, isProcessing: false);
   }
 
   /// Переключить выбор фотографии
@@ -67,9 +58,7 @@ class DeletedPhotosScreenController extends _$DeletedPhotosScreenController {
 
   /// Выбрать все фотографии
   void selectAll(List<String> photoIds) {
-    state = state.copyWith(
-      selectedPhotoIds: Set<String>.from(photoIds),
-    );
+    state = state.copyWith(selectedPhotoIds: Set<String>.from(photoIds));
   }
 
   /// Отменить выбор всех фотографий
@@ -78,14 +67,8 @@ class DeletedPhotosScreenController extends _$DeletedPhotosScreenController {
   }
 
   /// Обработать удаление с подтверждением
-  Future<void> handleDelete(
-    BuildContext context,
-    List<DeletedPhoto> photos,
-  ) async {
-    final confirmed = await DeleteConfirmationDialog.show(
-      context,
-      photos.length,
-    );
+  Future<void> handleDelete(BuildContext context, List<DeletedPhoto> photos) async {
+    final confirmed = await DeleteConfirmationDialog.show(context, photos.length);
 
     if (!confirmed) return;
 
@@ -103,24 +86,15 @@ class DeletedPhotosScreenController extends _$DeletedPhotosScreenController {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Ошибка при удалении: $e'),
-            backgroundColor: AppColors.deleteRed,
-          ),
+          SnackBar(content: Text('Ошибка при удалении: $e'), backgroundColor: AppColors.deleteRed),
         );
       }
     }
   }
 
   /// Обработать восстановление с подтверждением
-  Future<void> handleRestore(
-    BuildContext context,
-    List<DeletedPhoto> photos,
-  ) async {
-    final confirmed = await RestoreConfirmationDialog.show(
-      context,
-      photos.length,
-    );
+  Future<void> handleRestore(BuildContext context, List<DeletedPhoto> photos) async {
+    final confirmed = await RestoreConfirmationDialog.show(context, photos.length);
 
     if (!confirmed) return;
 
@@ -171,10 +145,7 @@ class DeletedPhotosScreenController extends _$DeletedPhotosScreenController {
       ref.invalidate(availableYearsProvider);
       ref.invalidate(monthGroupsByYearProvider);
 
-      state = state.copyWith(
-        isProcessing: false,
-        selectedPhotoIds: {},
-      );
+      state = state.copyWith(isProcessing: false, selectedPhotoIds: {});
     } catch (e) {
       state = state.copyWith(isProcessing: false);
       rethrow;
@@ -196,10 +167,7 @@ class DeletedPhotosScreenController extends _$DeletedPhotosScreenController {
         await deletedPhotosController.restore(id);
       }
 
-      state = state.copyWith(
-        isProcessing: false,
-        selectedPhotoIds: {},
-      );
+      state = state.copyWith(isProcessing: false, selectedPhotoIds: {});
     } catch (e) {
       state = state.copyWith(isProcessing: false);
       rethrow;

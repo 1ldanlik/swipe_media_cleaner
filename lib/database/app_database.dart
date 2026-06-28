@@ -13,7 +13,7 @@ part 'app_database.g.dart';
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor])
-      : super(executor ?? driftDatabase(name: 'swipe_media_cleaner'));
+    : super(executor ?? driftDatabase(name: 'swipe_media_cleaner'));
 
   @override
   int get schemaVersion => 1;
