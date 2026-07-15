@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../providers/permission_provider.dart';
 import '../../providers/month_groups_by_year_provider.dart';
+import '../auth_gate/auth_gate_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/month_card.dart';
 import '../../widgets/permission_request_widget.dart';
@@ -182,17 +183,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
-class _HomeScreenHeader extends StatelessWidget {
+class _HomeScreenHeader extends ConsumerWidget {
   const _HomeScreenHeader();
 
   @override
-  Widget build(BuildContext context) {
-    return const Padding(
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Padding(
       padding: EdgeInsets.symmetric(vertical: 16),
-      child: Text(
-        'Swipe Cleaner',
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        textAlign: TextAlign.center,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          const Text(
+            'Swipe Cleaner',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () async {
+                try {
+                  await ref.read(authFirebaseAuthProvider).signOut();
+                } catch (_) {
+                  if (!context.mounted) return;
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text('Не удалось выйти из аккаунта')));
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

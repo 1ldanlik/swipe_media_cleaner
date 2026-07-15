@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "993976638315",
+    "project_id": "swipe-media-cleaner",
+    "storage_bucket": "swipe-media-cleaner.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:993976638315:android:2d79aaaa82d31078964a2e",
+        "android_client_info": {
+          "package_name": "app.swipemediacleaner.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOmZyZ-fNKa1aJq38Q82lJc7WWf-rii7s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:993976638315:android:1b812363be528093964a2e",
+        "android_client_info": {
+          "package_name": "com.swipecleaner.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOmZyZ-fNKa1aJq38Q82lJc7WWf-rii7s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
